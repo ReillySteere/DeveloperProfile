@@ -1,0 +1,23 @@
+$bg-color: #24252a;
+$border-color: #444;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #222;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.phaserContainer {
+  border: 2px solid $border-color;
+  margin-bottom: 20px;
+  width: 1400px;
+  height: 700px;
+}
+
+.uiOverlay {
+  width: 1400;
+  text-align: center;
+}

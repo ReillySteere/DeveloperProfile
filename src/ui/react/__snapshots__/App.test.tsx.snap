@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`App Component matches snapshot 1`] = `
+<div
+  class="container"
+>
+  <div
+    class="phaserContainer"
+    id="phaser-container"
+  />
+  <div
+    class="uiOverlay"
+    id="root-ui"
+  >
+    <div
+      data-testid="health-status"
+    >
+      Health Status Mock
+    </div>
+  </div>
+</div>
+`;

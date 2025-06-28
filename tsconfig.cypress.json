@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig",
+  "compilerOptions": {
+    "jsx": "react",
+    "esModuleInterop": true,
+    "module": "CommonJS",
+    "useUnknownInCatchVariables": false,
+    "strictPropertyInitialization": false,
+    "types": ["cypress"]
+  },
+  "include": ["cypress"],
+  "exclude": ["node_modules", "dist", "node_modules/cypress"]
+}
