@@ -2,12 +2,18 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "ui/*": ["src/ui/*"],
-      "shared/*": ["src/shared/*"],
-      "backend/*": ["src/server/*"]
+      "ui/*": [
+        "src/ui/*"
+      ],
+      "backend/*": [
+        "src/server/*"
+      ]
     },
     "target": "ESNext",
-    "lib": ["dom", "ESNext"],
+    "lib": [
+      "dom",
+      "ESNext"
+    ],
     "module": "commonjs",
     "moduleResolution": "node",
     "outDir": "./dist",
@@ -23,12 +29,26 @@
     "skipLibCheck": true,
     "strictNullChecks": true,
     "strictBindCallApply": false,
+    "noImplicitAny": true,
     "noFallthroughCasesInSwitch": false,
     "strictPropertyInitialization": false,
     "jsx": "react",
     "strict": true,
-    "typeRoots": ["src/types", "./node_modules/@types"]
+    "typeRoots": [
+      "src/types",
+      "./node_modules/@types"
+    ],
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/**/*",
+    "jest.browser.ts",
+    "jest.node.ts",
+    "jest.setup.ts",
+    "cypress.config.ts",
+    "cypress/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+  ]
 }

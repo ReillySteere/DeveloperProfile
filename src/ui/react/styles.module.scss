@@ -1,10 +1,12 @@
 $bg-color: rgb(19 78 74);
-$border-color: #444;
+$border-color: #fff;
+$font-color: #fff;
 
 .container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   background-color: $bg-color;
   min-height: 100vh;
+  padding: 0% 10%;
 }

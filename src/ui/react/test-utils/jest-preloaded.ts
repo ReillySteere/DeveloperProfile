@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-require-imports */
 import '@testing-library/jest-dom';
 
 import { enableFetchMocks } from 'jest-fetch-mock';

@@ -9,7 +9,7 @@ import * as Sentry from '@sentry/node';
 
 @Catch()
 export class SentryExceptionFilter implements ExceptionFilter {
-  catch(exception: any, host: ArgumentsHost) {
+  catch(exception: unknown, host: ArgumentsHost) {
     console.log(exception);
     // Capture exception in Sentry
     Sentry.captureException(exception);
@@ -25,7 +25,7 @@ export class SentryExceptionFilter implements ExceptionFilter {
     // Send a standard error response
     response.status(status).json({
       statusCode: status,
-      message: exception.message || 'Internal server error',
+      message: (exception as Error).message || 'Internal server error',
     });
   }
 }

@@ -68,7 +68,7 @@ module.exports = {
     sentryWebpackPlugin({
       authToken: process.env.SENTRY_AUTH_TOKEN,
       org: 'freeland-f7',
-      project: 'towerdefence',
+      project: 'developerprofile',
     }),
   ],
 };

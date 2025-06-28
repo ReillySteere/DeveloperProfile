@@ -24,10 +24,10 @@ async function bootstrap() {
   app.useGlobalFilters(new SentryExceptionFilter());
 
   const config = new DocumentBuilder()
-    .setTitle('Tower Defense API')
-    .setDescription('API documentation for the Tower Defense Game backend')
+    .setTitle('Developer Profile API')
+    .setDescription('API documentation for the Developer Profile backend')
     .setVersion('1.0')
-    .addBearerAuth() // If you use JWT authentication, for example.
+    .addBearerAuth() // JWT Authetnication
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
