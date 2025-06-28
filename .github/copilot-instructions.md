@@ -252,4 +252,4 @@ This section lists all dependencies currently in use by the checkout project.
 - "typescript-eslint": "^8.20.0",
 - "webpack": "^5.98.0",
 - "webpack-cli": "^6.0.1",
-- "webpack-dev-server": "^5.2.1- 
+- "webpack-dev-server": "^5.2.1-

@@ -34,10 +34,20 @@ export default [
       ...prettierPlugin.configs.recommended.rules,
       'react-compiler/react-compiler': 'error',
       '@typescript-eslint/no-explicit-any': 'error',
+      "prettier/prettier": [
+        "error",
+        {
+          "endOfLine": "auto"
+        }
+      ],
     },
   },
   {
-    files: ['**/*.test.ts', '**/*.test.tsx', 'src/ui/react/test-utils/jest-preloaded.ts'],
+    files: [
+      '**/*.test.ts',
+      '**/*.test.tsx',
+      'src/ui/react/test-utils/jest-preloaded.ts',
+    ],
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
     },

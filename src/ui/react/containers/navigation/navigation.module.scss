@@ -1,15 +1,13 @@
-
 @use '../../styles.module.scss' as styles;
 
 .navigation {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    background-color: styles.$bg-color;
-    color: styles.$font-color;
-    min-height: 100vh;
-    height: 100vh;
-    width: 35%;
-
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  background-color: styles.$bg-color;
+  color: styles.$font-color;
+  min-height: 100vh;
+  height: 100vh;
+  width: 35%;
 }

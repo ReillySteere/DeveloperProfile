@@ -2,7 +2,6 @@
 
 ## Purpose
 
-
 ## Project Setup Instructions
 
 1. **Clone the repository:**
@@ -79,6 +78,5 @@ graph TD;
 ```
 
 ## Development Overview
-
 
 ## Future Considerations
