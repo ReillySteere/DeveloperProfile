@@ -6,7 +6,7 @@
     "build:server": "nest build",
     "test": "npm run test:server && npm run test:ui",
     "cypress:open": "cypress open",
-    "start": "concurrently \"npm run start:server:dev \" \"start:ui\"",
+    "start": "concurrently \"npm run start:server:dev \" \"npm run start:ui\"",
     "start:ui": "webpack serve --config webpack.browser.js --mode development",
     "start:server:debug": "nest start --debug --watch",
     "start:server:dev": "cross-env NODE_ENV=development nest start --entryFile=server/main --watch",

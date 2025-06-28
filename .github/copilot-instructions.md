@@ -115,84 +115,54 @@
 - If there’s any uncertainty about the code changes, file structure, or test implications, ask clarifying questions before proceeding.
 - For example, ask if backend-specific guidelines should be applied or if additional instructions on integrating with React Query are needed.
 
-## Repository Structure
+## Directory Structure
 
-checkout/
-├── .github/
-│ └── copilot-instructions.md
-├── .vscode/
-│ └── launch.json
-├── .adr-dir/
-├── .eslintcache
-├── .eslintrc.js
-├── .gitlab-ci.yml
-├── .lintstagedrc.js
-├── .npmignore
-├── .prettierignore
-├── .stylelintignore
-├── .stylelintrc.js
-├── .yarnrc
-├── babel.config.js
-├── Dockerfile
-├── jest.browser.ts
-├── jest.node.ts
-├── jest.setup.ts
-├── package.json
-├── postcss.config.js
-├── README.md
-├── tsconfig.jest.json
-├── tsconfig.json
-├── yarn-error.log
-├── config/
-├── coverage/
-├── deploy/
-├── doc/
-├── eslint-local-rules/
-├── public/
-├── src/
-│ ├── assets/
-│ ├── contexts/
-│ ├── react/
-│ │ ├── **mocks**/
-│ │ ├── components/
-│ │ ├── constants/
-│ │ ├── cookies/
-│ │ ├── formatting/
-│ │ ├── hooks/
-│ │ ├── pages/
-│ │ ├── providers/
-│ │ ├── router/
-│ │ ├── services/
-│ │ ├── store/
-│ │ ├── test-utils/
-│ │ ├── types/
-│ │ ├── utils/
-│ ├── shared/
-│ │ ├── constants/
-│ │ ├── errors/
-│ │ ├── mocks/
-│ │ ├── models/
-│ │ ├── orderMailer/
-│ │ ├── schemas/
-│ │ └── types/
-│ ├── server/
-│ │ ├── **mocks**/
-│ │ ├── constants/
-│ │ ├── controllers/
-│ │ ├── cookies/
-│ │ ├── decorators/
-│ │ ├── errors/
-│ │ ├── filters/
-│ │ ├── guards/
-│ │ ├── helpers/
-│ │ ├── interceptors/
-│ │ ├── lib/
-│ │ ├── models/
-│ │ ├── modules/
-│ │ ├── service-client/
-│ │ ├── services/
-│ │ ├── test-utils/
-│ │ └── viewModels/
+The project directory structure is as follows:
+
+```
+profile/
+    cypress.config.ts
+    eslint.config.js
+    jest.browser.ts
+    jest.node.ts
+    jest.setup.ts
+    LICENSE
+    package.json
+    README.md
+    tsconfig.cypress.json
+    tsconfig.jest.json
+    tsconfig.json
+    webpack.browser.js
+    webpack.server.js
+    cypress/
+        e2e/
+            app.spec.cy.ts
+            backend.spec.cy.ts
+        fixtures/
+            example.json
+        support/
+            commands.ts
+            e2e.ts
+    data/
+        database.sqlite
+    public/
+        index.html
+    src/
+        server/
+            app.controller.test.ts
+            app.controller.ts
+            app.module.ts
+            app.service.ts
+            main.ts
+            sentry-exception.filter.test.ts
+            sentry-exception.filter.ts
+            auth/
+            test-utils/
+            util/
+        shared/
+            types/
+        ui/
+```
 
 ## Project Dependencies
 
@@ -200,116 +170,86 @@ This section lists all dependencies currently in use by the checkout project.
 
 ### Dependencies
 
-- @hookform/devtools: ~4.3.1
-- @kount/kount-web-client-sdk: ~2.2.2
-- @nestjs-modules/mailer: 2.0.2
-- @nestjs/common: ~10.2.2
-- @nestjs/core: ~10.2.2
-- @nestjs/platform-express: ~10.2.2
-- @nestjs/serve-static: ~4.0.0
-- @tanstack/react-query: ~5.48.0
-- @tanstack/react-query-devtools: ~5.48.0
-- @types/googlepay: ~0.7.6
-- @unisporkal/alliance-ui-button: ~1.0.0
-- @unisporkal/alliance-ui-checkbox: ~1.0.0
-- @unisporkal/alliance-ui-dropdown-menu: ~1.0.0
-- @unisporkal/alliance-ui-flex-box: ~1.0.0
-- @unisporkal/alliance-ui-form: ~1.0.0
-- @unisporkal/alliance-ui-icon-button: ~1.0.0
-- @unisporkal/alliance-ui-icons: ~1.0.0
-- @unisporkal/alliance-ui-image: ~1.0.0
-- @unisporkal/alliance-ui-link: ~1.0.0
-- @unisporkal/alliance-ui-modal: ~1.0.0
-- @unisporkal/alliance-ui-radio-button: ~1.0.0
-- @unisporkal/alliance-ui-radio-button-group: ~1.0.0
-- @unisporkal/alliance-ui-select: ~1.0.0
-- @unisporkal/alliance-ui-spinner: ~1.0.0
-- @unisporkal/alliance-ui-tooltip: ~1.0.0
-- @unisporkal/alliance-ui-typography: ~1.0.0
-- @unisporkal/authentication: ~1.0.0
-- @unisporkal/babel-plugin-lazy-component: ~1.0.0
-- @unisporkal/browser: ~1.0.0
-- @unisporkal/consul-client: ~1.0.0
-- @unisporkal/cookie-cutter: ~1.0.0
-- @unisporkal/customer-profile: ~1.0.0
-- @unisporkal/experiences: ~1.0.0
-- @unisporkal/federation: ~1.0.0
-- @unisporkal/ga4: ~1.0.0
-- @unisporkal/instrumentation: ~1.0.0
-- @unisporkal/localization: ~1.0.0
-- @unisporkal/nestjs-core: ~1.0.0
-- @unisporkal/nestjs-customer-profile: ~1.0.0
-- @unisporkal/nestjs-federation: ~1.0.0
-- @unisporkal/nestjs-mailer: ~1.0.0
-- @unisporkal/react-instrumentation: ~1.0.0
-- @unisporkal/react-lazy-component: ~1.0.0
-- @unisporkal/service-client: ~1.0.0
-- @unisporkal/sites: ~1.0.0
-- @unisporkal/tooltip: ~1.0.0
-- @unisporkal/tracking: ~1.0.0
-- @unisporkal/unisporkal-styles: ~1.0.0
-- @unisporkal/utilities: ~1.0.0
-- axios: ~1.1.3
-- class-transformer: ~0.5.1
-- class-validator: ~0.14.0
-- classnames: ~2.3.1
-- concurrently: ~6.3.0
-- express: ~4.18.2
-- frames-react: ~1.1.2
-- ibantools: ~4.5.1
-- intl-tel-input: ~23.0.8
-- nodemailer: ^6.10.0
-- pretty-bytes: ~6.1.1
-- react: ~18.2.0
-- react-dom: ~18.2.0
-- react-google-recaptcha: ~2.1.0
-- react-hook-form: ~7.53.0
-- react-loader-spinner: ~4.0.0
-- react-router: ~6.21.0
-- react-router-dom: ~6.21.0
-- reflect-metadata: ~0.1.13
-- rxjs: ~7.8.1
-- sanitize-html: ~2.4.0
-- ts-jest: ~29.1.2
-- uuid: ~9.0.0
-- zod: ~3.24.2
+- "@nestjs/common": "^11.0.1",
+- "@nestjs/core": "^11.0.1",
+- "@nestjs/jwt": "^11.0.0",
+- "@nestjs/passport": "^11.0.5",
+- "@nestjs/platform-express": "^11.0.1",
+- "@nestjs/swagger": "^11.1.1",
+- "@nestjs/typeorm": "^11.0.0",
+- "@sentry/integrations": "^7.114.0",
+- "@sentry/node": "^9.11.0",
+- "@sentry/react": "^9.10.1",
+- "@sentry/tracing": "^7.120.3",
+- "@sentry/webpack-plugin": "^3.2.4",
+- "@tanstack/react-query": "^5.71.0",
+- "class-transformer": "^0.5.1",
+- "class-validator": "^0.14.1",
+- "passport": "^0.7.0",
+- "passport-jwt": "^4.0.1",
+- "react": "^19.1.0",
+- "react-dom": "^19.1.0",
+- "react-transition-group": "^4.4.5",
+- "reflect-metadata": "^0.2.2",
+- "rxjs": "^7.8.1",
+- "sqlite3": "^5.1.7",
+- "swagger-ui-express": "^5.0.1",
+- "typeorm": "^0.3.22",
+- "zustand": "^5.0.3"
 
 ### Dev Dependencies
 
-- @babel/eslint-parser: ~7.17.0
-- @module-federation/enhanced: 0.6.10
-- @nestjs/testing: ~10.2.2
-- @testing-library/dom: ~10.1.0
-- @testing-library/jest-dom: ~5.16.4
-- @testing-library/react: ~16.0.0
-- @testing-library/react-hooks: ~8.0.0
-- @testing-library/user-event: ~14.5.2
-- @types/applepayjs: ^14.0.9
-- @types/eslint: ~9.6.1
-- @types/jest: ~29.5.12
-- @types/nodemailer: ^6.4.17
-- @types/react: ~18.2.24
-- @types/spreedly-iframe-browser: ~1.0.3
-- @types/webpack-env: ~1.18.0
-- @unisporkal/babel-preset-unisporkal: ~1.0.0
-- @unisporkal/instrumentation: ~1.0.0
-- @unisporkal/linting: ~1.0.0
-- @unisporkal/webpack-config: ~1.0.0
-- babel-eslint: ~10.1.0
-- babel-jest: ~29.7.0
-- circular-dependency-plugin: ~5.2.2
-- eslint: ~8.50.0
-- eslint-plugin-local-rules: ~3.0.2
-- eslint-plugin-react-compiler: ^19.0.0-beta-6fc168f-20241025
-- husky: ~9.0.11
-- identity-obj-proxy: ~3.0.0
-- jest: ~29.7.0
-- jest-environment-jsdom: ~29.7.0
-- jest-fixed-jsdom: ^0.0.9
-- jest-mock: ~29.7.0
-- lint-staged: ~15.2.2
-- msw: ~2.7.1
-- prettier: ~2.8.3
-- stylelint: ~15.10.0
-- ts-node: ~10.9.2
-- typescript: ~5.2.2
+- "@babel/core": "^7.26.10",
+- "@babel/preset-env": "^7.26.9",
+- "@babel/preset-react": "^7.26.3",
+- "@babel/preset-typescript": "^7.27.0",
+- "@eslint/eslintrc": "^3.2.0",
+- "@eslint/js": "^9.18.0",
+- "@nestjs/cli": "^11.0.0",
+- "@nestjs/schematics": "^11.0.0",
+- "@nestjs/testing": "^11.0.1",
+- "@swc/cli": "^0.6.0",
+- "@swc/core": "^1.10.7",
+- "@testing-library/jest-dom": "^6.6.3",
+- "@testing-library/react": "^16.2.0",
+- "@types/express": "^5.0.0",
+- "@types/jest": "^29.5.14",
+- "@types/node": "^22.13.14",
+- "@types/passport-jwt": "^4.0.1",
+- "@types/react": "^19.0.12",
+- "@types/react-dom": "^19.0.4",
+- "@types/react-transition-group": "^4.4.12",
+- "@types/supertest": "^6.0.2",
+- "@typescript-eslint/eslint-plugin": "^8.28.0",
+- "@typescript-eslint/parser": "^8.28.0",
+- "babel-loader": "^10.0.0",
+- "babel-plugin-react-compiler": "^19.0.0-beta-ebf51a3-20250411",
+- "concurrently": "^7.0.0",
+- "cross-env": "^7.0.3",
+- "css-loader": "^7.1.2",
+- "cypress": "^14.2.1",
+- "eslint": "^9.23.0",
+- "eslint-config-prettier": "^10.1.1",
+- "eslint-plugin-prettier": "^5.2.5",
+- "eslint-plugin-react-compiler": "^19.0.0-beta-ebf51a3-20250411",
+- "globals": "^16.0.0",
+- "identity-obj-proxy": "^3.0.0",
+- "jest": "^29.7.0",
+- "jest-environment-jsdom": "^29.7.0",
+- "jest-fetch-mock": "^3.0.3",
+- "jest-fixed-jsdom": "^0.0.9",
+- "prettier": "^3.5.3",
+- "sass": "^1.86.0",
+- "sass-loader": "^16.0.5",
+- "source-map-support": "^0.5.21",
+- "style-loader": "^4.0.0",
+- "supertest": "^7.0.0",
+- "ts-jest": "^29.3.0",
+- "ts-loader": "^9.5.2",
+- "ts-node": "^10.9.2",
+- "tsconfig-paths": "^4.2.0",
+- "typescript": "^5.8.2",
+- "typescript-eslint": "^8.20.0",
+- "webpack": "^5.98.0",
+- "webpack-cli": "^6.0.1",
+- "webpack-dev-server": "^5.2.1- 
