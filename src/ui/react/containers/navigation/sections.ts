@@ -1,4 +1,5 @@
-import Placeholder from '../placeholder/placeholder';
+import Goals from 'ui/react/containers/goals';
+import Placeholder from 'ui/react/containers/placeholder';
 export type SectionType = {
   name: string;
   component: React.ComponentType;
@@ -6,23 +7,23 @@ export type SectionType = {
 
 export default {
   About: {
-    name: 'about',
+    name: 'About',
     component: Placeholder,
   },
   Experience: {
-    name: 'experience',
+    name: 'Experience',
     component: Placeholder,
   },
   Projects: {
-    name: 'projects',
+    name: 'Projects',
     component: Placeholder,
   },
   Goals: {
-    name: 'goals',
-    component: Placeholder,
+    name: 'Goals',
+    component: Goals,
   },
   Blog: {
-    name: 'blog',
+    name: 'Blog',
     component: Placeholder,
   },
 };
