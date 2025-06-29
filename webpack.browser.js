@@ -1,4 +1,5 @@
 const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
+const { tanstackRouter } = require('@tanstack/router-plugin/webpack');
 
 const path = require('path');
 
@@ -69,6 +70,13 @@ module.exports = {
       authToken: process.env.SENTRY_AUTH_TOKEN,
       org: 'freeland-f7',
       project: 'developerprofile',
+    }),
+    tanstackRouter({
+      target: 'react',
+      autoCodeSplitting: true,
+      routesDirectory: "./src/ui/react/routes",
+      generatedRouteTree: "./src/ui/routeTree.gen.ts",
+      semicolons: true,
     }),
   ],
 };

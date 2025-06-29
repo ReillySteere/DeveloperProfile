@@ -11,3 +11,21 @@
   height: 100vh;
   width: 35%;
 }
+
+.link {
+  display: flex;
+  justify-content: left;
+  font-size: large;
+  color: styles.$font-color;
+  padding: 16px;
+  width: 50%;
+  cursor: pointer;
+
+  &.inactive {
+    opacity: 0.5;
+  }
+
+  &.active {
+    font-weight: bold;
+  }
+}

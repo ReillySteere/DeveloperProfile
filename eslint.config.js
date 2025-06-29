@@ -2,6 +2,7 @@ import eslintPluginTs from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import prettierPlugin from 'eslint-plugin-prettier';
 import reactCompilerPlugin from 'eslint-plugin-react-compiler';
+import pluginRouter from '@tanstack/eslint-plugin-router'
 
 export default [
   {
@@ -25,6 +26,7 @@ export default [
       },
     },
     plugins: {
+      '@tanstack/router': pluginRouter,
       '@typescript-eslint': eslintPluginTs,
       prettier: prettierPlugin,
       'react-compiler': reactCompilerPlugin,
