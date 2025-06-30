@@ -5,7 +5,7 @@ import styles from './layout.module.scss';
  * SectionProps defines the props for the Section component.
  * @property {React.ReactNode} children - The content of the section.
  */
-interface SectionProps {
+interface SectionProps extends React.HTMLProps<HTMLDivElement> {
   children: React.ReactNode;
 }
 
@@ -14,8 +14,12 @@ interface SectionProps {
  * @param {SectionProps} props - The props for the component.
  * @returns {JSX.Element} The rendered section element.
  */
-const Section: React.FC<SectionProps> = ({ children }) => {
-  return <section className={styles.section}>{children}</section>;
+const Section: React.FC<SectionProps> = ({ children, ...props }) => {
+  return (
+    <section {...props} className={styles.section}>
+      {children}
+    </section>
+  );
 };
 
 export default Section;

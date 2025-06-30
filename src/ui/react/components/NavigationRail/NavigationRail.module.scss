@@ -1,0 +1,109 @@
+@use 'ui/react/styles.module.scss' as styles;
+
+.navigation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  justify-content: center;
+  width: 35%;
+}
+
+.rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.toggleButton {
+  margin: 0px 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.collapsed {
+  padding: 12px;
+  align-self: flex-start;
+}
+
+.extended {
+  padding: 0px;
+  align-self: flex-end;
+}
+
+.navList {
+  flex: 1;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.navItem {
+  width: 100%;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  text-decoration: none;
+  transition: background-color .2s, color .2s;
+}
+
+.inactiveLink {
+  color: styles.$inactive-link-color;
+
+  &:hover,
+  &:focus-visible {
+    color: styles.$active-link-color;
+  }
+}
+
+.activeLink {
+  color: styles.$active-link-color;
+
+  svg {
+    color: styles.$active-link-color;
+  }
+}
+
+.label {
+  margin-left: 8px;
+  white-space: nowrap;
+}
+
+.themeToggle {
+  margin: 16px 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 768px) {
+  .navigation {
+    position: relative;
+    height: auto;
+    width: 100%;
+  }
+
+  .rail {
+    flex-direction: row;
+    width: 100% !important;
+    height: 60px;
+  }
+
+  .navList {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .navLink {
+    justify-content: center;
+    flex: 1;
+  }
+}

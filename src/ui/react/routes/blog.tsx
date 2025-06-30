@@ -8,7 +8,7 @@ export const Route = createFileRoute('/blog')({
 
 function Blog() {
   return (
-    <Frame>
+    <Frame id="blog">
       <span>Blog Content</span>
     </Frame>
   );

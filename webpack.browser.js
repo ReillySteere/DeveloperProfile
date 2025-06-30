@@ -61,6 +61,14 @@ module.exports = {
     },
     port: 8081,
     open: true,
+    historyApiFallback: true,
+    proxy: [
+      {
+        context: ['/api'],
+        secure: false,
+        target: 'http://localhost:3000',
+      },
+    ],
   },
 
   devtool: 'source-map',
@@ -74,8 +82,8 @@ module.exports = {
     tanstackRouter({
       target: 'react',
       autoCodeSplitting: true,
-      routesDirectory: "./src/ui/react/routes",
-      generatedRouteTree: "./src/ui/routeTree.gen.ts",
+      routesDirectory: './src/ui/react/routes',
+      generatedRouteTree: './src/ui/routeTree.gen.ts',
       semicolons: true,
     }),
   ],

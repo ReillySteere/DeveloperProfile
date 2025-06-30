@@ -7,7 +7,7 @@ export const Route = createFileRoute('/goals')({
 
 function Goals() {
   return (
-    <Frame>
+    <Frame id="goals">
       <span>Goals Content</span>
     </Frame>
   );

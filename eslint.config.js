@@ -2,7 +2,7 @@ import eslintPluginTs from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import prettierPlugin from 'eslint-plugin-prettier';
 import reactCompilerPlugin from 'eslint-plugin-react-compiler';
-import pluginRouter from '@tanstack/eslint-plugin-router'
+import pluginRouter from '@tanstack/eslint-plugin-router';
 
 export default [
   {
@@ -36,20 +36,11 @@ export default [
       ...prettierPlugin.configs.recommended.rules,
       'react-compiler/react-compiler': 'error',
       '@typescript-eslint/no-explicit-any': 'error',
-      "prettier/prettier": [
-        "error",
-        {
-          "endOfLine": "auto"
-        }
-      ],
+      'prettier/prettier': 'error',
     },
   },
   {
-    files: [
-      '**/*.test.ts',
-      '**/*.test.tsx',
-      'src/ui/react/test-utils/jest-preloaded.ts',
-    ],
+    files: ['**/*.test.ts', '**/*.test.tsx', 'src/ui/react/test-utils/jest-preloaded.ts'],
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
     },
