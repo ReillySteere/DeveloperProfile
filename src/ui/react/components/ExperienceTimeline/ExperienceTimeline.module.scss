@@ -1,0 +1,23 @@
+.pageWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.scrollWrapper {
+  overflow: hidden;
+  width: 100%;
+}
+
+.timeline {
+  display: flex;
+  align-items: center;
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.entryWrapper {
+  position: relative;
+}
