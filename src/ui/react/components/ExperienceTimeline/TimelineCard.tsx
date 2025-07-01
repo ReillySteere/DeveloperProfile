@@ -4,6 +4,7 @@ import { motion, Variants } from 'framer-motion';
 import { X } from 'lucide-react';
 import styles from './TimelineCard.module.scss';
 import { ExperienceEntry } from 'shared/types';
+import { Heading, List, ListItem, Paragraph } from 'ui/react/components/layout';
 
 interface TimelineCardProps {
   entry: ExperienceEntry;
@@ -62,15 +63,20 @@ const TimelineCard: React.FC<TimelineCardProps> = ({
           <X size={20} />
         </button>
 
-        <h2 className={styles.title}>{entry.title}</h2>
-        <p className={styles.dates}>
+        <Heading Tag="h2" className={styles.title}>
+          {entry.title}
+        </Heading>
+        <Heading Tag="h2" className={styles.title}>
+          {entry.company}
+        </Heading>
+        <Paragraph className={styles.dates}>
           {startYear} – {endYear}
-        </p>
-        <ul className={styles.bullets}>
+        </Paragraph>
+        <List className={styles.bullets} ordered={false}>
           {entry.bulletPoints.map((pt, i) => (
-            <li key={i}>{pt}</li>
+            <ListItem key={i}>{pt}</ListItem>
           ))}
-        </ul>
+        </List>
       </motion.div>
     </motion.div>
   );
