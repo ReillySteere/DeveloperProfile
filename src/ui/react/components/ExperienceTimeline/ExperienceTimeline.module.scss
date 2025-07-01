@@ -4,15 +4,15 @@
 }
 
 .scrollWrapper {
-  overflow: hidden;
+  position: relative;
   width: 100%;
+  z-index: var(--overlay-plus-one-z-index);
 }
 
 .timeline {
   display: flex;
   align-items: center;
   cursor: grab;
-
   &:active {
     cursor: grabbing;
   }

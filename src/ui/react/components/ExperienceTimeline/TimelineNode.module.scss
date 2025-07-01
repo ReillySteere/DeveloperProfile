@@ -5,6 +5,8 @@
   margin: 0 16px;
   cursor: pointer;
   outline: none;
+  position: relative;
+  z-index: 1;
 
   &:focus .circle {
     box-shadow: 0 0 0 3px var(--accent-color);

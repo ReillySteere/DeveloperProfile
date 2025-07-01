@@ -9,7 +9,7 @@ export const ExperienceTimeline: React.FC = () => {
   const { experiences, isLoading, isError } = useExperiences();
   const containerRef = useRef<HTMLDivElement>(null);
   const [constraints, setConstraints] = useState({ left: 0, right: 0 });
-  const [openId, setOpenId] = useState<string | null>(null);
+  const [openId, setOpenId] = useState<string | null>('1');
 
   useLayoutEffect(() => {
     if (containerRef.current && experiences?.length) {
