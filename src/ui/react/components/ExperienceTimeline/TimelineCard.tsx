@@ -53,7 +53,7 @@ const TimelineCard: React.FC<TimelineCardProps> = ({
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
-        aria-label={`${entry.title} details`}
+        aria-label={`${entry.role} details`}
       >
         <button
           className={styles.closeButton}
@@ -64,7 +64,7 @@ const TimelineCard: React.FC<TimelineCardProps> = ({
         </button>
 
         <Heading Tag="h2" className={styles.title}>
-          {entry.title}
+          {entry.role}
         </Heading>
         <Heading Tag="h2" className={styles.title}>
           {entry.company}
@@ -74,7 +74,9 @@ const TimelineCard: React.FC<TimelineCardProps> = ({
         </Paragraph>
         <List className={styles.bullets} ordered={false}>
           {entry.bulletPoints.map((pt, i) => (
-            <ListItem key={i}>{pt}</ListItem>
+            <ListItem className={styles.bullet} key={i}>
+              {pt}
+            </ListItem>
           ))}
         </List>
       </motion.div>

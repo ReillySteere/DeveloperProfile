@@ -19,7 +19,7 @@ const TimelineNode: React.FC<TimelineNodeProps> = ({ entry, onClick }) => {
       onClick={onClick}
       role="button"
       tabIndex={0}
-      aria-label={`${entry.title}, ${year}`}
+      aria-label={`${entry.role}, ${year}`}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
