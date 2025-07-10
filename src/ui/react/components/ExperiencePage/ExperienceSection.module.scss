@@ -1,0 +1,27 @@
+.section {
+  scroll-snap-align: start;
+  min-height: 80vh;
+  padding: 4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: var(--bg-color);
+}
+
+.title {
+  margin-bottom: 0.5rem;
+  font-size: 2rem;
+  color: var(--font-color);
+}
+
+.dates {
+  font-size: 1rem;
+  color: var(--muted-color);
+  margin-bottom: 1.5rem;
+}
+
+.bullets {
+  list-style: disc inside;
+  color: var(--font-color);
+  line-height: 1.5;
+}

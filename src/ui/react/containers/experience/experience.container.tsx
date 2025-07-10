@@ -1,12 +1,12 @@
 import React from 'react';
 import Frame from 'ui/react/components/layout/frame';
 
-import { ExperienceTimeline } from 'ui/react/components/ExperienceTimeline/ExperienceTimeline';
+import ExperiencePage from 'ui/react/components/ExperiencePage/ExperiencePage';
 
 export default function Experience() {
   return (
     <Frame id="experience">
-      <ExperienceTimeline />
+      <ExperiencePage />
     </Frame>
   );
 }
