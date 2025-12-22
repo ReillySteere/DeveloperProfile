@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React, { useEffect } from 'react';
 import { Link } from '@tanstack/react-router';
 import { motion } from 'framer-motion';
 import { useNavStore } from 'ui/stores/navStore';
@@ -26,9 +26,24 @@ const navItems = [
 export const NavigationRail: React.FC = () => {
   const isExpanded = useNavStore((s) => s.isExpanded);
   const toggleExpand = useNavStore((s) => s.toggleExpand);
+  const setExpanded = useNavStore((s) => s.setExpanded);
   const theme = useNavStore((s) => s.theme);
   const toggleTheme = useNavStore((s) => s.toggleTheme);
   const activeSection = useNavStore((s) => s.activeSection);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setExpanded(false);
+      }
+    };
+
+    // Initial check
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [setExpanded]);
 
   return (
     <nav className={styles.navigation} aria-label="Main navigation">
@@ -42,7 +57,7 @@ export const NavigationRail: React.FC = () => {
           onClick={toggleExpand}
           aria-expanded={isExpanded}
           aria-label={isExpanded ? 'Collapse navigation' : 'Expand navigation'}
-          className={`${styles.toggleButton} ${styles.inactiveLink} ${isExpanded ? styles.extended : styles.collapsed}`}
+          className={`${styles.toggleButton} ${isExpanded ? styles.extended : styles.collapsed}`}
         >
           {isExpanded ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -52,7 +67,7 @@ export const NavigationRail: React.FC = () => {
               {/* Navigation Link */}
               <Link
                 to={path}
-                className={`${styles.navLink} ${activeSection === name.toLowerCase() ? styles.activeLink : styles.inactiveLink}`}
+                className={`${styles.navLink} ${activeSection === name.toLowerCase() ? styles.activeLink : ''}`}
               >
                 <Icon size={24} aria-hidden="true" />
                 {isExpanded && (
@@ -68,7 +83,7 @@ export const NavigationRail: React.FC = () => {
         <button
           onClick={toggleTheme}
           aria-label="Toggle theme"
-          className={`${styles.themeToggle} ${styles.inactiveLink} ${isExpanded ? styles.extended : styles.collapsed}`}
+          className={styles.themeToggle}
         >
           {theme === 'light' ? <Moon size={24} /> : <Sun size={24} />}
         </button>

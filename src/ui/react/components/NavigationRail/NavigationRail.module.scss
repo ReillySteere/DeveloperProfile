@@ -1,43 +1,58 @@
-.navigation {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+﻿.navigation {
   height: 100vh;
-  justify-content: center;
-  width: 35%;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  flex-shrink: 0;
 }
 
 .rail {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  background: var(--bg-color);
+  height: 100%;
+  background-color: var(--bg-surface);
+  border-right: 1px solid var(--border-default);
+  padding: var(--space-4) var(--space-2);
   overflow: hidden;
 }
 
 .toggleButton {
-  margin: 0px 0;
-  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
   border: none;
   cursor: pointer;
+  color: var(--text-secondary);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  transition: var(--transition-base);
+  margin-bottom: var(--space-6);
+  align-self: flex-start; /* Default for collapsed */
+
+  &:hover {
+    background-color: var(--bg-surface-hover);
+    color: var(--text-primary);
+  }
 }
 
+/* Alignment helpers for expanded/collapsed states */
 .collapsed {
-  padding: 12px;
-  align-self: flex-start;
+  align-self: center;
 }
 
 .extended {
-  padding: 0px;
   align-self: flex-end;
 }
 
 .navList {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
   list-style: none;
   padding: 0;
   margin: 0;
-  width: 100%;
+  flex: 1;
 }
 
 .navItem {
@@ -47,63 +62,53 @@
 .navLink {
   display: flex;
   align-items: center;
-  padding: 12px;
+  gap: var(--space-3);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
   text-decoration: none;
-  transition:
-    background-color 0.2s,
-    color 0.2s;
-}
+  color: var(--text-secondary);
+  transition: var(--transition-base);
+  white-space: nowrap;
+  overflow: hidden;
 
-.inactiveLink {
-  color: var(--inactive-link-color);
-
-  &:hover,
-  &:focus-visible {
-    color: var(--active-link-color);
+  &:hover {
+    background-color: var(--bg-surface-hover);
+    color: var(--text-primary);
   }
 }
 
 .activeLink {
-  color: var(--active-link-color);
+  background-color: var(--primary-subtle);
+  color: var(--primary-default);
+  font-weight: 500;
 
-  svg {
-    color: var(--active-link-color);
+  &:hover {
+    background-color: var(--primary-subtle);
+    color: var(--primary-default);
   }
 }
 
 .label {
-  margin-left: 8px;
-  white-space: nowrap;
+  font-size: 0.875rem; /* text-sm */
 }
 
 .themeToggle {
-  margin: 16px 0;
-  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
   border: none;
   cursor: pointer;
-}
+  color: var(--text-secondary);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  transition: var(--transition-base);
+  margin-top: auto; /* Push to bottom */
+  align-self: center;
 
-/* Responsive Breakpoints */
-@media (max-width: 768px) {
-  .navigation {
-    position: relative;
-    height: auto;
-    width: 100%;
-  }
-
-  .rail {
-    flex-direction: row;
-    width: 100% !important;
-    height: 60px;
-  }
-
-  .navList {
-    display: flex;
-    flex-direction: row;
-  }
-
-  .navLink {
-    justify-content: center;
-    flex: 1;
+  &:hover {
+    background-color: var(--bg-surface-hover);
+    color: var(--text-primary);
   }
 }
+

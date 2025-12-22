@@ -6,6 +6,7 @@ export interface NavStoreState {
   activeSection: string;
   theme: 'light' | 'dark';
   toggleExpand: () => void;
+  setExpanded: (expanded: boolean) => void;
   setActiveSection: (section: string) => void;
   toggleTheme: () => void;
 }
@@ -18,6 +19,7 @@ export const useNavStore = create<NavStoreState>()(
       theme: 'light',
 
       toggleExpand: () => set({ isExpanded: !get().isExpanded }),
+      setExpanded: (expanded) => set({ isExpanded: expanded }),
 
       setActiveSection: (section) => set({ activeSection: section }),
 

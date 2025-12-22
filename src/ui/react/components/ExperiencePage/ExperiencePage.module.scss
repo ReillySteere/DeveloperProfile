@@ -1,9 +1,10 @@
 .container {
   position: relative;
-  height: 80vh;
+  height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
   scroll-snap-type: y mandatory;
+  background-color: var(--bg-app);
 
   /* hide scrollbars */
   -ms-overflow-style: none;
@@ -14,40 +15,45 @@
 }
 
 .status {
-  padding: 2rem;
+  padding: var(--space-8);
   text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
 .progressDots {
   position: fixed;
   top: 50%;
-  right: 1rem;
+  right: var(--space-6);
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  z-index: var(--overlay-plus-one-z-index);
+  gap: var(--space-3);
+  z-index: 100;
 }
 
 .dot {
-  width: 0.5rem;
-  height: 0.5rem;
+  width: 0.75rem;
+  height: 0.75rem;
   border-radius: 50%;
-  background: var(--inactive-link-color);
-  transition: transform 0.2s;
+  background: var(--color-slate-300);
+  transition: all 0.2s ease;
   cursor: pointer;
 
   &:hover {
     transform: scale(1.2);
-    background: var(--hover-link-color);
+    background: var(--primary-default);
   }
 
-  &:focus {
-    outline: 2px solid var(--accent-color);
-    transform: scale(1.1);
+  &:focus-visible {
+    outline: 2px solid var(--primary-default);
+    outline-offset: 2px;
   }
 }
 
 .active {
-  background: var(--accent-color);
+  background: var(--primary-default);
+  transform: scale(1.2);
 }

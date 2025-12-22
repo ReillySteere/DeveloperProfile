@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
+import './styles/reset.css';
+import './styles/tokens.css';
 import * as Sentry from '@sentry/browser';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { routeTree } from './routeTree.gen';

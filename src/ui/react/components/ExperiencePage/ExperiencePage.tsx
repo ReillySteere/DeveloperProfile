@@ -2,9 +2,10 @@ import React, { useRef, useEffect, useState } from 'react';
 import styles from './ExperiencePage.module.scss';
 import { useExperiences } from './useExperience';
 import ExperienceSection from './ExperienceSection';
+import { QueryState } from '../feedback/QueryState/QueryState';
 
 const ExperiencePage: React.FC = () => {
-  const { experiences, isLoading, isError } = useExperiences();
+  const { experiences, isLoading, isError, error, refetch } = useExperiences();
   const containerRef = useRef<HTMLElement>(null);
   const sectionRefs = useRef<HTMLElement[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -39,42 +40,51 @@ const ExperiencePage: React.FC = () => {
     }
   };
 
-  if (isLoading) return <div className={styles.status}>Loading…</div>;
-  if (isError || !experiences)
-    return <div className={styles.status}>Error loading experiences.</div>;
-
   return (
-    <main className={styles.container} ref={containerRef}>
-      {experiences.map((entry, idx) => (
-        <ExperienceSection
-          key={entry.id}
-          entry={entry}
-          index={idx}
-          ref={(el: HTMLElement) => {
-            sectionRefs.current[idx] = el;
-          }}
-        />
-      ))}
+    <QueryState
+      isLoading={isLoading}
+      isError={isError}
+      data={experiences}
+      error={error}
+      refetch={refetch}
+      loadingComponent={
+        <div className={styles.status}>Loading experiences...</div>
+      }
+    >
+      {(data) => (
+        <main className={styles.container} ref={containerRef}>
+          {data.map((entry, idx) => (
+            <ExperienceSection
+              key={entry.id}
+              entry={entry}
+              index={idx}
+              ref={(el: HTMLElement) => {
+                sectionRefs.current[idx] = el;
+              }}
+            />
+          ))}
 
-      <div className={styles.progressDots}>
-        {experiences.map((_, idx) => (
-          <div
-            key={idx}
-            className={`${styles.dot} ${currentIndex === idx ? styles.active : ''}`}
-            onClick={() => scrollToSection(idx)}
-            role="button"
-            tabIndex={0}
-            aria-label={`Go to section ${idx + 1}`}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                scrollToSection(idx);
-              }
-            }}
-          />
-        ))}
-      </div>
-    </main>
+          <div className={styles.progressDots}>
+            {data.map((_, idx) => (
+              <div
+                key={idx}
+                className={`${styles.dot} ${currentIndex === idx ? styles.active : ''}`}
+                onClick={() => scrollToSection(idx)}
+                role="button"
+                tabIndex={0}
+                aria-label={`Go to section ${idx + 1}`}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    scrollToSection(idx);
+                  }
+                }}
+              />
+            ))}
+          </div>
+        </main>
+      )}
+    </QueryState>
   );
 };
 

@@ -13,7 +13,7 @@ module.exports = {
   },
 
   resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.jsx', '.module.scss'],
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.css', '.module.scss'],
     alias: {
       ui: path.resolve(__dirname, 'src/ui'),
       shared: path.resolve(__dirname, 'src/shared'),
@@ -26,6 +26,10 @@ module.exports = {
         test: /\.(ts|tsx)$/,
         exclude: /node_modules/,
         use: 'babel-loader',
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
       },
       {
         test: /\.module\.scss$/,
