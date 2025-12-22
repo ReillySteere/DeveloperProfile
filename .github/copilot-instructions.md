@@ -1,119 +1,174 @@
 # COPILOT INSTRUCTIONS
 
+## Architecture Overview
+
+This is a **full-stack TypeScript monorepo** with separate NestJS backend and React frontend, using:
+
+- **Backend:** NestJS + TypeORM + SQLite (in `src/server/`)
+- **Frontend:** React 19 + TanStack Router + TanStack Query + Zustand (in `src/ui/`)
+- **Shared:** Common types in `src/shared/types/`
+- **Path Aliases:** `ui/*`, `shared/*`, `backend/*` configured in tsconfig.json
+- **Dual Build System:** Webpack (UI) + NestJS CLI (server)
+- **Dual Test Configs:** `jest.browser.ts` (UI) and `jest.node.ts` (server) with separate coverage requirements (100% for both)
+
+**Key Integration Pattern:** React Query hooks (e.g., `useExperiences` in [src/ui/react/components/ExperiencePage/useExperience.ts](src/ui/react/components/ExperiencePage/useExperience.ts)) fetch from NestJS controllers (e.g., `ExperienceController` in [src/server/modules/experience.controller.ts](src/server/modules/experience.controller.ts)) via Axios.
+
+## Development Workflow
+
+**Critical Commands:**
+
+- `npm start` - Runs BOTH UI (webpack-dev-server on port 8080) and server (NestJS on port 3000) concurrently
+- `npm run build` - Builds server then UI into `dist/`
+- `npm run test` - Runs BOTH test suites (`test:server` + `test:ui`) with 100% coverage requirement
+- `npm run lint` - ESLint with Prettier integration, includes React Compiler plugin
+
+**Testing Specifics:**
+
+- UI tests use `@testing-library/react` imported from `ui/react/test-utils` (provides QueryClient wrapper)
+- Server tests use manual dependency injection (see [src/server/auth/auth.service.test.ts](src/server/auth/auth.service.test.ts))
+- Both require 100% coverage (statements, branches, functions, lines)
+- Test files must match patterns: `src/ui/**/*.test.ts*` or `src/server/**/*.test.ts`
+
 ## Code Generation Requirements
 
-- Avoid working on more than one file at a time.
-- Multiple simultaneous edits to a file may cause corruption.
-- Focus on one conceptual change at a time.
-- Adjust or expand in later steps if needed.
+**Workflow Rules:**
 
-- For large files (>300 lines) or complex refactors, ALWAYS start by creating a detailed plan _before_ making any edits.
-- The plan should include:
+- Edit ONE file at a time to prevent corruption
+- For files >300 lines or complex refactors, create a detailed plan first with function list, dependencies, and change order
+- Always propose execution plan for significant tasks and request confirmation
+- If new requirements surface during edits, revise plan and get approval before proceeding
 
-  - A list of all functions or sections that need modification.
-  - The order in which changes should be applied.
-  - Dependencies between changes.
-  - A suggestion to split changes across multiple sessions if needed.
+**Before/After Protocol:**
 
-- **Before/After Snippets & Explanations**:
+- Include clear before/after code snippets when proposing changes
+- Provide concise explanations of what changed and why
 
-  - Always include clear before and after code snippets when proposing changes.
-  - Provide concise explanations of what changed and why.
+## NestJS Backend Patterns
 
-### Confirmation and Iterative Implementation
+**Module Structure:**
 
-- For significant or non-trivial tasks, propose a clear execution plan and request explicit confirmation from the developer.
-- If new requirements or issues are discovered during editing, revise the plan and ask for confirmation before proceeding.
+- Controllers handle HTTP requests with `@Controller` decorators (e.g., `@Controller('api/experience')`)
+- Services contain business logic with `@Injectable` decorators
+- Modules wire dependencies together (see [src/server/app.module.ts](src/server/app.module.ts))
+- JWT authentication via Passport using `JwtAuthGuard` and `JwtStrategy` (see [src/server/auth/](src/server/auth/))
 
-### NestJS Backend Considerations
+**Key Setup Details:**
 
-- For backend changes, follow NestJS conventions:
-  - Use decorators (e.g., `@Controller`, `@Injectable`) appropriately.
-  - Structure code into controllers, services, and modules.
-  - Maintain dependency injection patterns.
-  - Code should be modular and follow single-responsibility principle
+- Swagger API docs configured at `/api/docs` in [src/server/main.ts](src/server/main.ts)
+- Global ValidationPipe with `whitelist: true, forbidNonWhitelisted: true`
+- Sentry exception filter applied globally
+- CORS enabled for local development
 
-### TypeScript and React Patterns
+**Environment Variables:**
 
-- Use TypeScript interfaces/types for all props and data structures
-- Follow React best practices (hooks, functional components)
-- Use proper state management techniques
-- Components should be modular and follow single-responsibility principle
+- `JWT_AUTH_SECRET` - Secret key for signing JWT tokens (defaults to 'defaultSecretKey' if not set)
+- `SENTRY_DSN` - Data Source Name for Sentry error tracking
 
-### Required Before Each Commit
+**Database & Entities:**
 
-- Run `yarn run lint` to ensure code follows project standards
-- Ensure all tests pass by running `yarn run test` in the terminal
-- When adding new functionality, make sure you update the README
-- Make sure that the repository structure documentation is correct and accurate in the Copilot Instructions file
+- Database: SQLite (via TypeORM)
+- Entities: Currently no entities defined. Initial data seeding will be based on hardcoded data in `ExperienceController`.
+- Future Workflow: Create entities in `src/server/modules/` matching `ExperienceEntry` type, then update controller to fetch from DB.
 
-## Development Flow
+## React Frontend Patterns
 
-- Install dependencies: `yarn install`
-- Development server: `yarn run dev`
-- Build: `yarn run build`
-- Test: `yarn run jest`
-- Lint: `yarn run eslint`
+**Routing & State:**
+
+- TanStack Router with file-based routing (generated `routeTree.gen.ts` - DO NOT edit manually)
+- Zustand store for global state (e.g., `navStore` with persist middleware - see [src/ui/stores/navStore.ts](src/ui/stores/navStore.ts))
+- TanStack Query for server state (all API calls go through custom hooks like `useExperiences`)
+
+**Styling:**
+
+- SCSS modules with CSS Modules naming: `[name]__[local]___[hash:base64:5]`
+- Dark/light theme via `data-theme` attribute on `<html>` (controlled by navStore)
+
+**Key Libraries:**
+
+- React Compiler plugin enabled (enforced by ESLint)
+- Framer Motion for animations
+- Lucide React for icons
+- Sentry browser integration
 
 ## Testing Requirements
 
-- Ensure the test suite covers every branch, statement, and function.
-- Add tests for any new functionality to avoid reducing test coverage.
-- Place all tests for a unit within one comprehensive file.
-- Organize related tests under appropriate `describe` blocks.
-- Write tests in TypeScript (TS Version 5) and use type casting when necessary.
-- Use only `import`/`export` (ES module) syntax (do not use `require`).
-- For JSX unit testing, use `@testing-library/react` imported from `app/react/test-utils`.
-- Use `describe` and `it` blocks consistently to group and name tests clearly.
-- Destructure props passed to mock components by default.
-- Prefix unused variables with an underscore (\_).
-- For mocks:
+**Coverage:** 100% for statements, branches, functions, lines (enforced in both configs)
 
-  - Add `__esModule: true` only to objects created within `jest.mock` factory functions.
-  - Use a `mock` prefix when referencing mock variables inside `jest.mock()` (e.g., `mockUpdateSubmissionData`).
+**UI Testing Patterns:**
 
-### Event Handlers and State Assertions
+- Import `render` from `ui/react/test-utils` (wraps with QueryClient provider)
+- Use `@testing-library/react` methods
+- Prefix unused variables with underscore
+- Destructure props in mock components
 
-- Simulate and assert the behavior of all event handlers to confirm they trigger as expected.
-- Verify changes to component state and ensure correct responses to mocked external calls.
-- Remember that Jest hoists calls to `jest.mock` to the top of the file; if the factory function references later variables, wrap them in a function to delay evaluation.
+**Server Testing Patterns:**
 
-## Code Review Guidelines
+- Manual dependency injection (no `@nestjs/testing` module setup in examples)
+- Mock dependencies like `JwtService` using Jest mocks
+- Follow `describe` > `it` structure
 
-- Ensure code readability by using clear and descriptive variable and function names.
-- Maintain code maintainability by adhering to DRY (Don't Repeat Yourself) principles and modular design.
-- Follow project conventions for file structure, naming, and formatting.
-- Review for potential edge cases and ensure proper handling of unexpected inputs.
-- Verify that all new code is covered by tests and that existing tests are not broken.
-- When evaluating code, highlight opportunities for extracting logic from the existing code base where there are signs of duplication
+**Mock Conventions:**
+
+- Add `__esModule: true` ONLY in `jest.mock` factory functions
+- Prefix mock variables with `mock` when referenced inside `jest.mock()` (e.g., `mockUpdateSubmissionData`)
+- Remember Jest hoists `jest.mock()` calls - wrap variable references in functions to delay evaluation
+
+**Event Handlers:** Simulate all event handlers and assert state changes
+
+## Pre-Commit Checklist
+
+1. Run `npm run lint` (must pass with no errors)
+2. Run `npm run test` (must achieve 100% coverage)
+3. Update README.md if adding new functionality
+4. Verify directory structure documentation in this file matches reality
 
 ## Error Handling
 
-- Use specific error classes to represent different types of errors.
-- Log errors consistently using the project's logging framework or utility.
-- Ensure that error messages are clear and actionable for debugging purposes.
-- Avoid exposing sensitive information in error messages.
-- Implement fallback mechanisms where appropriate to handle failures gracefully.
+**Server-Side:**
+
+- Use NestJS built-in exceptions (e.g., `BadRequestException`, `UnauthorizedException`)
+- Global `SentryExceptionFilter` captures all unhandled errors (see [src/server/sentry-exception.filter.ts](src/server/sentry-exception.filter.ts))
+- Use `ErrorMessage` utility for extracting error messages safely (see [src/server/util/ErrorMessage.ts](src/server/util/ErrorMessage.ts))
+
+**Client-Side:**
+
+- TanStack Query handles error states automatically (use `isError` from hooks)
+- Sentry browser integration captures unhandled errors
+- Ensure error messages are clear and actionable without exposing sensitive information
 
 ## Performance Optimization
 
-- Avoid unnecessary re-renders in React by using `React.memo`, `useMemo`, and `useCallback` where applicable.
-- Minimize the use of heavy computations in the main thread; offload them to web workers or background processes.
-- Use lazy loading for components and assets to improve initial load times.
-- Profile and monitor performance regularly to identify bottlenecks.
+- React Compiler plugin automatically optimizes memoization (avoid manual `useMemo`/`useCallback` unless profiled)
+- TanStack Query provides intelligent caching (configure `staleTime` per-query, see `useExperiences` for example)
+- Use lazy loading for routes when appropriate
+- CSS Modules enable tree-shaking of unused styles
 
 ## Accessibility Standards
 
-- Use semantic HTML elements (e.g., `<header>`, `<main>`, `<footer>`) to improve screen reader navigation.
-- Include ARIA roles and attributes where necessary to enhance accessibility.
-- Test components with screen readers to ensure they are usable by visually impaired users.
-- Ensure sufficient color contrast for text and UI elements.
-- Provide keyboard navigation support for all interactive elements.
+- Use semantic HTML (`<header>`, `<main>`, `<footer>`)
+- Include ARIA attributes where necessary
+- Test keyboard navigation for all interactive elements
+- Ensure sufficient color contrast (theme system supports light/dark modes)
 
-## Clarification & Iterative Feedback
+## Path Aliases & Module Resolution
 
-- If there’s any uncertainty about the code changes, file structure, or test implications, ask clarifying questions before proceeding.
-- For example, ask if backend-specific guidelines should be applied or if additional instructions on integrating with React Query are needed.
+**TypeScript Paths (tsconfig.json):**
+
+- `ui/*` → `src/ui/*`
+- `shared/*` → `src/shared/*`
+- `backend/*` → `src/server/*`
+
+**Webpack Aliases (webpack.browser.js):**
+
+- `ui` → `src/ui`
+- `shared` → `src/shared`
+
+**Jest Module Mappers:**
+
+- UI tests: `^ui/(.*)$` → `<rootDir>/src/ui/$1`
+- Server tests: `^backend/(.*)$` → `<rootDir>/src/server/$1`
+
+**Import Convention:** Always use path aliases, never relative paths for cross-domain imports (e.g., `import { ExperienceEntry } from 'shared/types'`)
 
 ## Directory Structure
 
@@ -137,7 +192,6 @@ profile/
     cypress/
         e2e/
             app.spec.cy.ts
-            backend.spec.cy.ts
         fixtures/
             example.json
         support/
@@ -157,11 +211,21 @@ profile/
             sentry-exception.filter.test.ts
             sentry-exception.filter.ts
             auth/
+            modules/
             test-utils/
             util/
         shared/
             types/
         ui/
+            index.tsx
+            routeTree.gen.ts
+            api/
+            react/
+                components/
+                containers/
+                test-utils/
+            routes/
+            stores/
 ```
 
 ## Project Dependencies
