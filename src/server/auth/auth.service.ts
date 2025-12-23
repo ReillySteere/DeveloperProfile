@@ -20,6 +20,7 @@ export class AuthService {
 
   validateUser(username: string, password: string): Partial<User> | null {
     if (username === this.demoUser.username && password === 'password') {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password: _password, ...result } = this.demoUser;
       return result;
     }

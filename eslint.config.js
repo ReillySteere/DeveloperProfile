@@ -40,7 +40,11 @@ export default [
     },
   },
   {
-    files: ['**/*.test.ts', '**/*.test.tsx', 'src/ui/react/test-utils/jest-preloaded.ts'],
+    files: [
+      '**/*.test.ts',
+      '**/*.test.tsx',
+      'src/ui/test-utils/jest-preloaded.ts',
+    ],
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
     },

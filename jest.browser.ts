@@ -20,7 +20,7 @@ module.exports = {
   },
   modulePaths: ['<rootDir>/node_modules'],
   moduleDirectories: [__dirname, 'node_modules', 'test-utils'],
-  setupFilesAfterEnv: ['<rootDir>/src/ui/react/test-utils/jest-preloaded.ts'],
+  setupFilesAfterEnv: ['<rootDir>/src/ui/test-utils/jest-preloaded.ts'],
   clearMocks: true,
   testEnvironment: 'jest-fixed-jsdom',
   testEnvironmentOptions: {
@@ -29,7 +29,10 @@ module.exports = {
   collectCoverageFrom: [
     'src/ui/**/*.ts',
     'src/ui/**/*.tsx',
-    '!src/react/**/*.types.ts',
+    '!src/ui/test-utils/**',
+    '!src/ui/routeTree.get.ts',
+    '!src/ui/shared/routes/*.tsx',
+    '!src/ui/**/*.types.ts',
     '!**/node_modules/**',
   ],
   coverageReporters: ['html', 'text', 'text-summary', 'cobertura'],
