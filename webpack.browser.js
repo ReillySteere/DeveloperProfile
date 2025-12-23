@@ -86,7 +86,7 @@ module.exports = {
     tanstackRouter({
       target: 'react',
       autoCodeSplitting: true,
-      routesDirectory: './src/ui/react/routes',
+      routesDirectory: './src/ui/shared/routes',
       generatedRouteTree: './src/ui/routeTree.gen.ts',
       semicolons: true,
     }),
