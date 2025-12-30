@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 
 import { AuthModule } from './auth/auth.module';
 import { ExperienceModule } from './modules/experience/experience.module';
@@ -23,7 +21,5 @@ import { SeedExperience1703289600000 } from './migrations/1703289600000-SeedExpe
     ExperienceModule,
     AboutModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

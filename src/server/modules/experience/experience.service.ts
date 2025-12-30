@@ -1,12 +1,24 @@
-import { Injectable } from '@nestjs/common';
-import { ExperienceRepository } from './experience.repository';
-import { ExperienceEntry } from 'shared/types';
+import { Inject, Injectable } from '@nestjs/common';
+import { type IExperienceRepository } from './experience.repository';
+import { type ExperienceEntry } from 'shared/types';
+import TOKENS from './tokens';
+
+export interface IExperienceService {
+  getExperience(): Promise<ExperienceEntry[]>;
+}
 
 @Injectable()
-export class ExperienceService {
-  constructor(private readonly repository: ExperienceRepository) {}
+export class ExperienceService implements IExperienceService {
+  readonly #repository: IExperienceRepository;
+
+  constructor(
+    @Inject(TOKENS.ExperienceRepository)
+    repository: IExperienceRepository,
+  ) {
+    this.#repository = repository;
+  }
 
   async getExperience(): Promise<ExperienceEntry[]> {
-    return this.repository.findAll();
+    return this.#repository.findAll();
   }
 }

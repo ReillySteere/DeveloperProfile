@@ -1,15 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ExperienceModule } from './experience.module';
-import { ExperienceService } from './experience.service';
+import { IExperienceService } from './experience.service';
 import { Experience } from './experience.entity';
 import { ExperienceController } from './experience.controller';
 import { SeedExperience1703289600000 } from '../../migrations/1703289600000-SeedExperience';
 import { DataSource } from 'typeorm';
+import TOKENS from './tokens';
 
 describe('Experience Integration', () => {
   let module: TestingModule;
-  let service: ExperienceService;
+  let service: IExperienceService;
   let controller: ExperienceController;
   let dataSource: DataSource;
 
@@ -28,7 +29,7 @@ describe('Experience Integration', () => {
       ],
     }).compile();
 
-    service = module.get<ExperienceService>(ExperienceService);
+    service = module.get<IExperienceService>(TOKENS.ExperienceService);
     controller = module.get<ExperienceController>(ExperienceController);
     dataSource = module.get<DataSource>(DataSource);
 
