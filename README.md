@@ -6,7 +6,7 @@ A full-stack developer profile application built with a modern React frontend an
 
 ### Frontend
 
-- **Framework:** React 19
+- **Presentation Library:** React 19
 - **Routing:** TanStack Router
 - **Data Fetching:** TanStack Query
 - **State Management:** Zustand
@@ -91,16 +91,16 @@ This project follows a **Modular Monolith** architecture with a **Backend for Fr
 
 ```mermaid
 graph TD
-    subgraph Frontend [Frontend (React 19)]
+    subgraph Frontend ["Frontend (React 19)"]
         Container[Feature Container]
-        Hook[Custom Hook (useExperience)]
+        Hook["Custom Hook (useExperience)"]
         RQ[TanStack Query]
         Shared[Shared Components]
     end
 
-    subgraph Backend [Backend (NestJS)]
-        Controller[Controller (BFF)]
-        Service[Service (Business Logic)]
+    subgraph Backend ["Backend (NestJS)"]
+        Controller["Controller (BFF)"]
+        Service["Service (Business Logic)"]
         Repo[Repository]
     end
 
@@ -122,11 +122,6 @@ graph TD
 - **About Section:** Detailed professional summary and skills.
 - **Responsive Design:** Optimized for various screen sizes with a custom Navigation Rail.
 - **Dark/Light Mode:** Theming support via CSS variables.
-  yarn cy:open
-
-  ```
-
-  ```
 
 ## Tooling and Stack Overview
 
