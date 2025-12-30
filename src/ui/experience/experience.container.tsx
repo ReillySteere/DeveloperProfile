@@ -1,5 +1,5 @@
 import React from 'react';
-import Frame from 'ui/shared/components/Frame';
+import { Frame } from 'ui/shared/components';
 
 import ExperiencePage from 'ui/experience/components/ExperiencePage';
 

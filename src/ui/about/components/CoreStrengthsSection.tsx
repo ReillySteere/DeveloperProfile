@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from 'ui/shared/components/Card/Card';
+import { Card, CardContent, CardHeader, CardTitle } from 'ui/shared/components';
 import styles from '../about.module.scss';
 
 export const CoreStrengthsSection = () => {

@@ -3,35 +3,16 @@ import styles from './Button.module.scss';
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'destructive';
-  size?: 'sm' | 'md' | 'lg';
-  isLoading?: boolean;
+  variant?: 'primary' | 'secondary';
   leftIcon?: React.ReactNode;
-  rightIcon?: React.ReactNode;
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    {
-      className,
-      variant = 'primary',
-      size = 'md',
-      isLoading,
-      leftIcon,
-      rightIcon,
-      children,
-      disabled,
-      ...props
-    },
+    { className, variant = 'primary', leftIcon, children, disabled, ...props },
     ref,
   ) => {
-    const rootClassName = [
-      styles.button,
-      styles[variant],
-      styles[size],
-      isLoading ? styles.loading : '',
-      className,
-    ]
+    const rootClassName = [styles.button, styles[variant], styles.md, className]
       .filter(Boolean)
       .join(' ');
 
@@ -39,12 +20,11 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={rootClassName}
-        disabled={disabled || isLoading}
+        disabled={disabled}
         {...props}
       >
-        {!isLoading && leftIcon}
+        {leftIcon}
         {children}
-        {!isLoading && rightIcon}
       </button>
     );
   },

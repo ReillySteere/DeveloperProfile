@@ -1,18 +1,12 @@
 import React from 'react';
 import styles from './Card.module.scss';
 
-interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
-  hoverable?: boolean;
-}
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, hoverable, children, ...props }, ref) => {
+  ({ className, children, ...props }, ref) => {
     return (
-      <div
-        ref={ref}
-        className={`${styles.card} ${hoverable ? styles.hoverable : ''} ${className || ''}`}
-        {...props}
-      >
+      <div ref={ref} className={`${styles.card} ${className || ''}`} {...props}>
         {children}
       </div>
     );
@@ -21,21 +15,19 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
 Card.displayName = 'Card';
 
 export const CardHeader = ({
-  className,
   children,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={`${styles.header} ${className || ''}`} {...props}>
+  <div className={styles.header} {...props}>
     {children}
   </div>
 );
 
 export const CardTitle = ({
-  className,
   children,
   ...props
 }: React.HTMLAttributes<HTMLHeadingElement>) => (
-  <h3 className={`${styles.title} ${className || ''}`} {...props}>
+  <h3 className={styles.title} {...props}>
     {children}
   </h3>
 );
@@ -46,16 +38,6 @@ export const CardContent = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div className={`${styles.content} ${className || ''}`} {...props}>
-    {children}
-  </div>
-);
-
-export const CardFooter = ({
-  className,
-  children,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={`${styles.footer} ${className || ''}`} {...props}>
     {children}
   </div>
 );

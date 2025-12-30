@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import styles from './ExperiencePage.module.scss';
 import { useExperiences } from '../hooks/useExperience';
 import ExperienceSection from './ExperienceSection';
-import { QueryState } from 'ui/shared/components/QueryState/QueryState';
+import { QueryState } from 'ui/shared/components';
 
 const ExperiencePage: React.FC = () => {
   const { experiences, isLoading, isError, error, refetch } = useExperiences();
@@ -47,9 +47,6 @@ const ExperiencePage: React.FC = () => {
       data={experiences}
       error={error}
       refetch={refetch}
-      loadingComponent={
-        <div className={styles.status}>Loading experiences...</div>
-      }
     >
       {(data) => (
         <main className={styles.container} ref={containerRef}>

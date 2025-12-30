@@ -1,5 +1,5 @@
 import React from 'react';
-import Frame from 'ui/shared/components/Frame';
+import { Frame } from 'ui/shared/components';
 import styles from './about.module.scss';
 import { HeroSection } from './components/HeroSection';
 import { WhatIDoSection } from './components/WhatIDoSection';

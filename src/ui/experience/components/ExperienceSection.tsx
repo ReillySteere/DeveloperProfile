@@ -4,8 +4,7 @@ import { useInView } from 'react-intersection-observer';
 import { Calendar } from 'lucide-react';
 import styles from './ExperienceSection.module.scss';
 import { type ExperienceEntry } from 'shared/types';
-import { Badge } from '../../shared/components/Badge/Badge';
-import { Card, CardContent } from '../../shared/components/Card/Card';
+import { Badge, Card, CardContent } from '../../shared/components';
 
 interface ExperienceSectionProps {
   entry: ExperienceEntry;

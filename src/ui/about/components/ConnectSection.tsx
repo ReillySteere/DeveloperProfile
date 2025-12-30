@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'ui/shared/components/Button/Button';
+import { Button } from 'ui/shared/components';
 import { Github, Linkedin, Mail } from 'lucide-react';
 import styles from '../about.module.scss';
 

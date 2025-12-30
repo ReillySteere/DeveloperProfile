@@ -1,6 +1,6 @@
 import React from 'react';
 import { createFileRoute } from '@tanstack/react-router';
-import Frame from 'ui/shared/components/Frame';
+import { Frame } from 'ui/shared/components';
 export const Route = createFileRoute('/goals')({
   component: Goals,
 });

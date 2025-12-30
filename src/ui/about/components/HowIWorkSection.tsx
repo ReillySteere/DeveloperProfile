@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardContent } from 'ui/shared/components/Card/Card';
+import { Card, CardContent } from 'ui/shared/components';
 import styles from '../about.module.scss';
 
 export const HowIWorkSection = () => {

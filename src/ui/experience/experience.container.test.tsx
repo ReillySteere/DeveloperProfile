@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor, act } from 'ui/test-utils';
 import Experience from './experience.container';
 import ExperienceSection from './components/ExperienceSection';
+import { QueryState } from 'ui/shared/components';
 import axios from 'axios';
 import { ExperienceEntry } from 'shared/types';
 
@@ -11,6 +12,7 @@ const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 // Mock framer-motion to avoid animation issues
 jest.mock('framer-motion', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const React = require('react');
   return {
     motion: {
@@ -40,7 +42,7 @@ beforeAll(() => {
   window.IntersectionObserver = mockIntersectionObserver;
   mockIntersectionObserver.mockImplementation((callback) => {
     return {
-      observe: mockObserve.mockImplementation((element) => {
+      observe: mockObserve.mockImplementation(() => {
         // Store callback to trigger it manually in tests
         (window as any).__intersectionCallback = callback;
       }),
@@ -85,16 +87,29 @@ describe('Experience Container', () => {
     mockedAxios.get.mockImplementation(() => new Promise(() => {}));
 
     render(<Experience />);
-    expect(screen.getByText(/Loading experiences.../i)).toBeInTheDocument();
+    expect(screen.getAllByTestId('skeleton')).toHaveLength(3);
   });
 
-  it('renders error state', async () => {
-    mockedAxios.get.mockRejectedValue(new Error('Failed to fetch'));
+  it('renders error state and handles retry', async () => {
+    mockedAxios.get.mockRejectedValueOnce(new Error('Failed to fetch'));
 
     render(<Experience />);
 
     await waitFor(() => {
       expect(screen.getByText(/Something went wrong/i)).toBeInTheDocument();
+    });
+
+    // Test retry button
+    const retryButton = screen.getByRole('button', { name: /Try Again/i });
+    expect(retryButton).toBeInTheDocument();
+
+    // Mock success for retry
+    mockedAxios.get.mockResolvedValueOnce({ data: mockExperiences });
+
+    fireEvent.click(retryButton);
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Company')).toBeInTheDocument();
     });
   });
 
@@ -118,6 +133,28 @@ describe('Experience Container', () => {
     // Check tags
     expect(screen.getByText('React')).toBeInTheDocument();
     expect(screen.getByText('JavaScript')).toBeInTheDocument();
+  });
+
+  it('renders empty state', async () => {
+    mockedAxios.get.mockResolvedValue({ data: [] });
+
+    render(<Experience />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/No data found/i)).toBeInTheDocument();
+    });
+  });
+
+  it('QueryState handles non-array data', () => {
+    render(
+      <QueryState
+        isLoading={false}
+        isError={false}
+        data={{ some: 'data' }}
+        children={(data: any) => <div>{data.some}</div>}
+      />,
+    );
+    expect(screen.getByText('data')).toBeInTheDocument();
   });
 
   it('handles navigation dots interaction', async () => {
