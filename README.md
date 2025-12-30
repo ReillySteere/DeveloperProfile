@@ -82,7 +82,12 @@ This project follows a **Modular Monolith** architecture with a **Backend for Fr
 
 1.  **Modular Monolith:** The application is structured as a single deployable unit but organized into distinct modules. Each feature in the UI (e.g., Experience) has a corresponding module in the backend.
 2.  **Backend for Frontend (BFF):** The UI is responsible purely for presentational concerns. All data manipulation, formatting, and business logic are handled in the NestJS layer. The backend exposes endpoints specifically tailored to the needs of the frontend containers.
-3.  **Data Flow:**
+3.  **Domain Layer:** Domain objects are the primary vehicle for realizing intended business value.
+    - **Controllers:** Must call Services (cannot call Repositories directly).
+    - **Services:** Perform business interactions on data.
+    - **Repositories:** Handle persistence.
+    - All three layers may import and use Domain Objects.
+4.  **Data Flow:**
     - **Containers:** React containers (`src/ui/*/**.container.tsx`) are the entry points for features.
     - **Data Fetching:** Data is retrieved using **TanStack Query**, which interfaces with the backend API.
     - **Backend Modules:** Dedicated NestJS modules surface data via controllers.
@@ -102,6 +107,7 @@ graph TD
         Controller["Controller (BFF)"]
         Service["Service (Business Logic)"]
         Repo[Repository]
+        Domain["Domain Objects"]
     end
 
     DB[(SQLite Database)]
@@ -110,10 +116,14 @@ graph TD
     Container -->|Calls| Hook
     Hook -->|Uses| RQ
     RQ -->|HTTP GET /api/experience| Controller
+
     Controller -->|Calls| Service
-    Service -->|Transforms Data| Service
     Service -->|Queries| Repo
     Repo -->|SQL| DB
+
+    Controller -.->|Imports| Domain
+    Service -.->|Imports| Domain
+    Repo -.->|Imports| Domain
 ```
 
 ## Key Features
@@ -136,7 +146,3 @@ graph TD
 
 The API endpoints are documented using Swagger. Once the backend is running, you can access the API docs at:  
 [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
-
-## Development Overview
-
-## Future Considerations

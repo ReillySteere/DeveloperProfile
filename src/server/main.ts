@@ -27,7 +27,7 @@ async function bootstrap() {
     .setTitle('Developer Profile API')
     .setDescription('API documentation for the Developer Profile backend')
     .setVersion('1.0')
-    .addBearerAuth() // JWT Authetnication
+    .addBearerAuth() // JWT Authenication
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
