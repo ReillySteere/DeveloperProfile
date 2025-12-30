@@ -21,12 +21,14 @@ The About feature serves as the landing page and introduction for the profile ap
 The resume download is a specialized workflow that handles binary data streaming and browser-native download triggers.
 
 **Server-Side Requirements:**
+
 - **Streaming:** Must use `StreamableFile` to efficiently pipe data without loading the entire file into memory.
 - **Headers:**
   - `Content-Type`: Must be set to `application/pdf`.
   - `Content-Disposition`: Must be set to `attachment; filename="<filename>"` to trigger a download prompt instead of inline viewing.
 
 **Client-Side Requirements:**
+
 - **Hook:** `useDownloadResume` (`src/ui/about/hooks/useDownloadResume.ts`)
   - Uses `axios` with `responseType: 'blob'` to correctly handle binary data.
   - **Filename Extraction:** Parses the `Content-Disposition` header to extract the server-provided filename. This ensures the downloaded file matches the server's versioning.
@@ -61,6 +63,7 @@ The resume download is a specialized workflow that handles binary data streaming
 ## Testing Strategy
 
 - **Backend Integration:** `src/server/modules/about/about.integration.test.ts`
+
   - Verifies that the `/resume` endpoint returns a `StreamableFile`.
   - Asserts that `Content-Type` and `Content-Disposition` headers are correctly set.
   - Validates that the `AboutService` can successfully locate and read the physical file from disk.
