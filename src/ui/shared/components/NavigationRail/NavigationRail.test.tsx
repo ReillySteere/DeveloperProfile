@@ -49,7 +49,6 @@ describe('NavigationRail', () => {
     expect(screen.getByText('About')).toBeInTheDocument();
     expect(screen.getByText('Blog')).toBeInTheDocument();
     expect(screen.getByText('Experience')).toBeInTheDocument();
-    expect(screen.getByText('Goals')).toBeInTheDocument();
     expect(screen.getByText('Projects')).toBeInTheDocument();
   });
 

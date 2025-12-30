@@ -7,7 +7,6 @@ import {
   User,
   Book,
   Briefcase,
-  Target,
   Layers,
   Menu,
   X,
@@ -19,7 +18,6 @@ const navItems = [
   { name: 'About', path: '/about', Icon: User },
   { name: 'Blog', path: '/blog', Icon: Book },
   { name: 'Experience', path: '/experience', Icon: Briefcase },
-  { name: 'Goals', path: '/goals', Icon: Target },
   { name: 'Projects', path: '/projects', Icon: Layers },
 ];
 
