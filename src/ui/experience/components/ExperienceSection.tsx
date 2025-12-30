@@ -2,7 +2,7 @@ import React, { forwardRef, useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { Calendar } from 'lucide-react';
-import styles from './ExperienceSection.module.scss';
+import styles from '../experience.module.scss';
 import { type ExperienceEntry } from 'shared/types';
 import { Badge, Card, CardContent } from '../../shared/components';
 

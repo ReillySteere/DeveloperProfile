@@ -6,6 +6,13 @@ export class SeedExperience1703289600000 implements MigrationInterface {
   transaction?: boolean | undefined;
 
   public async up(queryRunner: QueryRunner): Promise<void> {
+    const existing = await queryRunner.query(
+      'SELECT COUNT(*) as count FROM experience',
+    );
+    if (existing[0].count > 0) {
+      return;
+    }
+
     const data = [
       {
         id: randomUUID(),

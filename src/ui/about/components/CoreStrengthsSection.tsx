@@ -16,12 +16,19 @@ export const CoreStrengthsSection = () => {
           </CardHeader>
           <CardContent>
             <ul className={styles.list} aria-label="List of technologies">
-              <li>Ruby</li>
-              <li>Node.js</li>
-              <li>React</li>
-              <li>TypeScript</li>
+              <li>AngularJS</li>
+              <li>Cypress</li>
               <li>HTML/CSS</li>
               <li>NestJS</li>
+              <li>Node.js</li>
+              <li>Grafana</li>
+              <li>Prometheus</li>
+              <li>Rails</li>
+              <li>React</li>
+              <li>Sentry</li>
+              <li>Splunk</li>
+              <li>TypeScript</li>
+              <li>Webpack</li>
             </ul>
           </CardContent>
         </Card>
@@ -31,11 +38,13 @@ export const CoreStrengthsSection = () => {
           </CardHeader>
           <CardContent>
             <ul className={styles.list} aria-label="List of practices">
-              <li>Domain-Driven Design</li>
-              <li>Event-Driven Architecture</li>
-              <li>Automated Testing (Cypress)</li>
-              <li>Interaction Design</li>
               <li>Agile Methodologies</li>
+              <li>Architectural Decision Records / Enforcement</li>
+              <li>Automated End to End Testing</li>
+              <li>Backend For Frontend Systems</li>
+              <li>Domain Driven Design</li>
+              <li>Event Driven Architecture</li>
+              <li>Micro Front End Architecture</li>
             </ul>
           </CardContent>
         </Card>

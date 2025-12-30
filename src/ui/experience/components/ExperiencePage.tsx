@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import styles from './ExperiencePage.module.scss';
+import styles from '../experience.module.scss';
 import { useExperiences } from '../hooks/useExperience';
 import ExperienceSection from './ExperienceSection';
 import { QueryState } from 'ui/shared/components';
@@ -49,17 +49,19 @@ const ExperiencePage: React.FC = () => {
       refetch={refetch}
     >
       {(data) => (
-        <main className={styles.container} ref={containerRef}>
-          {data.map((entry, idx) => (
-            <ExperienceSection
-              key={entry.id}
-              entry={entry}
-              index={idx}
-              ref={(el: HTMLElement) => {
-                sectionRefs.current[idx] = el;
-              }}
-            />
-          ))}
+        <div className={styles.pageWrapper}>
+          <main className={styles.scrollContainer} ref={containerRef}>
+            {data.map((entry, idx) => (
+              <ExperienceSection
+                key={entry.id}
+                entry={entry}
+                index={idx}
+                ref={(el: HTMLElement) => {
+                  sectionRefs.current[idx] = el;
+                }}
+              />
+            ))}
+          </main>
 
           <div className={styles.progressDots}>
             {data.map((_, idx) => (
@@ -80,7 +82,7 @@ const ExperiencePage: React.FC = () => {
               />
             ))}
           </div>
-        </main>
+        </div>
       )}
     </QueryState>
   );

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from 'ui/shared/components';
-import { Github, Linkedin, Mail } from 'lucide-react';
+import { Mail } from 'lucide-react';
 import styles from '../about.module.scss';
 
 export const ConnectSection = () => {
@@ -10,7 +10,6 @@ export const ConnectSection = () => {
       <div className={styles.list}>
         <Button
           variant="secondary"
-          leftIcon={<Linkedin size={16} aria-hidden="true" />}
           onClick={() =>
             window.open('https://www.linkedin.com/in/reillysteere/', '_blank')
           }
@@ -27,14 +26,6 @@ export const ConnectSection = () => {
           aria-label="Send an email"
         >
           Email
-        </Button>
-        <Button
-          variant="secondary"
-          leftIcon={<Github size={16} aria-hidden="true" />}
-          onClick={() => window.open('https://github.com', '_blank')}
-          aria-label="View GitHub profile"
-        >
-          GitHub
         </Button>
       </div>
     </section>

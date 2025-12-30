@@ -7,15 +7,11 @@ export const WhatIDoSection = () => {
       <h3 id="what-i-do-heading">What I Do</h3>
       <p>
         I focus on platform engineering and architecture, building scalable
-        systems and processes to accelerate product teams. I emphasize a
+        systems and processes that accelerate product teams. I emphasize a
         pragmatic approach to software development, balancing technical
         excellence with business needs, leveraging "Boring" but well tested
         technical solutions to deliver reliable outcomes on time and with clear
-        expectations established on the cost of technical compromise.
-      </p>
-      <p>
-        I am comfortable in both direct delivery and technical leadership roles
-        with strong examples of project success in both.
+        expectations established on the costs of technical compromise.
       </p>
     </section>
   );

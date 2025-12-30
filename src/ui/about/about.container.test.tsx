@@ -53,31 +53,14 @@ describe('AboutContainer', () => {
     render(<AboutContainer />);
     expect(screen.getByText('Core Strengths')).toBeInTheDocument();
     expect(screen.getByText('Technologies')).toBeInTheDocument();
-    expect(screen.getByText('Ruby')).toBeInTheDocument();
+    expect(screen.getByText('Rails')).toBeInTheDocument();
     expect(screen.getByText('NestJS')).toBeInTheDocument();
-  });
-
-  it('renders the "How I Work" section with principles', () => {
-    render(<AboutContainer />);
-    expect(screen.getByText('How I Work')).toBeInTheDocument();
-    expect(screen.getByText('Mentorship:')).toBeInTheDocument();
-    expect(screen.getByText('Testing Strategy:')).toBeInTheDocument();
   });
 
   it('renders connect buttons', () => {
     render(<AboutContainer />);
-    expect(screen.getByText('GitHub')).toBeInTheDocument();
     expect(screen.getByText('LinkedIn')).toBeInTheDocument();
     expect(screen.getByText('Email')).toBeInTheDocument();
-  });
-
-  it('opens GitHub link on click', () => {
-    const openSpy = jest.spyOn(window, 'open').mockImplementation(() => null);
-    render(<AboutContainer />);
-    const button = screen.getByText('GitHub');
-    fireEvent.click(button);
-    expect(openSpy).toHaveBeenCalledWith('https://github.com', '_blank');
-    openSpy.mockRestore();
   });
 
   it('opens LinkedIn link on click', () => {

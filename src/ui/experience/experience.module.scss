@@ -1,0 +1,135 @@
+.pageWrapper {
+  position: relative;
+  height: 100vh;
+  max-width: calc(var(--content-width) + var(--space-16));
+  margin: 0 auto;
+  background-color: var(--bg-app);
+  display: flex;
+}
+
+.scrollContainer {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-snap-type: y mandatory;
+  /* hide scrollbars */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.status {
+  padding: var(--space-8);
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.progressDots {
+  position: relative;
+  height: 100%;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  z-index: 100;
+  padding: var(--space-8) 10px 0px 0px;
+}
+
+.dot {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: var(--color-slate-300);
+  transition: all 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.2);
+    background: var(--primary-default);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-default);
+    outline-offset: 2px;
+  }
+}
+
+.active {
+  background: var(--primary-default);
+  transform: scale(1.2);
+}
+
+.section {
+  scroll-snap-align: start;
+  padding: var(--space-8) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  //justify-content: center;
+  max-width: var(--content-width) + 10;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: var(--space-6);
+}
+
+.role {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.company {
+  font-size: var(--text-xl);
+  color: var(--primary-default);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--space-1);
+}
+
+.dates {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.description {
+  font-size: var(--text-lg);
+  color: var(--text-primary);
+  margin-bottom: var(--space-6);
+  line-height: 1.6;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-6);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.listItem {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  color: var(--text-secondary);
+  line-height: 1.5;
+
+  &::before {
+    content: '•';
+    color: var(--primary-default);
+    font-weight: bold;
+  }
+}
