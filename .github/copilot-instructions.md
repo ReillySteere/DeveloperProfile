@@ -1,6 +1,7 @@
 # Copilot Instructions
 
 ## Architecture Overview
+
 - **Full-Stack Monorepo:** NestJS (backend) + React 19 (frontend).
 - **Shared:** Common types in `src/shared/types/` (aliased as `shared/*`).
 - **Frontend (`src/ui`):**
@@ -13,6 +14,7 @@
 - **Path Aliases:** `ui/*`, `shared/*`, `backend/*` (configured in `tsconfig.json`).
 
 ## Critical Workflows
+
 - **Start:** `npm start` (concurrently runs `start:server:dev` and `start:ui`).
 - **Test:** `npm test` (runs `test:server` and `test:ui`).
   - **Coverage:** 100% required for statements, branches, functions, lines.
@@ -21,21 +23,24 @@
 - **Build:** `npm run build` (runs `build:server` and `build:ui`).
 
 ## Code Generation Requirements
+
 - **Workflow:** Edit ONE file at a time. For complex tasks, propose a plan first.
 - **Safety:** Always run tests after changes.
 - **Style:** Follow existing patterns (functional components, manual DI for server unit tests).
 - **Before/After Protocol:** Include clear before/after code snippets when proposing changes.
 
 ## Backend Patterns (`src/server`)
+
 - **Structure:** Modules, Controllers, Services.
 - **Data Access:** TypeORM with SQLite (`data/database.sqlite`).
 - **Testing:**
   - **Unit:** Manual dependency injection (e.g., `new Service(mockDep)`). See `src/server/auth/auth.service.test.ts`.
   - **Integration:** Use `Test.createTestingModule` with `:memory:` database. See `src/server/modules/experience/experience.integration.test.ts`.
 - **API:** Controllers mapped to `/api/*`. Global ValidationPipe enabled.
-- **Error Handling:** Global `SentryExceptionFilter`. Use `ErrorMessage` utility.
+- **Error Handling:** Global `SentryExceptionFilter`.
 
 ## Frontend Patterns (`src/ui`)
+
 - **Directory Structure:**
   - **Feature Folders:** `src/ui/<feature>/` (e.g., `src/ui/experience/`) containing:
     - `components/`: Feature-specific components.
@@ -56,6 +61,7 @@
   - Test files: `src/ui/**/*.test.ts*`.
 
 ## Testing Specifics
+
 - **Configs:** `jest.browser.ts` (UI) and `jest.node.ts` (Server).
 - **UI Utils:** Located in `src/ui/test-utils/` (aliased as `test-utils` in Jest).
 - **Mocks:**
@@ -64,6 +70,7 @@
   - Remember Jest hoists `jest.mock()` calls.
 
 ## Key Files
+
 - `src/server/app.module.ts`: Main backend module.
 - `src/ui/routeTree.gen.ts`: Generated routes.
 - `src/ui/experience/hooks/useExperience.ts`: Example data fetching hook.
