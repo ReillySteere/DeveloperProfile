@@ -1,6 +1,29 @@
 # Developer Profile
 
-## Purpose
+A full-stack developer profile application built with a modern React frontend and a robust NestJS backend.
+
+## Core Technologies
+
+### Frontend
+
+- **Framework:** React 19
+- **Routing:** TanStack Router
+- **Data Fetching:** TanStack Query
+- **State Management:** Zustand
+- **Styling:** SCSS Modules with CSS Variables
+- **Build Tool:** Webpack
+
+### Backend
+
+- **Framework:** NestJS
+- **Database:** SQLite
+- **ORM:** TypeORM
+- **Authentication:** Passport JWT
+
+### Testing
+
+- **Unit/Integration:** Jest (configured for both Node and Browser environments)
+- **E2E:** Cypress
 
 ## Project Setup Instructions
 
@@ -8,7 +31,7 @@
 
    ```bash
    git clone <repository-url>
-   cd towerdefense
+   cd profile
    ```
 
 2. **Install dependencies:**
@@ -48,8 +71,62 @@
    - **Cypress Integration Tests:**
 
      ```bash
-     yarn cy:open
+     yarn cypress:open
      ```
+
+## Architecture
+
+This project follows a **Modular Monolith** architecture with a **Backend for Frontend (BFF)** pattern.
+
+### Core Principles
+
+1.  **Modular Monolith:** The application is structured as a single deployable unit but organized into distinct modules. Each feature in the UI (e.g., Experience) has a corresponding module in the backend.
+2.  **Backend for Frontend (BFF):** The UI is responsible purely for presentational concerns. All data manipulation, formatting, and business logic are handled in the NestJS layer. The backend exposes endpoints specifically tailored to the needs of the frontend containers.
+3.  **Data Flow:**
+    - **Containers:** React containers (`src/ui/*/**.container.tsx`) are the entry points for features.
+    - **Data Fetching:** Data is retrieved using **TanStack Query**, which interfaces with the backend API.
+    - **Backend Modules:** Dedicated NestJS modules surface data via controllers.
+
+### Architecture Diagram
+
+```mermaid
+graph TD
+    subgraph Frontend [Frontend (React 19)]
+        Container[Feature Container]
+        Hook[Custom Hook (useExperience)]
+        RQ[TanStack Query]
+        Shared[Shared Components]
+    end
+
+    subgraph Backend [Backend (NestJS)]
+        Controller[Controller (BFF)]
+        Service[Service (Business Logic)]
+        Repo[Repository]
+    end
+
+    DB[(SQLite Database)]
+
+    Container -->|Uses| Shared
+    Container -->|Calls| Hook
+    Hook -->|Uses| RQ
+    RQ -->|HTTP GET /api/experience| Controller
+    Controller -->|Calls| Service
+    Service -->|Transforms Data| Service
+    Service -->|Queries| Repo
+    Repo -->|SQL| DB
+```
+
+## Key Features
+
+- **Experience Timeline:** A scrollable, animated timeline of professional experience.
+- **About Section:** Detailed professional summary and skills.
+- **Responsive Design:** Optimized for various screen sizes with a custom Navigation Rail.
+- **Dark/Light Mode:** Theming support via CSS variables.
+  yarn cy:open
+
+  ```
+
+  ```
 
 ## Tooling and Stack Overview
 
@@ -64,18 +141,6 @@
 
 The API endpoints are documented using Swagger. Once the backend is running, you can access the API docs at:  
 [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
-
-## Initial Architecture Diagram
-
-Below is a simple diagram outlining the interactions between the frontend and backend:
-
-```mermaid
-graph TD;
-    A[Browser/Client] --> B[React UI + Phaser 3];
-    B --> C[NestJS API Gateway];
-    C --> D[SQLite Database];
-    C --> E[Sentry (Observability)];
-```
 
 ## Development Overview
 

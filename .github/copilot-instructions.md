@@ -42,15 +42,15 @@
     - `hooks/`: Feature-specific hooks (e.g., `useExperience.ts`).
     - `*.container.tsx`: Main feature container.
   - **Shared:** `src/ui/shared/` containing:
-    - `components/`: Reusable UI components (Button, Card, etc.).
+    - `components/`: Reusable UI components (Button, Card, etc.). **ALWAYS** import from `ui/shared/components` (barrel file).
     - `routes/`: Route definitions (TanStack Router).
     - `stores/`: Global state (Zustand).
   - **Test Utils:** `src/ui/test-utils/`.
 - **Routing:** TanStack Router. **DO NOT EDIT** `src/ui/routeTree.gen.ts`.
 - **State Management:**
-  - **Server State:** TanStack Query via custom hooks.
+  - **Server State:** TanStack Query via custom hooks. Use `QueryState` component for handling loading/error/empty states.
   - **Global State:** Zustand (e.g., `navStore`).
-- **Components:** Functional components.
+- **Components:** Functional components. Use `Frame` component for page layout.
 - **Testing:**
   - Use `render` from `ui/test-utils` (wraps `QueryClientProvider`).
   - Test files: `src/ui/**/*.test.ts*`.
