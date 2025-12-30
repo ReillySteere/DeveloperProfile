@@ -145,4 +145,4 @@ graph TD
 ## API Endpoint Documentation
 
 The API endpoints are documented using Swagger. Once the backend is running, you can access the API docs at:  
-[http://localhost:3000/api-docs](http://localhost:3000/api-docs)
+[http://localhost:3000/api/docs](http://localhost:3000/api/docs)
