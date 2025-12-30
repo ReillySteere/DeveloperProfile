@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 
 const navItems = [
-  { name: 'About', path: '/', Icon: User },
+  { name: 'About', path: '/about', Icon: User },
   { name: 'Blog', path: '/blog', Icon: Book },
   { name: 'Experience', path: '/experience', Icon: Briefcase },
   { name: 'Goals', path: '/goals', Icon: Target },

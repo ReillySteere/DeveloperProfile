@@ -73,6 +73,7 @@ const ExperiencePage: React.FC = () => {
                 role="button"
                 tabIndex={0}
                 aria-label={`Go to section ${idx + 1}`}
+                aria-current={currentIndex === idx ? 'true' : undefined}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();

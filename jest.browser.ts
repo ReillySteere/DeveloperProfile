@@ -21,6 +21,7 @@ module.exports = {
   modulePaths: ['<rootDir>/node_modules'],
   moduleDirectories: [__dirname, 'node_modules', 'test-utils'],
   setupFilesAfterEnv: ['<rootDir>/src/ui/test-utils/jest-preloaded.ts'],
+  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
   clearMocks: true,
   testEnvironment: 'jest-fixed-jsdom',
   testEnvironmentOptions: {
@@ -30,10 +31,12 @@ module.exports = {
     'src/ui/**/*.ts',
     'src/ui/**/*.tsx',
     '!src/ui/test-utils/**',
-    '!src/ui/routeTree.get.ts',
+    '!src/ui/index.tsx',
+    '!src/ui/routeTree.gen.ts',
     '!src/ui/shared/routes/*.tsx',
     '!src/ui/**/*.types.ts',
     '!**/node_modules/**',
+    '!**/dist/**',
   ],
   coverageReporters: ['html', 'text', 'text-summary', 'cobertura'],
   coverageThreshold: {

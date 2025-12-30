@@ -8,6 +8,7 @@ module.exports = {
     '^backend/(.*)$': '<rootDir>/src/server/$1',
   },
   setupFilesAfterEnv: ['./src/server/test-utils/jest-node-preloaded.ts'],
+  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
   clearMocks: true,
   transform: {
     '.*/(server|shared)/.*\\.test\\.ts$': [
@@ -35,6 +36,7 @@ module.exports = {
     '!src/server/app.module.ts',
     '!src/server/**/*.types.ts',
     '!**/node_modules/**',
+    '!**/dist/**',
   ],
   coverageReporters: ['html', 'text', 'text-summary', 'cobertura'],
   coverageThreshold: {

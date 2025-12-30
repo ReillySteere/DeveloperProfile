@@ -118,7 +118,7 @@ describe('NavigationRail', () => {
     const experienceLink = screen.getByTestId('nav-link-/experience');
     expect(experienceLink.className).toContain('activeLink');
 
-    const aboutLink = screen.getByTestId('nav-link-/');
+    const aboutLink = screen.getByTestId('nav-link-/about');
     expect(aboutLink.className).not.toContain('activeLink');
   });
 
