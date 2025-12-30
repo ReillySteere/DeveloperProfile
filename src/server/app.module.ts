@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 
 import { AuthModule } from './auth/auth.module';
 import { ExperienceModule } from './modules/experience/experience.module';
+import { AboutModule } from './modules/about/about.module';
 import { Experience } from './modules/experience/experience.entity';
 import { SeedExperience1703289600000 } from './migrations/1703289600000-SeedExperience';
 
@@ -20,6 +21,7 @@ import { SeedExperience1703289600000 } from './migrations/1703289600000-SeedExpe
     }),
     AuthModule,
     ExperienceModule,
+    AboutModule,
   ],
   controllers: [AppController],
   providers: [AppService],

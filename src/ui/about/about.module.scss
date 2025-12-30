@@ -8,6 +8,9 @@
 }
 
 .hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   text-align: left;
   margin-bottom: 1rem;
 
@@ -32,6 +35,11 @@
     color: var(--text-secondary);
     font-size: 1rem;
   }
+}
+
+.heroContent {
+  display: flex;
+  flex-direction: column;
 }
 
 .section {

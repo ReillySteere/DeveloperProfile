@@ -1,6 +1,10 @@
 import React from 'react';
-import { render, screen, fireEvent } from 'ui/test-utils';
+import { render, screen, fireEvent, waitFor } from 'ui/test-utils';
+import axios from 'axios';
 import AboutContainer from './about.container';
+
+jest.mock('axios');
+const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 jest.mock('ui/shared/stores/navStore', () => ({
   useNavStore: jest.fn((selector) => selector({ setActiveSection: jest.fn() })),
@@ -17,10 +21,33 @@ jest.mock('lucide-react', () => {
     Mail: () => React.createElement('span', { 'data-testid': 'mail-icon' }),
     MapPin: () =>
       React.createElement('span', { 'data-testid': 'map-pin-icon' }),
+    Download: () =>
+      React.createElement('span', { 'data-testid': 'download-icon' }),
+    Loader2: () =>
+      React.createElement('span', { 'data-testid': 'loader-icon' }),
   };
 });
 
 describe('AboutContainer', () => {
+  const createObjectURLMock = jest.fn(() => 'mock-url');
+  const revokeObjectURLMock = jest.fn();
+
+  beforeAll(() => {
+    window.URL.createObjectURL = createObjectURLMock;
+    window.URL.revokeObjectURL = revokeObjectURLMock;
+    jest
+      .spyOn(HTMLAnchorElement.prototype, 'click')
+      .mockImplementation(() => {});
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('renders the hero section with name and role', () => {
     render(<AboutContainer />);
     expect(
@@ -91,5 +118,79 @@ describe('AboutContainer', () => {
       writable: true,
       value: originalLocation,
     });
+  });
+
+  it('handles the resume download process', async () => {
+    const blob = new Blob(['resume content'], { type: 'application/pdf' });
+    let resolvePromise: (value: any) => void;
+    const promise = new Promise((resolve) => {
+      resolvePromise = resolve;
+    });
+
+    mockedAxios.get.mockReturnValue(promise as any);
+
+    render(<AboutContainer />);
+    const downloadButton = screen.getByRole('button', {
+      name: /download resume/i,
+    });
+
+    fireEvent.click(downloadButton);
+
+    // Verify loading state
+    await waitFor(() => {
+      expect(screen.getByText('Downloading...')).toBeInTheDocument();
+    });
+    expect(downloadButton).toBeDisabled();
+
+    // Resolve the API call
+    resolvePromise!({
+      data: blob,
+      headers: { 'content-disposition': 'attachment; filename="resume.pdf"' },
+    });
+
+    // Verify API call
+    await waitFor(() => {
+      expect(mockedAxios.get).toHaveBeenCalledWith('/api/about/resume', {
+        responseType: 'blob',
+      });
+    });
+
+    // Verify download trigger
+    await waitFor(() => {
+      expect(createObjectURLMock).toHaveBeenCalledWith(blob);
+    });
+
+    // Verify state restoration
+    await waitFor(() => {
+      expect(screen.getByText('Download Resume')).toBeInTheDocument();
+    });
+    expect(downloadButton).toBeEnabled();
+  });
+
+  it('handles missing filename in download response', async () => {
+    const blob = new Blob(['resume content'], { type: 'application/pdf' });
+    mockedAxios.get.mockResolvedValueOnce({
+      data: blob,
+      headers: {}, // No content-disposition
+    });
+
+    render(<AboutContainer />);
+    const downloadButton = screen.getByRole('button', {
+      name: /download resume/i,
+    });
+
+    fireEvent.click(downloadButton);
+
+    await waitFor(() => {
+      expect(mockedAxios.get).toHaveBeenCalled();
+    });
+
+    // Wait for the button to reset, indicating the mutation has settled (failed)
+    await waitFor(() => {
+      expect(downloadButton).toBeEnabled();
+    });
+
+    // Verify createObjectURL was NOT called due to error
+    expect(createObjectURLMock).not.toHaveBeenCalled();
   });
 });

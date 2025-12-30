@@ -31,6 +31,7 @@ module.exports = {
     'src/shared/**/*.ts',
     'src/server/**/*.ts',
     '!src/shared/types/*',
+    '!src/server/migrations/**',
     '!src/server/main.ts',
     '!src/server/test-utils/**',
     '!src/server/app.module.ts',
