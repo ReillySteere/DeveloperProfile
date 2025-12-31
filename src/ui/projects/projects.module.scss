@@ -1,0 +1,92 @@
+.container {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.projectCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.titleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.role {
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+.meta {
+  display: flex;
+  gap: var(--space-4);
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.dateGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.description {
+  color: var(--text-muted);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.sectionTitle {
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.requirementsList {
+  list-style-type: disc;
+  padding-left: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+
+  li {
+    color: var(--text-body);
+  }
+}
+
+.technologies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.techBadge {
+  font-size: var(--font-size-xs);
+}
