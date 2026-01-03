@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, Link as LinkIcon } from 'lucide-react';
 import { Project } from 'shared/types';
@@ -11,6 +11,7 @@ import {
   Button,
 } from 'ui/shared/components';
 import styles from '../projects.module.scss';
+import { useDateFormatter } from 'ui/shared/hooks/useDateFormatter';
 
 interface ProjectCardProps {
   project: Project;
@@ -23,13 +24,15 @@ const variants = {
 };
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
-  const formatDate = (dateStr?: string) => {
-    if (!dateStr) return 'Present';
-    return new Date(dateStr).toLocaleDateString('en-US', {
-      month: 'short',
-      year: 'numeric',
-    });
-  };
+  const { formatMonthYear } = useDateFormatter();
+
+  const projectStartDate = useMemo(() => {
+    return formatMonthYear(project.startDate);
+  }, [formatMonthYear]);
+
+  const projectEndDate = useMemo(() => {
+    return project?.endDate ? formatMonthYear(project.endDate) : 'Present';
+  }, [formatMonthYear]);
 
   return (
     <motion.div
@@ -59,7 +62,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
             <div className={styles.dateGroup}>
               <Calendar size={14} />
               <span>
-                {formatDate(project.startDate)} - {formatDate(project.endDate)}
+                {projectStartDate} - {projectEndDate}
               </span>
             </div>
           </div>
@@ -77,8 +80,17 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
           </div>
 
           <div className={styles.section}>
-            <h4 className={styles.sectionTitle}>Execution & Role</h4>
-            <p>{project.execution}</p>
+            <h4 className={styles.sectionTitle}>Execution</h4>
+            {project.execution.map((paragraph, i) => (
+              <p key={i}>{paragraph}</p>
+            ))}
+          </div>
+
+          <div className={styles.section}>
+            <h4 className={styles.sectionTitle}>Results</h4>
+            {project.results.map((paragraph, i) => (
+              <p key={i}>{paragraph}</p>
+            ))}
           </div>
 
           <div className={styles.section}>

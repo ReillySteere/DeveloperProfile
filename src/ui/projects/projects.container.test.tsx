@@ -69,7 +69,8 @@ const mockProjects: Project[] = [
     shortDescription: 'Desc One',
     role: 'Role One',
     requirements: ['Req 1'],
-    execution: 'Exec 1',
+    execution: ['Exec 1a', 'Exec 1b'],
+    results: ['Result 1a', 'Result 1b'],
     technologies: ['Tech A'],
     startDate: '2023-01-15',
     endDate: '2023-12-15',
@@ -81,7 +82,8 @@ const mockProjects: Project[] = [
     shortDescription: 'Desc Two',
     role: 'Role Two',
     requirements: ['Req 2'],
-    execution: 'Exec 2',
+    execution: ['Exec 2'],
+    results: ['Result 2'],
     technologies: ['Tech B'],
     startDate: '2024-01-15',
   },
@@ -151,7 +153,10 @@ describe('Projects Container', () => {
     expect(screen.getByText('Role One')).toBeInTheDocument();
     expect(screen.getByText('Desc One')).toBeInTheDocument();
     expect(screen.getByText('Req 1')).toBeInTheDocument();
-    expect(screen.getByText('Exec 1')).toBeInTheDocument();
+    expect(screen.getByText('Exec 1a')).toBeInTheDocument();
+    expect(screen.getByText('Exec 1b')).toBeInTheDocument();
+    expect(screen.getByText('Result 1a')).toBeInTheDocument();
+    expect(screen.getByText('Result 1b')).toBeInTheDocument();
     expect(screen.getByText('Tech A')).toBeInTheDocument();
 
     expect(screen.getByText(/Jan 2023/)).toBeInTheDocument();
@@ -166,6 +171,7 @@ describe('Projects Container', () => {
     expect(screen.getByText('Project Two')).toBeInTheDocument();
     expect(screen.getByText(/Jan 2024/)).toBeInTheDocument();
     expect(screen.getByText(/Present/)).toBeInTheDocument();
+    expect(screen.getByText('Result 2')).toBeInTheDocument();
 
     expect(screen.getAllByText('View Project')).toHaveLength(1);
   });

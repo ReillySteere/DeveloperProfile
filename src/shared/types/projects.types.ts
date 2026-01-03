@@ -4,10 +4,11 @@ export interface Project {
   shortDescription: string;
   role: string;
   requirements: string[];
-  execution: string;
+  execution: string[];
+  results: string[];
   technologies: string[];
   link?: string;
   imageUrl?: string;
-  startDate?: string;
+  startDate: string;
   endDate?: string;
 }
