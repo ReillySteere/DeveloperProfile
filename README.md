@@ -129,6 +129,7 @@ graph TD
 ## Key Features
 
 - **Experience Timeline:** A scrollable, animated timeline of professional experience.
+- **Projects Showcase:** A detailed portfolio of technical projects with role, execution, and results.
 - **About Section:** Detailed professional summary and skills.
 - **Responsive Design:** Optimized for various screen sizes with a custom Navigation Rail.
 - **Dark/Light Mode:** Theming support via CSS variables.

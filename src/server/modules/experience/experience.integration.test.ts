@@ -4,7 +4,7 @@ import { ExperienceModule } from './experience.module';
 import { IExperienceService } from './experience.service';
 import { Experience } from './experience.entity';
 import { ExperienceController } from './experience.controller';
-import { SeedExperience1703289600000 } from '../../migrations/SeedExperience';
+import { SeedExperience1703289600000 } from '../../migrations/1703289600000-SeedExperience';
 import { DataSource } from 'typeorm';
 import TOKENS from './tokens';
 

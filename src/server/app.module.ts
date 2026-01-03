@@ -5,9 +5,9 @@ import { AuthModule } from './modules/auth/auth.module';
 import { ExperienceModule } from './modules/experience/experience.module';
 import { AboutModule } from './modules/about/about.module';
 import { Experience } from './modules/experience/experience.entity';
-import { SeedExperience1703289600000 } from './migrations/SeedExperience';
+import { SeedExperience1703289600000 } from './migrations/1703289600000-SeedExperience';
 import { Project } from './modules/projects/project.entity';
-import { SeedProjects1704153600001 } from './migrations/SeedProjects';
+import { SeedProjects1704153600001 } from './migrations/1704153600001-SeedProjects';
 import { ProjectModule } from './modules/projects/project.module';
 
 @Module({

@@ -6,7 +6,7 @@ import { ProjectModule } from './project.module';
 import { ProjectsController } from './projects.controller';
 import TOKENS from './tokens';
 import { IProjectsService } from './project.service';
-import { SeedProjects1704153600001 } from '../../migrations/SeedProjects';
+import { SeedProjects1704153600001 } from '../../migrations/1704153600001-SeedProjects';
 
 describe('Projects Integration', () => {
   let moduleRef: TestingModule;
