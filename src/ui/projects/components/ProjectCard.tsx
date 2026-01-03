@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, Link as LinkIcon } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import { Project } from 'shared/types';
 import {
   Card,
@@ -8,7 +8,6 @@ import {
   CardHeader,
   CardTitle,
   Badge,
-  Button,
 } from 'ui/shared/components';
 import styles from '../projects.module.scss';
 import { useDateFormatter } from 'ui/shared/hooks/useDateFormatter';
@@ -28,11 +27,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
 
   const projectStartDate = useMemo(() => {
     return formatMonthYear(project.startDate);
-  }, [formatMonthYear]);
+  }, [formatMonthYear, project.startDate]);
 
   const projectEndDate = useMemo(() => {
     return project?.endDate ? formatMonthYear(project.endDate) : 'Present';
-  }, [formatMonthYear]);
+  }, [formatMonthYear, project.endDate]);
 
   return (
     <motion.div
@@ -49,14 +48,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
               <CardTitle>{project.title}</CardTitle>
               <span className={styles.role}>{project.role}</span>
             </div>
-            {project.link && (
-              <a href={project.link} target="_blank" rel="noopener noreferrer">
-                <Button variant="secondary">
-                  <LinkIcon size={16} style={{ marginRight: '0.5rem' }} />
-                  View Project
-                </Button>
-              </a>
-            )}
           </div>
           <div className={styles.meta}>
             <div className={styles.dateGroup}>

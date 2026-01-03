@@ -1,18 +1,21 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React from 'react';
-import { render, screen, fireEvent } from 'ui/test-utils';
+import { render, screen, fireEvent, waitFor } from 'ui/test-utils';
 import ProjectsContainer from './projects.container';
-import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import { Project } from 'shared/types';
 
 // Mock framer-motion
+
 jest.mock('framer-motion', () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const React = require('react');
+
   return {
     motion: {
       div: React.forwardRef(
         /* eslint-disable @typescript-eslint/no-unused-vars */
+
         (
           {
             children,
@@ -25,9 +28,11 @@ jest.mock('framer-motion', () => {
             viewport,
             ...props
           }: any,
+
           ref: any,
         ) => {
           /* eslint-enable @typescript-eslint/no-unused-vars */
+
           return (
             <div ref={ref} {...props}>
               {children}
@@ -40,27 +45,26 @@ jest.mock('framer-motion', () => {
 });
 
 // Mock lucide-react
+
 jest.mock('lucide-react', () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const React = require('react');
+
   return {
     Calendar: () =>
       React.createElement('span', { 'data-testid': 'calendar-icon' }),
-    Link: () => React.createElement('span', { 'data-testid': 'link-icon' }),
+
     AlertCircle: () =>
       React.createElement('span', { 'data-testid': 'alert-icon' }),
+
     RefreshCw: () =>
       React.createElement('span', { 'data-testid': 'refresh-icon' }),
   };
 });
 
-// Mock react-query
-jest.mock('@tanstack/react-query', () => ({
-  ...jest.requireActual('@tanstack/react-query'),
-  useQuery: jest.fn(),
-}));
+jest.mock('axios');
 
-const mockUseQuery = useQuery as jest.Mock;
+const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 const mockProjects: Project[] = [
   {
@@ -74,8 +78,8 @@ const mockProjects: Project[] = [
     technologies: ['Tech A'],
     startDate: '2023-01-15',
     endDate: '2023-12-15',
-    link: 'http://example.com',
   },
+
   {
     id: '2',
     title: 'Project Two',
@@ -92,64 +96,51 @@ const mockProjects: Project[] = [
 describe('Projects Container', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.useFakeTimers();
-  });
 
-  afterEach(() => {
-    jest.useRealTimers();
+    mockedAxios.get.mockReset();
   });
 
   it('renders loading state', () => {
-    mockUseQuery.mockReturnValue({
-      data: undefined,
-      isLoading: true,
-      isError: false,
-      error: null,
-      refetch: jest.fn(),
-    });
+    mockedAxios.get.mockImplementation(() => new Promise(() => {}));
 
     render(<ProjectsContainer />);
+
     // QueryState renders skeletons when loading
+
     expect(screen.getAllByTestId('skeleton').length).toBeGreaterThan(0);
   });
 
-  it('renders error state and handles retry', () => {
-    const refetch = jest.fn();
-    mockUseQuery.mockReturnValue({
-      data: undefined,
-      isLoading: false,
-      isError: true,
-      error: new Error('Failed'),
-      refetch,
-    });
+  it('renders error state and handles retry', async () => {
+    mockedAxios.get.mockRejectedValueOnce(new Error('Failed'));
 
     render(<ProjectsContainer />);
-    expect(screen.getByText(/Something went wrong/i)).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(screen.getByText(/Something went wrong/i)).toBeInTheDocument();
+    });
+
+    mockedAxios.get.mockResolvedValueOnce({ data: mockProjects });
 
     const retryButton = screen.getByRole('button', { name: /Try Again/i });
+
     fireEvent.click(retryButton);
-    expect(refetch).toHaveBeenCalled();
+
+    await waitFor(() => {
+      expect(screen.getByText('Project One')).toBeInTheDocument();
+    });
+
+    expect(mockedAxios.get).toHaveBeenCalledTimes(2);
   });
 
-  it('renders projects list successfully and covers hook internals', () => {
-    // We want to cover fetchProjects inside useProjects too
-    mockUseQuery.mockImplementation(({ queryFn }) => {
-      if (queryFn) {
-        queryFn();
-        jest.runAllTimers();
-      }
-      return {
-        data: mockProjects,
-        isLoading: false,
-        isError: false,
-        error: null,
-        refetch: jest.fn(),
-      };
-    });
+  it('renders projects list successfully and covers hook internals', async () => {
+    mockedAxios.get.mockResolvedValueOnce({ data: mockProjects });
 
     render(<ProjectsContainer />);
 
-    expect(screen.getByText('Project One')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Project One')).toBeInTheDocument();
+    });
+
     expect(screen.getByText('Role One')).toBeInTheDocument();
     expect(screen.getByText('Desc One')).toBeInTheDocument();
     expect(screen.getByText('Req 1')).toBeInTheDocument();
@@ -158,21 +149,11 @@ describe('Projects Container', () => {
     expect(screen.getByText('Result 1a')).toBeInTheDocument();
     expect(screen.getByText('Result 1b')).toBeInTheDocument();
     expect(screen.getByText('Tech A')).toBeInTheDocument();
-
     expect(screen.getByText(/Jan 2023/)).toBeInTheDocument();
     expect(screen.getByText(/Dec 2023/)).toBeInTheDocument();
-
-    const linkButton = screen.getByText('View Project');
-    expect(linkButton).toBeInTheDocument();
-    const link = linkButton.closest('a');
-    expect(link).toHaveAttribute('href', 'http://example.com');
-    expect(link).toHaveAttribute('target', '_blank');
-
     expect(screen.getByText('Project Two')).toBeInTheDocument();
     expect(screen.getByText(/Jan 2024/)).toBeInTheDocument();
     expect(screen.getByText(/Present/)).toBeInTheDocument();
     expect(screen.getByText('Result 2')).toBeInTheDocument();
-
-    expect(screen.getAllByText('View Project')).toHaveLength(1);
   });
 });

@@ -1,5 +1,5 @@
 module.exports = {
-  testRegex: '.*/(server|shared)/.*\\.test\\.ts$',
+  testRegex: '.*/src/(server|shared)/.*\\.test\\.ts$',
   preset: 'ts-jest/presets/js-with-ts-esm',
   modulePaths: ['<rootDir>/node_modules'],
   moduleDirectories: [__dirname, 'node_modules', 'test-utils'],
@@ -11,7 +11,7 @@ module.exports = {
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],
   clearMocks: true,
   transform: {
-    '.*/(server|shared)/.*\\.test\\.ts$': [
+    '.*/src/(server|shared)/.*\\.test\\.ts$': [
       'ts-jest',
       {
         useESM: true,

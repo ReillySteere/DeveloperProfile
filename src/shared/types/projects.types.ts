@@ -7,8 +7,6 @@ export interface Project {
   execution: string[];
   results: string[];
   technologies: string[];
-  link?: string;
-  imageUrl?: string;
   startDate: string;
   endDate?: string;
 }

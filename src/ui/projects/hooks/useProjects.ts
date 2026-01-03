@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import { Project } from 'shared/types';
 
 interface UseProjectsResult {
@@ -9,128 +10,8 @@ interface UseProjectsResult {
   refetch: () => void;
 }
 
-const MOCK_PROJECTS: Project[] = [
-  {
-    id: '1',
-    title: 'Checkout Submission Migration',
-    shortDescription:
-      'Finalize removal of legacy handling of Point of Sale submissions to a modern, scalable, and observable architecture on a system transacting several million dollars in daily revenue.',
-    role: 'Platform Engineer / Technical Domain Owner',
-    requirements: [
-      'Improve developer experience and throughput when implementing new product experiences',
-      'Improve reliability and scalability of payment processing systems handling high volumes of transactions',
-      'Minimize customer friction and lost-revenue caused by avoidable errors',
-      'Migrate email handling and core system functionality off legacy platforms',
-      'Reduce cyclomatic complexity of a critical business system',
-      'Prepare codebase for integration with upcoming whitelabeling / integration with additional sites',
-    ],
-    execution: [
-      'Built out effective and extensible builders for important business workflows, while also leveraging new advancements in copilot instructions to better support overall domain coverage and developer onboarding.',
-      'Collaborated with other software development teams to further ensure intended software architectural boundaries were being respected and that dangerous non-compliant implementations were deprecated in a safe manner without impact to the end user',
-      'Led implementation of new design patterns that fully captured all payment, purchase and product types for checkout submissions.',
-      'Introduced event driven architecture leveraging NestJS, including additional tooling to support intended functionality while still maintaining a request-scope only model - significantly reducing the total experienced time for Checkout Submissions and setting the system up well for future enhancements and workflows.',
-      'Introduced architectural fitness functions (Jest/Linting) to ensure intended design patterns were being followed and to prevent regression of critical architectural boundaries.',
-      'Introduced ADRs and Logical Component Documentation to better capture architectural decisions and important system components.',
-    ],
-    results: [
-      'All issues occurring during the course of this migration, whether introduced by this work or various product initiatives on the same domain were detected through automated means rather than customer reports, significantly improving the user experience and reducing lost-revenue due to avoidable errors.',
-      'Built stand-alone microservice to support safe migration / equivalency between systems for workflows managed in different micro-frontends as well as significantly improved integration test tooling and coverage of system.',
-      'Improved test coverage of system from 60% to 95%+ through a combination of unit, integration, and end-to-end tests, significantly improving developer confidence when making changes to the system and reducing the likelihood of regressions reaching production environments.',
-      'Significantly reduced a huge amount of cyclomatic and cognitive complexity by replacing organic development and a multitude of partial design pattern implementations with a fully thought-out and consistent architecture that could be easily reasoned about and extended by engineers of varying experience levels. The new system also clearly optimizes for areas seeing the most frequent changes and has been significantly enhanced through linting, architectural fitness functions and documentation to properly guide growth moving forward',
-    ],
-    technologies: [
-      'C#',
-      'Grafana',
-      'Prometheus',
-      'NestJS',
-      'Redis',
-      'Ruby on Rails',
-      'RabbitMQ',
-      'S3',
-    ],
-    startDate: '2025-04-01',
-  },
-  {
-    id: '2',
-    title: 'Checkout UI Migration',
-    shortDescription:
-      'PCI Compliance Driven Migration of Legacy AngularJS pages rendering point of sale / payment experiences to a Modern React Application.',
-    role: 'Technical Lead / Project Manager',
-    requirements: [
-      'Ensure PCI Compliance by removing AngularJS from all point of sale systems',
-      'Unify payment method handling in a single scalable system',
-      'Improve observability of payment flows and error prevention',
-      'Improve developer experience and throughput when implementing new product experiences',
-    ],
-    execution: [
-      'Collaborated closely with product, security, and operations teams to minimize disruption to in-market experiences while improving developer velocity and reliability.',
-      'Led a team of 2-6 engineers at varying experience levels, balancing mentorship with project road mapping and execution to successfully migrate critical business experiences while protecting PCI compliance obligations.',
-      'Introduced TypeScript and React best practices, significantly improving code quality and developer experience across a domain that had grown organically over fifteen years across two sites, an international market, and a myriad collection of products and purchase types. We also significantly improved error observability in the process, aligning our reported metrics with business KPIs and improving the user experience for many previously unobserved edge cases.',
-      'Implemented a standardized payment framework, allowing easier addition of new payment methods and reducing the complexity of existing integrations.',
-    ],
-    results: [
-      'Achieved migration with minimal customer or revenue impact',
-      'Ensured all needed security updates were delivered promptly',
-      'Established new service-level objectives (SLOs) and error budgets for all existing payment methods, significantly improving visibility into system reliability and allowing for data-driven prioritization of reliability work. This also included building out new observability dashboards and alerting to better capture business-relevant KPIs and align engineering efforts with business outcomes.',
-      'Significantly improved usability for customer support teams, as well as reduced complexity for new feature development by consolidating disparate code paths into a unified presentation and architecture.',
-      'Significantly improved responsiveness of the page for end-users, allowing faster interactions and checkout completion and simpler additions of new product experiences',
-      'Successfully migrated all presentation of point of sale experiences off legacy AngularJS platform and met all PCI compliance obligations within set deadlines.',
-    ],
-    technologies: [
-      'AngularJS',
-      'Cypress',
-      'React',
-      'TypeScript',
-      'TanStack Query',
-      'NestJS',
-    ],
-    startDate: '2024-04-01',
-    endDate: '2025-04-01',
-  },
-  {
-    id: '3',
-    title: 'AI Image Generation by Getty Images',
-    shortDescription:
-      'A completely new multi-site product offering allowing AI generated images to be purchased and licensed through Getty Images / iStock platforms. This project involved significant cross-team collaboration, tight deadlines and careful coordination both inside my engineering team as well as with product, design, legal and operations teams.',
-    role: 'Front-End Team Lead',
-    requirements: [
-      'Develop a user-friendly interface that required consideration of significant state complexity.',
-      'Build a scalable platform that would deliver on key business priorities, while also being well set up for future extension and feature growth.',
-      'Pioneer a TypeScript only approach, implementing new platform functionality in NestJS / where previously most developers had been heavily engaged with Ruby on Rails for backend work.',
-    ],
-    execution: [
-      'Absorbed significant operational responsibilities traditionally held by product owners to ensure timely delivery of this high-profile product within tight deadlines. This included backlog grooming, sprint planning and direct coordination with cross-functional partners to ensure alignment on priorities and scope.',
-      'Architected a modular and extensible front-end framework using React and TypeScript with a NestJS Backend-For-Frontend (BFF) pattern, enabling rapid development and iteration of new features while maintaining high code quality and consistency across the codebase.',
-      'Built out complex state management solutions leveraging a mix of TanStack Query and Zustand to effectively handle a level of state complexity that was unprecedented in our front-end applications, while also ensuring optimal performance and responsiveness for end-users.',
-      'Collaborated closely with product managers and designers to translate complex requirements into a seamless user experience, while also ensuring that technical feasibility and scalability were prioritized throughout the development process.',
-      'Led a team of 10 developers through the initial launch of this product offering and facilitated an effective hand-off to new leads for subsequent product initiatives. During this time, I balanced mentorship, code reviews, and architectural guidance with team leadership responsibilities to ensure the on-time delivery of this product.',
-    ],
-    results: [
-      'Delivered product on time, with close alignment with business on priorities and delivered scope',
-      'Established first in-company NestJS / React only codebase',
-      'Established best practices for complex state management in front-end applications',
-      'Established strong foundation for future AI product offerings',
-      'Product currently delivers several million dollars in annual revenue',
-    ],
-    technologies: [
-      'React',
-      'React Router',
-      'NestJS',
-      'TanStack Query',
-      'Zustand',
-    ],
-    startDate: '2023-04-01',
-    endDate: '2023-12-31',
-  },
-];
-
-const fetchProjects = (): Promise<Project[]> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(MOCK_PROJECTS);
-    }, 500);
-  });
-};
+const fetchProjects = (): Promise<Project[]> =>
+  axios.get<Project[]>('/api/projects').then((response) => response.data);
 
 export function useProjects(): UseProjectsResult {
   const { data, isLoading, isError, error, refetch } = useQuery<

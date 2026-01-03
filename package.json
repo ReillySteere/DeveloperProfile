@@ -15,8 +15,8 @@
     "test:ui": "jest --config jest.browser.ts --coverage",
     "lint": "eslint \"src/**/*.{ts,tsx}\" --fix",
     "format": "npm run format:server && npm run format:ui",
-    "format:server": "prettier --write \"{server|shared}/src/**/*.ts\" \"test/**/*.ts\"",
-    "format:ui": "prettier --write 'ui/src/**/*.{ts,tsx,js,jsx,json,css,md}'"
+    "format:server": "prettier --write \"src/{server|shared}/**/*.ts\" \"test/**/*.ts\"",
+    "format:ui": "prettier --write 'src/ui/**/*.{ts,tsx,js,jsx,json,css,md}'"
   },
   "devDependencies": {
     "@babel/core": "^7.26.10",
