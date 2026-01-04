@@ -45,18 +45,30 @@ jest.mock('react-markdown', () => (props: any) => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const React = require('react');
 
-  // Simulate the code component usage for mermaid blocks
+  // Simulate the code component usage
   if (props.components && props.components.code) {
-    if (
-      typeof props.children === 'string' &&
-      props.children.includes('```mermaid')
-    ) {
-      const content = props.children.replace(/```mermaid\n|```/g, '');
-      return props.components.code({
-        node: {},
-        className: 'language-mermaid',
-        children: content,
-      });
+    if (typeof props.children === 'string') {
+      if (props.children.includes('```mermaid')) {
+        const content = props.children.replace(/```mermaid\n|```/g, '');
+        return props.components.code({
+          node: {},
+          className: 'language-mermaid',
+          children: content,
+        });
+      } else if (props.children.includes('```typescript')) {
+        const content = props.children.replace(/```typescript\n|```/g, '');
+        return props.components.code({
+          node: {},
+          className: 'language-typescript',
+          children: content,
+        });
+      } else if (props.children.includes('`inline`')) {
+        return props.components.code({
+          node: {},
+          className: undefined,
+          children: 'inline',
+        });
+      }
     }
   }
 
@@ -156,6 +168,42 @@ describe('Blog Integration', () => {
       await waitFor(() => {
         const mermaidDiv = document.querySelector('.mermaid');
         expect(mermaidDiv).toBeInTheDocument();
+      });
+    });
+
+    it('renders syntax highlighted code blocks', async () => {
+      const codePost = {
+        ...mockPost,
+        content: '```typescript\nconst x = 1;\n```',
+      };
+      mockedAxios.get.mockResolvedValueOnce({ data: codePost });
+
+      render(<BlogPostContainer />);
+
+      await waitFor(() => {
+        // SyntaxHighlighter mock renders a 'pre'
+        expect(document.querySelector('pre')).toBeInTheDocument();
+        expect(screen.getByText('const x = 1;')).toBeInTheDocument();
+      });
+    });
+
+    it('renders inline code', async () => {
+      const inlinePost = {
+        ...mockPost,
+        content: 'This is `inline` code.',
+      };
+      mockedAxios.get.mockResolvedValueOnce({ data: inlinePost });
+
+      render(<BlogPostContainer />);
+
+      await waitFor(() => {
+        expect(screen.getByText('inline')).toBeInTheDocument();
+        // Should render a 'code' tag, not 'pre'
+        // Note: SyntaxHighlighter mock renders 'pre', regular code renders 'code'
+        const codeElement = document.querySelector('code');
+        expect(codeElement).toBeInTheDocument();
+        // Ensure it's not inside a pre (which would be SyntaxHighlighter)
+        expect(codeElement?.closest('pre')).toBeNull();
       });
     });
 

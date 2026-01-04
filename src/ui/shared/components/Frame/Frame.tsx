@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import styles from './frame.module.scss';
 import { useNavStore } from 'ui/shared/stores/navStore';
-import Header from './Header';
 
 interface FrameProps extends React.HTMLProps<HTMLDivElement> {
   children?: React.ReactNode;
@@ -16,7 +15,6 @@ const Frame: React.FC<FrameProps> = ({ children, id, ...props }) => {
   }, [id]);
   return (
     <section id={id} {...props} className={styles.frame}>
-      <Header />
       {children}
     </section>
   );

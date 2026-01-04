@@ -16,7 +16,6 @@ export default function BlogContainer() {
 
   return (
     <Frame id="blog">
-      <h1>Blog</h1>
       <QueryState
         isLoading={isLoading}
         isError={isError}
