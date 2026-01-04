@@ -16,8 +16,7 @@ The Blog feature is a content publishing system designed to share technical arti
   - `metaDescription`: String (For SEO and list previews)
   - `publishedAt`: Date string
   - `tags`: JSON array of strings
-  - `markdownContent`: Text (The main body of the post)
-  - `documentContent`: Text (Nullable, reserved for future structured content)
+  - `content`: Text (The main body of the post)
 - **Migrations:**
   - `SeedBlog`: Populates initial blog posts.
 
@@ -28,7 +27,7 @@ The Blog feature is a content publishing system designed to share technical arti
   - `GET /`: Returns a list of posts.
     - **Optimization:** Selects only metadata (`id`, `slug`, `title`, `metaDescription`, `publishedAt`, `tags`) to reduce payload size.
     - **Sorting:** Orders by `publishedAt` descending.
-  - `GET /:slug`: Returns the full blog post object, including `markdownContent`.
+  - `GET /:slug`: Returns the full blog post object, including `content`.
 - **Service:** `BlogService`
   - Handles retrieval logic and error handling (e.g., `NotFoundException` for invalid slugs).
 
@@ -82,4 +81,3 @@ The Blog feature is a content publishing system designed to share technical arti
 ## Future Roadmap
 
 - **Content Management:** Implementation of an admin interface or CMS integration to allow adding/editing articles without database migrations.
-- **Rich Content:** Utilization of the `documentContent` field for more complex data structures.

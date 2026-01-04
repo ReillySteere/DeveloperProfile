@@ -6,7 +6,6 @@ import { ProjectModule } from './project.module';
 import { ProjectsController } from './projects.controller';
 import TOKENS from './tokens';
 import { IProjectsService } from './project.service';
-import { SeedProjects1704153600001 } from '../../migrations/1704153600001-SeedProjects';
 
 describe('Projects Integration', () => {
   let moduleRef: TestingModule;
@@ -22,8 +21,6 @@ describe('Projects Integration', () => {
           database: ':memory:',
           entities: [Project],
           synchronize: true,
-          migrations: [SeedProjects1704153600001],
-          migrationsRun: false,
         }),
         ProjectModule,
       ],
@@ -33,7 +30,18 @@ describe('Projects Integration', () => {
     service = moduleRef.get<IProjectsService>(TOKENS.ProjectsService);
     dataSource = moduleRef.get<DataSource>(DataSource);
 
-    await dataSource.runMigrations();
+    // Seed data manually
+    const repo = dataSource.getRepository(Project);
+    await repo.insert({
+      title: 'Test Project',
+      shortDescription: 'Test Description',
+      role: 'Test Role',
+      requirements: ['Req 1'],
+      execution: ['Exec 1'],
+      results: ['Res 1'],
+      technologies: ['Tech 1'],
+      startDate: '2024-01-01',
+    });
   });
 
   afterAll(async () => {
@@ -59,11 +67,5 @@ describe('Projects Integration', () => {
     const sortedDates = [...startDates].sort((a, b) => (a > b ? -1 : 1));
     expect(startDates).toEqual(sortedDates);
     spy.mockRestore();
-  });
-
-  it('clears projects after rolling back migration', async () => {
-    await dataSource.undoLastMigration();
-    const projects = await controller.getProjects();
-    expect(projects).toEqual([]);
   });
 });

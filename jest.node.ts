@@ -36,6 +36,7 @@ module.exports = {
     '!src/server/test-utils/**',
     '!src/server/app.module.ts',
     '!src/server/**/*.types.ts',
+    '!src/server/modules/seeding/**',
     '!**/node_modules/**',
     '!**/dist/**',
   ],

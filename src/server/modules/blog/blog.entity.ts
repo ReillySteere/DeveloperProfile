@@ -27,10 +27,7 @@ export class BlogPost {
   tags: string[];
 
   @Column('text')
-  markdownContent: string;
-
-  @Column('text', { nullable: true })
-  documentContent: string | null;
+  content: string;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -89,7 +89,7 @@ const mockPosts = [
     metaDescription: 'Description',
     publishedAt: new Date().toISOString(),
     tags: ['test'],
-    markdownContent: '# Hello World Content',
+    content: '# Hello World Content',
   },
 ];
 
@@ -147,7 +147,7 @@ describe('Blog Integration', () => {
     it('renders mermaid diagrams', async () => {
       const mermaidPost = {
         ...mockPost,
-        markdownContent: '```mermaid\ngraph TD; A-->B;\n```',
+        content: '```mermaid\ngraph TD; A-->B;\n```',
       };
       mockedAxios.get.mockResolvedValueOnce({ data: mermaidPost });
 

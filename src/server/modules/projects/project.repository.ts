@@ -9,13 +9,17 @@ export interface IProjectsRepository {
 
 @Injectable()
 export class ProjectsRepository implements IProjectsRepository {
+  readonly #repo: Repository<Project>;
+
   constructor(
     @InjectRepository(Project)
-    private readonly repo: Repository<Project>,
-  ) {}
+    repo: Repository<Project>,
+  ) {
+    this.#repo = repo;
+  }
 
   findAll(): Promise<Project[]> {
-    return this.repo.find({
+    return this.#repo.find({
       order: {
         startDate: 'DESC',
       },

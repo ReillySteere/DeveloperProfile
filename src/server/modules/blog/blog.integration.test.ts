@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BlogModule } from './blog.module';
 import { BlogPost } from './blog.entity';
 import { BlogController } from './blog.controller';
-import { SeedBlog1704153600002 } from '../../migrations/1704153600002-SeedBlog';
 import { DataSource } from 'typeorm';
 
 describe('Blog Integration', () => {
@@ -19,8 +18,6 @@ describe('Blog Integration', () => {
           database: ':memory:',
           entities: [BlogPost],
           synchronize: true,
-          migrations: [SeedBlog1704153600002],
-          migrationsRun: false,
         }),
         BlogModule,
       ],
@@ -29,8 +26,16 @@ describe('Blog Integration', () => {
     controller = module.get<BlogController>(BlogController);
     dataSource = module.get<DataSource>(DataSource);
 
-    // Run migrations manually
-    await dataSource.runMigrations();
+    // Seed data manually
+    const repo = dataSource.getRepository(BlogPost);
+    await repo.save({
+      slug: 'hello-world',
+      title: 'Hello World',
+      metaDescription: 'Description',
+      publishedAt: new Date().toISOString(),
+      tags: ['test'],
+      content: '# Hello World',
+    });
   });
 
   afterAll(async () => {
@@ -43,15 +48,15 @@ describe('Blog Integration', () => {
     expect(result.length).toBeGreaterThan(0);
     expect(result[0].slug).toBe('hello-world');
     // Should not return full content in list
-    expect(result[0].markdownContent).toBeUndefined();
+    expect(result[0].content).toBeUndefined();
   });
 
   it('should return full post by slug', async () => {
     const result = await controller.findOne('hello-world');
     expect(result).toBeDefined();
     expect(result.slug).toBe('hello-world');
-    expect(result.markdownContent).toBeDefined();
-    expect(result.markdownContent).toContain('# Hello World');
+    expect(result.content).toBeDefined();
+    expect(result.content).toContain('# Hello World');
   });
 
   it('should throw error for non-existent slug', async () => {

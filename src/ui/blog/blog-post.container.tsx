@@ -40,7 +40,7 @@ export default function BlogPostContainer() {
                 </div>
               </div>
             </header>
-            <BlogPost content={post.markdownContent || ''} />
+            <BlogPost content={post.content} />
           </article>
         )}
       </QueryState>

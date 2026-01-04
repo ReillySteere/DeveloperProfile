@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from '@tanstack/react-router';
-import { BlogPost } from '../hooks/useBlog';
 import styles from '../blog.module.scss';
 import { Card } from 'ui/shared/components/Card/Card';
 import { Badge } from 'ui/shared/components/Badge/Badge';
+import { BlogPost } from 'shared/types';
 
 interface BlogListProps {
   posts: BlogPost[];

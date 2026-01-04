@@ -1,0 +1,10 @@
+[
+  {
+    "slug": "hello-world",
+    "title": "Hello World: A Guide to Markdown",
+    "metaDescription": "A sample post demonstrating Markdown rendering capabilities.",
+    "publishedAt": "2024-01-01T00:00:00.000Z",
+    "tags": ["markdown", "guide", "demo"],
+    "content": "\n# Hello World\n\nThis is a sample blog post to demonstrate **Markdown** rendering.\n\n## Features\n\n- GFM Support\n- Syntax Highlighting\n- Mermaid Diagrams\n\n### Code Example\n\n```typescript\nconst greeting = \"Hello World\";\nconsole.log(greeting);\n```\n\n### Mermaid Diagram\n\n```mermaid\ngraph TD;\n    A-->B;\n    A-->C;\n    B-->D;\n    C-->D;\n```\n\n### Table\n\n| Feature | Status |\n| :--- | :--- |\n| Markdown | ✅ |\n| Mermaid | ✅ |\n| Syntax Highlighting | ✅ |\n"
+  }
+]

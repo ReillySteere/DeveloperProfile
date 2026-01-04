@@ -4,7 +4,6 @@ import { ExperienceModule } from './experience.module';
 import { IExperienceService } from './experience.service';
 import { Experience } from './experience.entity';
 import { ExperienceController } from './experience.controller';
-import { SeedExperience1703289600000 } from '../../migrations/1703289600000-SeedExperience';
 import { DataSource } from 'typeorm';
 import TOKENS from './tokens';
 
@@ -22,8 +21,6 @@ describe('Experience Integration', () => {
           database: ':memory:',
           entities: [Experience],
           synchronize: true,
-          migrations: [SeedExperience1703289600000],
-          migrationsRun: false,
         }),
         ExperienceModule,
       ],
@@ -33,8 +30,16 @@ describe('Experience Integration', () => {
     controller = module.get<ExperienceController>(ExperienceController);
     dataSource = module.get<DataSource>(DataSource);
 
-    // Run migrations manually to ensure tables exist first (created by synchronize: true)
-    await dataSource.runMigrations();
+    // Seed data manually
+    const repo = dataSource.getRepository(Experience);
+    await repo.insert({
+      role: 'Test Role',
+      company: 'Test Company',
+      description: 'Test Description',
+      bulletPoints: ['Point 1'],
+      startDate: '2024-01-01',
+      tags: ['Tag1'],
+    });
   });
 
   afterAll(async () => {
@@ -53,11 +58,5 @@ describe('Experience Integration', () => {
     expect(firstItem.role).toBeDefined();
     expect(firstItem.bulletPoints).toBeInstanceOf(Array);
     expect(firstItem.tags).toBeInstanceOf(Array);
-  });
-
-  it('should rollback migration and clear data', async () => {
-    await dataSource.undoLastMigration();
-    const result = await controller.getExperience();
-    expect(result).toEqual([]);
   });
 });

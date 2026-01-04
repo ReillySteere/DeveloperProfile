@@ -9,13 +9,16 @@ export interface IExperienceRepository {
 
 @Injectable()
 export class ExperienceRepository implements IExperienceRepository {
+  readonly #repo: Repository<Experience>;
+
   constructor(
     @InjectRepository(Experience)
-    private readonly repo: Repository<Experience>,
-  ) {}
-
+    repo: Repository<Experience>,
+  ) {
+    this.#repo = repo;
+  }
   findAll(): Promise<Experience[]> {
-    return this.repo.find({
+    return this.#repo.find({
       order: {
         startDate: 'DESC',
       },

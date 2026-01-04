@@ -1,16 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-
-export interface BlogPost {
-  id: string;
-  slug: string;
-  title: string;
-  metaDescription: string;
-  publishedAt: string;
-  tags: string[];
-  markdownContent?: string;
-  documentContent?: string; // For future use
-}
+import { BlogPost } from 'shared/types';
 
 const fetchBlogPosts = async (): Promise<BlogPost[]> => {
   const { data } = await axios.get<BlogPost[]>('/api/blog');

@@ -9,16 +9,16 @@ export interface IExperienceService {
 
 @Injectable()
 export class ExperienceService implements IExperienceService {
-  readonly #repository: IExperienceRepository;
+  readonly #experienceRepository: IExperienceRepository;
 
   constructor(
     @Inject(TOKENS.ExperienceRepository)
-    repository: IExperienceRepository,
+    experienceRepository: IExperienceRepository,
   ) {
-    this.#repository = repository;
+    this.#experienceRepository = experienceRepository;
   }
 
   async getExperience(): Promise<ExperienceEntry[]> {
-    return this.#repository.findAll();
+    return this.#experienceRepository.findAll();
   }
 }
