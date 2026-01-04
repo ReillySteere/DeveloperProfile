@@ -17,6 +17,7 @@ The Blog feature is a content publishing system designed to share technical arti
   - `publishedAt`: Date string
   - `tags`: JSON array of strings
   - `content`: Text (The main body of the post)
+  - `documentContent`: Text (Nullable, reserved for future structured content)
 - **Migrations:**
   - `SeedBlog`: Populates initial blog posts.
 

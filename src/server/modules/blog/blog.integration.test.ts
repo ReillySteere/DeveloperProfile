@@ -48,7 +48,7 @@ describe('Blog Integration', () => {
     expect(result.length).toBeGreaterThan(0);
     expect(result[0].slug).toBe('hello-world');
     // Should not return full content in list
-    expect(result[0].content).toBeUndefined();
+    expect((result[0] as any).content).toBeUndefined();
   });
 
   it('should return full post by slug', async () => {
