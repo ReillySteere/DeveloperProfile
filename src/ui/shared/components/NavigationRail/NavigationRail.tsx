@@ -2,6 +2,7 @@
 import { Link } from '@tanstack/react-router';
 import { motion } from 'framer-motion';
 import { useNavStore } from 'ui/shared/stores/navStore';
+import { SignInButton } from './SignInButton';
 import styles from './NavigationRail.module.scss';
 import {
   User,
@@ -85,6 +86,8 @@ export const NavigationRail: React.FC = () => {
         >
           {theme === 'light' ? <Moon size={24} /> : <Sun size={24} />}
         </button>
+
+        <SignInButton />
       </motion.div>
     </nav>
   );

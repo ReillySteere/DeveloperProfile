@@ -1,0 +1,19 @@
+.signInButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  transition: var(--transition-base);
+  align-self: center;
+  margin-top: var(--space-2);
+
+  &:hover {
+    background-color: var(--bg-surface-hover);
+    color: var(--text-primary);
+  }
+}
