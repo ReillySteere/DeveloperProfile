@@ -2,6 +2,7 @@
 
 ## Architecture Overview
 
+- **Style:** Modular Monolith with Backend for Frontend (BFF) pattern.
 - **Full-Stack Monorepo:** NestJS (backend) + React 19 (frontend).
 - **Shared:** Common types in `src/shared/types/` (aliased as `shared/*`).
 - **Frontend (`src/ui`):**
@@ -51,7 +52,9 @@
     - `routes/`: Route definitions (TanStack Router).
     - `stores/`: Global state (Zustand).
   - **Test Utils:** `src/ui/test-utils/`.
-- **Routing:** TanStack Router. **DO NOT EDIT** `src/ui/routeTree.gen.ts`.
+- **Routing:** TanStack Router.
+  - **DO NOT EDIT** `src/ui/routeTree.gen.ts`.
+  - **Patterns:** Supports flat and nested routes (e.g., `/blog` parent with `/blog/$slug` child).
 - **State Management:**
   - **Server State:** TanStack Query via custom hooks. Use `QueryState` component for handling loading/error/empty states.
   - **Global State:** Zustand (e.g., `navStore`).
@@ -68,6 +71,7 @@
   - Use `jest.mock` with `__esModule: true`.
   - Prefix mock variables with `mock` (e.g., `mockUpdate`).
   - Remember Jest hoists `jest.mock()` calls.
+  - **ESM Modules:** Libraries like `react-markdown` and `mermaid` require specific mocking strategies (see `src/ui/blog/blog.container.test.tsx`).
 
 ## Key Files
 
@@ -75,3 +79,4 @@
 - `src/ui/routeTree.gen.ts`: Generated routes.
 - `src/ui/experience/hooks/useExperience.ts`: Example data fetching hook.
 - `src/server/modules/experience/experience.controller.ts`: Example controller.
+- `src/ui/blog/blog.container.tsx`: Example of nested routing and list/detail views.

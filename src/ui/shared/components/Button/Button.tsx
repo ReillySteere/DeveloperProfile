@@ -1,8 +1,7 @@
 import React from 'react';
 import styles from './Button.module.scss';
 
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary';
   leftIcon?: React.ReactNode;
 }

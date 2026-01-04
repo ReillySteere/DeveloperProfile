@@ -9,21 +9,29 @@ import { SeedExperience1703289600000 } from './migrations/1703289600000-SeedExpe
 import { Project } from './modules/projects/project.entity';
 import { SeedProjects1704153600001 } from './migrations/1704153600001-SeedProjects';
 import { ProjectModule } from './modules/projects/project.module';
+import { BlogModule } from './modules/blog/blog.module';
+import { BlogPost } from './modules/blog/blog.entity';
+import { SeedBlog1704153600002 } from './migrations/1704153600002-SeedBlog';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: 'data/database.sqlite',
-      entities: [Experience, Project],
+      entities: [Experience, Project, BlogPost],
       synchronize: true,
-      migrations: [SeedExperience1703289600000, SeedProjects1704153600001],
+      migrations: [
+        SeedExperience1703289600000,
+        SeedProjects1704153600001,
+        SeedBlog1704153600002,
+      ],
       migrationsRun: true,
     }),
     AuthModule,
     ExperienceModule,
     AboutModule,
     ProjectModule,
+    BlogModule,
   ],
 })
 export class AppModule {}

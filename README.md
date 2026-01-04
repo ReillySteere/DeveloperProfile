@@ -47,7 +47,6 @@ A full-stack developer profile application built with a modern React frontend an
    ```
 
 4. **Run the application:**
-
    - **Development mode (UI + Server):**
 
      ```bash
@@ -61,7 +60,6 @@ A full-stack developer profile application built with a modern React frontend an
      ```
 
 5. **Run tests:**
-
    - **Unit Tests:**
 
      ```bash
@@ -126,11 +124,21 @@ graph TD
     Repo -.->|Imports| Domain
 ```
 
+## Feature Architecture
+
+Detailed architectural documentation for each feature can be found here:
+
+- [About Feature](architecture/logicalComponents/about.md)
+- [Experience Feature](architecture/logicalComponents/experience.md)
+- [Projects Feature](architecture/logicalComponents/projects.md)
+- [Blog Feature](architecture/logicalComponents/blog.md)
+
 ## Key Features
 
 - **Experience Timeline:** A scrollable, animated timeline of professional experience.
 - **Projects Showcase:** A detailed portfolio of technical projects with role, execution, and results.
 - **About Section:** Detailed professional summary and skills.
+- **Technical Blog:** A markdown-based blogging platform with syntax highlighting and diagram support.
 - **Responsive Design:** Optimized for various screen sizes with a custom Navigation Rail.
 - **Dark/Light Mode:** Theming support via CSS variables.
 
