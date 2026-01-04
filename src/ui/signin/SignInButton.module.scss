@@ -11,9 +11,15 @@
   transition: var(--transition-base);
   align-self: center;
   margin-top: var(--space-2);
+  gap: var(--space-3);
 
   &:hover {
     background-color: var(--bg-surface-hover);
     color: var(--text-primary);
   }
+}
+
+.label {
+  font-size: 0.875rem;
+  white-space: nowrap;
 }
