@@ -1,5 +1,6 @@
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { UnauthorizedException } from '@nestjs/common';
 
 describe('AuthController', () => {
   let authController: AuthController;
@@ -14,12 +15,13 @@ describe('AuthController', () => {
   });
 
   describe('login', () => {
-    it('should return invalid credentials when user validation fails', () => {
+    it('should throw UnauthorizedException when user validation fails', () => {
       (authService.validateUser as jest.Mock).mockReturnValue(null);
       const loginDto = { username: 'invalid', password: 'wrong' };
-      const result = authController.login(loginDto);
+      expect(() => authController.login(loginDto)).toThrow(
+        UnauthorizedException,
+      );
       expect(authService.validateUser).toHaveBeenCalledWith('invalid', 'wrong');
-      expect(result).toEqual({ message: 'Invalid credentials' });
     });
 
     it('should return a token when credentials are valid', () => {

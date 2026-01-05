@@ -57,6 +57,16 @@
   }
 }
 
+.error {
+  color: var(--color-red-600);
+  background-color: var(--color-red-50);
+  border: 1px solid var(--color-red-200);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-4);
+}
+
 .form {
   display: flex;
   flex-direction: column;

@@ -2,7 +2,7 @@
 import { Link } from '@tanstack/react-router';
 import { motion } from 'framer-motion';
 import { useNavStore } from 'ui/shared/stores/navStore';
-import { SignInButton } from '../../../signin/SignInButton';
+import { SignInButton } from '../../../signin/components/SignInButton';
 import styles from './NavigationRail.module.scss';
 import {
   User,

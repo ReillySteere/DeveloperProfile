@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { X } from 'lucide-react';
 import { Button } from 'ui/shared/components/Button/Button';
+import { useAuth } from '../hooks/useAuth';
 import styles from './SignInModal.module.scss';
 
 interface SignInModalProps {
@@ -16,6 +17,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isMounted, setIsMounted] = useState(false);
+  const { login, isLoading, error } = useAuth();
 
   useEffect(() => {
     setIsMounted(true);
@@ -42,12 +44,12 @@ export const SignInModal: React.FC<SignInModalProps> = ({
 
   if (!isOpen || !isMounted) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(
-      `Username: ${username} attempted to login with password: ${password}`,
-    );
-    onClose();
+    const success = await login(username, password);
+    if (success) {
+      onClose();
+    }
     // Reset form
     setUsername('');
     setPassword('');
@@ -75,6 +77,8 @@ export const SignInModal: React.FC<SignInModalProps> = ({
           </button>
         </div>
 
+        {error && <div className={styles.error}>{error}</div>}
+
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.formGroup}>
             <label htmlFor="username" className={styles.label}>
@@ -88,6 +92,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({
               className={styles.input}
               required
               autoFocus
+              disabled={isLoading}
             />
           </div>
 
@@ -102,15 +107,21 @@ export const SignInModal: React.FC<SignInModalProps> = ({
               onChange={(e) => setPassword(e.target.value)}
               className={styles.input}
               required
+              disabled={isLoading}
             />
           </div>
 
           <div className={styles.actions}>
-            <Button type="button" variant="secondary" onClick={onClose}>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={onClose}
+              disabled={isLoading}
+            >
               Cancel
             </Button>
-            <Button type="submit" variant="primary">
-              Sign In
+            <Button type="submit" variant="primary" disabled={isLoading}>
+              {isLoading ? 'Signing In...' : 'Sign In'}
             </Button>
           </div>
         </form>
