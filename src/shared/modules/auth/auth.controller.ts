@@ -7,9 +7,10 @@ import {
   UnauthorizedException,
   Inject,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { type IAuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { AuthCredentialsDto } from './auth.dto';
 import TOKENS from './tokens';
 
 @ApiTags('Auth')
@@ -23,9 +24,10 @@ export class AuthController {
 
   // Public endpoint: simulates a login and returns a JWT token
   @Post('login')
+  @ApiBody({ type: AuthCredentialsDto })
   @ApiOperation({ summary: 'Login and retrieve JWT token' })
   @ApiResponse({ status: 201, description: 'User logged in successfully' })
-  async login(@Body() loginDto: { username: string; password: string }) {
+  async login(@Body() loginDto: AuthCredentialsDto) {
     const user = await this.#authService.validateUser(
       loginDto.username,
       loginDto.password,
@@ -37,9 +39,10 @@ export class AuthController {
   }
 
   @Post('register')
+  @ApiBody({ type: AuthCredentialsDto })
   @ApiOperation({ summary: 'Register a new user' })
   @ApiResponse({ status: 201, description: 'User registered successfully' })
-  async register(@Body() registerDto: { username: string; password: string }) {
+  async register(@Body() registerDto: AuthCredentialsDto) {
     return this.#authService.register(
       registerDto.username,
       registerDto.password,
