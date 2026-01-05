@@ -72,6 +72,12 @@ A full-stack developer profile application built with a modern React frontend an
      yarn cypress:open
      ```
 
+## Environment Variables
+
+The application requires the following environment variables to be set. You can create a `.env` file in the root directory:
+
+- `JWT_AUTH_SECRET`: A secret key used for signing and verifying JSON Web Tokens (JWT). This is required for the authentication module to function correctly.
+
 ## Architecture
 
 This project follows a **Modular Monolith** architecture with a **Backend for Frontend (BFF)** pattern.
