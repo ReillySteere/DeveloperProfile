@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import * as fs from 'fs';
 
 import { ExperienceModule } from './modules/experience/experience.module';
 import { AboutModule } from './modules/about/about.module';
@@ -13,6 +14,25 @@ import { BlogPost } from './modules/blog/blog.entity';
 import { User } from 'server/shared/modules/auth/user.entity';
 import { SeedingModule } from './modules/seeding/seeding.module';
 
+const clientPath = join(__dirname, '..', '..', 'client');
+
+if (!fs.existsSync(clientPath)) {
+  console.log('Client path does not exist:', clientPath);
+  console.log('Current directory:', __dirname);
+  try {
+    const distPath = join(__dirname, '..', '..');
+    console.log('Contents of dist:', fs.readdirSync(distPath));
+  } catch (e) {
+    console.log('Could not list dist:', e);
+  }
+} else {
+  console.log('Client path exists:', clientPath);
+  console.log(
+    'Index file exists:',
+    fs.existsSync(join(clientPath, 'index.html')),
+  );
+}
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -22,7 +42,7 @@ import { SeedingModule } from './modules/seeding/seeding.module';
       synchronize: true,
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', '..', 'client'),
+      rootPath: clientPath,
     }),
     ExperienceModule,
     AboutModule,
