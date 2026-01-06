@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import styles from './frame.module.scss';
+import styles from './Frame.module.scss';
 import { useNavStore } from 'ui/shared/stores/navStore';
 
 interface FrameProps extends React.HTMLProps<HTMLDivElement> {
