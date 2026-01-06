@@ -1,5 +1,8 @@
 {
   "name": "developer-profile",
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "build": "npm run build:server && npm run build:ui",
     "build:ui": "webpack --config webpack.browser.js --mode production",
