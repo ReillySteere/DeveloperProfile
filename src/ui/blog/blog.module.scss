@@ -259,3 +259,9 @@
   border-top: 1px solid var(--border-default);
   justify-content: flex-end;
 }
+
+.createButtonContainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}

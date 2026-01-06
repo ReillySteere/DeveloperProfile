@@ -8,6 +8,7 @@ export interface IBlogRepository {
   findBySlug(slug: string): Promise<BlogPost | null>;
   findById(id: string): Promise<BlogPost | null>;
   update(id: string, post: Partial<BlogPost>): Promise<BlogPost | null>;
+  create(post: Partial<BlogPost>): Promise<BlogPost>;
 }
 
 @Injectable()
@@ -19,6 +20,11 @@ export class BlogRepository implements IBlogRepository {
     repo: Repository<BlogPost>,
   ) {
     this.#repo = repo;
+  }
+
+  create(post: Partial<BlogPost>): Promise<BlogPost> {
+    const newPost = this.#repo.create(post);
+    return this.#repo.save(newPost);
   }
 
   findAll(): Promise<Partial<BlogPost>[]> {

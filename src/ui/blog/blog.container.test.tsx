@@ -151,8 +151,38 @@ describe('Blog Integration', () => {
       expect(mockedAxios.get).toHaveBeenCalledWith('/api/blog');
     });
 
+    it('shows create button when authenticated', async () => {
+      mockedAxios.get.mockResolvedValueOnce({ data: mockPosts });
+      useAuthStore.setState({ isAuthenticated: true });
+
+      render(<BlogContainer />);
+
+      await waitFor(() => {
+        expect(screen.getByText('Create New Post')).toBeInTheDocument();
+      });
+    });
+
+    it('does not show create button when not authenticated', async () => {
+      mockedAxios.get.mockResolvedValueOnce({ data: mockPosts });
+      useAuthStore.setState({ isAuthenticated: false });
+
+      render(<BlogContainer />);
+
+      await waitFor(() => {
+        expect(screen.queryByText('Create New Post')).not.toBeInTheDocument();
+      });
+    });
+
     it('renders Outlet when child route is active', () => {
       mockUseMatches.mockReturnValue([{ routeId: '/blog/$slug' }]);
+
+      render(<BlogContainer />);
+
+      expect(screen.getByTestId('outlet')).toBeInTheDocument();
+    });
+
+    it('renders Outlet when create route is active', () => {
+      mockUseMatches.mockReturnValue([{ routeId: '/blog/create' }]);
 
       render(<BlogContainer />);
 

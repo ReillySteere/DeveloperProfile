@@ -1,14 +1,20 @@
 import React from 'react';
-import { Outlet, useMatches } from '@tanstack/react-router';
+import { Outlet, useMatches, Link } from '@tanstack/react-router';
 import { Frame } from 'ui/shared/components';
+import { Button } from 'ui/shared/components/Button/Button';
 import { QueryState } from 'ui/shared/components/QueryState/QueryState';
 import { useBlogPosts } from './hooks/useBlog';
 import { BlogList } from './views/SelectBlogPost/SelectBlogPost';
+import { useAuthStore } from 'ui/shared/stores/authStore';
+import styles from './blog.module.scss';
 
 export default function BlogContainer() {
   const matches = useMatches();
-  const isChildActive = matches.some((m) => m.routeId === '/blog/$slug');
+  const isChildActive = matches.some(
+    (m) => m.routeId === '/blog/$slug' || m.routeId === '/blog/create',
+  );
   const { data, isLoading, isError, error, refetch } = useBlogPosts();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   if (isChildActive) {
     return <Outlet />;
@@ -16,6 +22,13 @@ export default function BlogContainer() {
 
   return (
     <Frame id="blog">
+      {isAuthenticated && (
+        <div className={styles.createButtonContainer}>
+          <Link to="/blog/create">
+            <Button>Create New Post</Button>
+          </Link>
+        </div>
+      )}
       <QueryState
         isLoading={isLoading}
         isError={isError}

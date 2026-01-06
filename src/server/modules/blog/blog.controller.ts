@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Put,
+  Post,
   Body,
   Inject,
   Param,
@@ -11,6 +12,7 @@ import { IBlogService } from './blog.service';
 import TOKENS from './tokens';
 import { BlogPost } from 'shared/types';
 import { UpdateBlogPostDto } from './dto/updateBlogPost.dto';
+import { CreateBlogPostDto } from './dto/createBlogPost.dto';
 import {
   ApiTags,
   ApiOperation,
@@ -60,6 +62,22 @@ export class BlogController {
   @Get(':slug')
   findOne(@Param('slug') slug: string): Promise<BlogPost> {
     return this.#blogService.findBySlug(slug);
+  }
+
+  @ApiOperation({ summary: 'Create a new blog post' })
+  @ApiBody({
+    type: CreateBlogPostDto,
+    description: 'Data for the new blog post',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'The created blog post',
+  })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Post()
+  create(@Body() createBlogPostDto: CreateBlogPostDto): Promise<BlogPost> {
+    return this.#blogService.create(createBlogPostDto);
   }
 
   @ApiOperation({ summary: 'Update an existing blog post' })

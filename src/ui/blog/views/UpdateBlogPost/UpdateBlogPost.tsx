@@ -5,7 +5,7 @@ import { BlogPost as BlogPostType } from 'shared/types';
 import { Button } from 'ui/shared/components/Button/Button';
 
 interface UpdateBlogPostProps {
-  post: BlogPostType;
+  post?: Partial<BlogPostType>;
   onSave: (post: Partial<BlogPostType>) => void;
   onCancel: () => void;
 }
@@ -15,11 +15,27 @@ export const UpdateBlogPost: React.FC<UpdateBlogPostProps> = ({
   onSave,
   onCancel,
 }) => {
-  const [formData, setFormData] = useState<BlogPostType>({ ...post });
+  const [formData, setFormData] = useState<Partial<BlogPostType>>({
+    title: '',
+    slug: '',
+    metaDescription: '',
+    tags: [],
+    content: '',
+    ...(post || {}),
+  });
   const [showPreview, setShowPreview] = useState(false);
 
   useEffect(() => {
-    setFormData({ ...post });
+    if (post) {
+      setFormData({
+        title: '',
+        slug: '',
+        metaDescription: '',
+        tags: [],
+        content: '',
+        ...post,
+      });
+    }
   }, [post]);
 
   const handleChange = (
@@ -110,20 +126,22 @@ export const UpdateBlogPost: React.FC<UpdateBlogPostProps> = ({
               type="text"
               id="tags"
               name="tags"
-              value={formData.tags.join(', ')}
+              value={formData.tags?.join(', ') || ''}
               onChange={handleTagsChange}
             />
           </div>
 
-          <div className={styles.formGroup}>
-            <label>Published At</label>
-            <input
-              type="text"
-              value={new Date(formData.publishedAt).toLocaleString()}
-              disabled
-              readOnly
-            />
-          </div>
+          {formData.publishedAt && (
+            <div className={styles.formGroup}>
+              <label>Published At</label>
+              <input
+                type="text"
+                value={new Date(formData.publishedAt).toLocaleString()}
+                disabled
+                readOnly
+              />
+            </div>
+          )}
 
           <div className={styles.formGroup}>
             <label htmlFor="content">Content (Markdown)</label>
@@ -149,7 +167,7 @@ export const UpdateBlogPost: React.FC<UpdateBlogPostProps> = ({
         <div className={styles.preview}>
           <div className={styles.blogPost}>
             <h1>{formData.title}</h1>
-            <ReadBlogPost content={formData.content} />
+            <ReadBlogPost content={formData.content || ''} />
           </div>
           <div className={styles.actions}>
             <Button

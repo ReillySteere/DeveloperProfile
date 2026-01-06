@@ -7,6 +7,7 @@ export interface IBlogService {
   findAll(): Promise<Partial<BlogPost>[]>;
   findBySlug(slug: string): Promise<BlogPost>;
   update(id: string, post: Partial<BlogPost>): Promise<BlogPost>;
+  create(post: Partial<BlogPost>): Promise<BlogPost>;
 }
 
 @Injectable()
@@ -15,6 +16,13 @@ export class BlogService implements IBlogService {
 
   constructor(@Inject(TOKENS.BlogRepository) blogRepository: IBlogRepository) {
     this.#blogRepository = blogRepository;
+  }
+
+  create(post: Partial<BlogPost>): Promise<BlogPost> {
+    return this.#blogRepository.create({
+      ...post,
+      publishedAt: post.publishedAt || new Date().toISOString(),
+    });
   }
 
   async findAll(): Promise<Partial<BlogPost>[]> {

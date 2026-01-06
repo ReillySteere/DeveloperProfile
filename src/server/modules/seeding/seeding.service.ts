@@ -37,6 +37,12 @@ export class SeedingService implements OnApplicationBootstrap {
       'src/server/assets/data/experience.json',
     );
     try {
+      const count = await this.#experienceRepo.count();
+      if (count > 0) {
+        this.#logger.log('Experience data already exists. Skipping seed.');
+        return;
+      }
+
       const fileContent = await fs.readFile(dataPath, 'utf-8');
       const data = JSON.parse(fileContent);
 
@@ -63,6 +69,12 @@ export class SeedingService implements OnApplicationBootstrap {
       'src/server/assets/data/projects.json',
     );
     try {
+      const count = await this.#projectRepo.count();
+      if (count > 0) {
+        this.#logger.log('Projects data already exists. Skipping seed.');
+        return;
+      }
+
       const fileContent = await fs.readFile(dataPath, 'utf-8');
       const data = JSON.parse(fileContent);
 
@@ -86,6 +98,12 @@ export class SeedingService implements OnApplicationBootstrap {
       'src/server/assets/data/blog-posts.json',
     );
     try {
+      const count = await this.#blogRepo.count();
+      if (count > 0) {
+        this.#logger.log('Blog posts data already exists. Skipping seed.');
+        return;
+      }
+
       const fileContent = await fs.readFile(dataPath, 'utf-8');
       const data = JSON.parse(fileContent);
 

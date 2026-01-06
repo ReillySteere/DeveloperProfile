@@ -60,3 +60,25 @@ export function useUpdateBlogPost() {
     },
   });
 }
+
+export function useCreateBlogPost() {
+  const queryClient = useQueryClient();
+  const token = useAuthStore((state) => state.token);
+
+  return useMutation({
+    mutationFn: async (data: Partial<BlogPost>) => {
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+      const response = await axios.post<BlogPost>('/api/blog', data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['blog-posts'] });
+    },
+  });
+}
