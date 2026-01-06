@@ -2,14 +2,11 @@ import {
   Controller,
   Post,
   Body,
-  UseGuards,
-  Get,
   UnauthorizedException,
   Inject,
 } from '@nestjs/common';
 import { ApiBody, ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { type IAuthService } from './auth.service';
-import { JwtAuthGuard } from './jwt-auth.guard';
 import { AuthCredentialsDto } from './auth.dto';
 import TOKENS from './tokens';
 
@@ -22,7 +19,6 @@ export class AuthController {
     this.#authService = authService;
   }
 
-  // Public endpoint: simulates a login and returns a JWT token
   @Post('login')
   @ApiBody({ type: AuthCredentialsDto })
   @ApiOperation({ summary: 'Login and retrieve JWT token' })
@@ -47,16 +43,5 @@ export class AuthController {
       registerDto.username,
       registerDto.password,
     );
-  }
-
-  // Protected test endpoint that requires JWT authentication
-  @UseGuards(JwtAuthGuard)
-  @Get('protected')
-  @ApiOperation({
-    summary: 'Protected endpoint accessible only with a valid JWT',
-  })
-  @ApiResponse({ status: 200, description: 'Access granted', type: Object })
-  getProtectedData() {
-    return { message: 'JWT is valid. You have accessed protected data.' };
   }
 }

@@ -7,6 +7,7 @@ import { JwtStrategy } from './jwt.strategy';
 import { AuthController } from './auth.controller';
 import { User } from './user.entity';
 import TOKENS from './tokens';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Module({
   imports: [
@@ -23,11 +24,15 @@ import TOKENS from './tokens';
       useClass: AuthService,
     },
     {
+      provide: TOKENS.JwtAuthGuard,
+      useClass: JwtAuthGuard,
+    },
+    {
       provide: TOKENS.JwtStrategy,
       useClass: JwtStrategy,
     },
   ],
   controllers: [AuthController],
-  exports: [TOKENS.AuthService],
+  exports: [TOKENS.AuthService, TOKENS.JwtAuthGuard],
 })
 export class AuthModule {}

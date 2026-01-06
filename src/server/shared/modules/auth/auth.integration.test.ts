@@ -100,15 +100,6 @@ describe('Auth Integration', () => {
         expect(jwtService.sign).not.toHaveBeenCalled();
       });
     });
-
-    describe('getProtectedData', () => {
-      it('should return protected data message', () => {
-        const result = authController.getProtectedData();
-        expect(result).toEqual({
-          message: 'JWT is valid. You have accessed protected data.',
-        });
-      });
-    });
   });
 
   describe('JwtStrategy', () => {

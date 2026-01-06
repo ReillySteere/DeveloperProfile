@@ -8,18 +8,21 @@ import styles from './SignInButton.module.scss';
 export const SignInButton: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const isExpanded = useNavStore((s) => s.isExpanded);
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, user } = useAuth();
 
   if (isAuthenticated) {
     return (
-      <button
-        onClick={logout}
-        aria-label="Sign out"
-        className={styles.signInButton}
-      >
-        <LogOut size={24} />
-        {isExpanded && <span className={styles.label}>Sign Out</span>}
-      </button>
+      <div className={styles.signedInContainer}>
+        <h3 className={styles.welcomeMessage}>Welcome, {user?.username}!</h3>
+        <button
+          onClick={logout}
+          aria-label="Sign out"
+          className={styles.signInButton}
+        >
+          <LogOut size={24} />
+          {isExpanded && <span className={styles.label}>Sign Out</span>}
+        </button>
+      </div>
     );
   }
 
