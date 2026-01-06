@@ -23,7 +23,6 @@ import { SeedingModule } from './modules/seeding/seeding.module';
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', '..', 'client'),
-      exclude: ['/api/:rest(.*)'],
     }),
     ExperienceModule,
     AboutModule,
