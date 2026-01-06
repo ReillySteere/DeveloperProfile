@@ -1,1 +1,1 @@
-web: npm run start:server:prod
+web: node dist/src/server/main

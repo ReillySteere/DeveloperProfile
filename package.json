@@ -13,7 +13,7 @@
     "start:ui": "webpack serve --config webpack.browser.js --mode development",
     "start:server:debug": "nest start --debug --watch",
     "start:server:dev": "cross-env NODE_ENV=development nest start --entryFile=server/main --watch",
-    "start:server:prod": "node dist/server/main",
+    "start:server:prod": "node dist/src/server/main",
     "test:server": "jest --config jest.node.ts --coverage",
     "test:ui": "jest --config jest.browser.ts --coverage",
     "lint": "eslint \"src/**/*.{ts,tsx}\" --fix",
