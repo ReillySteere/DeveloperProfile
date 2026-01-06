@@ -7,7 +7,14 @@ import * as Sentry from '@sentry/node';
 import { ValidationPipe } from '@nestjs/common';
 import { SentryExceptionFilter } from './sentry-exception.filter';
 
+import * as fs from 'fs';
+
 async function bootstrap() {
+  // Ensure data directory exists for SQLite
+  if (!fs.existsSync('data')) {
+    fs.mkdirSync('data');
+  }
+
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
     integrations: [Sentry.httpIntegration()],
@@ -33,6 +40,8 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
 
-  await app.listen(3000);
+  const port = process.env.PORT || 3000;
+  await app.listen(port);
+  console.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap();
