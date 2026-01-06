@@ -126,7 +126,7 @@ export const UpdateBlogPost: React.FC<UpdateBlogPostProps> = ({
               type="text"
               id="tags"
               name="tags"
-              value={formData.tags?.join(', ') || ''}
+              value={formData.tags?.join(', ')}
               onChange={handleTagsChange}
             />
           </div>

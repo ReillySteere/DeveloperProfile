@@ -63,6 +63,42 @@ describe('Blog Integration', () => {
     await expect(controller.findOne('non-existent')).rejects.toThrow();
   });
 
+  it('should create a new post', async () => {
+    const newPostData = {
+      title: 'New Integration Post',
+      slug: 'new-integration-post',
+      content: '# New Content',
+      metaDescription: 'New Meta',
+      tags: ['new', 'integration'],
+      publishedAt: new Date().toISOString(),
+    };
+
+    const created = await controller.create(newPostData);
+
+    expect(created).toBeDefined();
+    expect(created.id).toBeDefined();
+    expect(created.title).toBe(newPostData.title);
+    expect(created.slug).toBe(newPostData.slug);
+
+    const verified = await controller.findOne(newPostData.slug);
+    expect(verified.title).toBe(newPostData.title);
+  });
+
+  it('should create a new post with default publishedAt', async () => {
+    const newPostData = {
+      title: 'No Date Post',
+      slug: 'no-date-post',
+      content: '# Content',
+      metaDescription: 'Desc',
+      tags: [],
+    };
+
+    const created = await controller.create(newPostData as any);
+
+    expect(created.publishedAt).toBeDefined();
+    expect(new Date(created.publishedAt).getTime()).not.toBeNaN();
+  });
+
   it('should update an existing post', async () => {
     const post = await controller.findOne('hello-world');
     expect(post).toBeDefined();

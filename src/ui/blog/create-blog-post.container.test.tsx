@@ -130,6 +130,46 @@ describe('CreateBlogPostContainer', () => {
     });
   });
 
+  it('navigates to /blog on cancel', async () => {
+    useAuthStore.setState({ isAuthenticated: true, token: 'fake-token' });
+    render(<CreateBlogPostContainer />);
+
+    fireEvent.click(screen.getByText('Cancel'));
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith({ to: '/blog' });
+    });
+  });
+
+  it('toggles preview mode', async () => {
+    useAuthStore.setState({ isAuthenticated: true, token: 'fake-token' });
+    render(<CreateBlogPostContainer />);
+
+    // Fill some content to preview
+    fireEvent.change(screen.getByLabelText(/Title/i), {
+      target: { value: 'Preview Title' },
+    });
+    fireEvent.change(screen.getByLabelText(/Content/i), {
+      target: { value: '# Preview Content' },
+    });
+
+    // Switch to preview
+    fireEvent.click(screen.getByText('Preview Mode'));
+
+    expect(screen.getByText('Edit Mode')).toBeInTheDocument();
+    expect(screen.getByText('Preview Title')).toBeInTheDocument();
+    // Since we mock markdown rendering, we might just see div or similar,
+    // but ReadBlogPost is structured to show content.
+    // In the mock for react-markdown (top of file):
+    // jest.mock('react-markdown', () => (props: any) => ... React.createElement('div', null, props.children)
+    expect(screen.getByText('# Preview Content')).toBeInTheDocument();
+
+    // Switch back
+    fireEvent.click(screen.getByText('Back to Edit'));
+    expect(screen.getByText('Preview Mode')).toBeInTheDocument();
+    expect(screen.getByLabelText(/Title/i)).toHaveValue('Preview Title');
+  });
+
   it('logs error on failure', async () => {
     const consoleSpy = jest
       .spyOn(console, 'error')
