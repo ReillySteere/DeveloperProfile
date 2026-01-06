@@ -1,5 +1,6 @@
 const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
 const { tanstackRouter } = require('@tanstack/router-plugin/webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const path = require('path');
 
@@ -9,7 +10,7 @@ module.exports = {
 
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'dist/client'),
   },
 
   resolve: {
@@ -93,6 +94,9 @@ module.exports = {
       routesDirectory: './src/ui/shared/routes',
       generatedRouteTree: './src/ui/routeTree.gen.ts',
       semicolons: true,
+    }),
+    new HtmlWebpackPlugin({
+      template: './public/index.html',
     }),
   ],
 };

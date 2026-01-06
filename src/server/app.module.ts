@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 import { ExperienceModule } from './modules/experience/experience.module';
 import { AboutModule } from './modules/about/about.module';
@@ -18,6 +20,10 @@ import { SeedingModule } from './modules/seeding/seeding.module';
       database: 'data/database.sqlite',
       entities: [Experience, Project, BlogPost, User],
       synchronize: true,
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', '..', 'client'),
+      exclude: ['/api/(.*)'],
     }),
     ExperienceModule,
     AboutModule,
