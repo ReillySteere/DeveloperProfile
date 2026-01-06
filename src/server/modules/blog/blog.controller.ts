@@ -64,10 +64,10 @@ export class BlogController {
 
   @ApiOperation({ summary: 'Update an existing blog post' })
   @ApiParam({
-    name: 'slug',
+    name: 'id',
     type: 'string',
-    description: 'Slug of the blog post to update',
-    example: 'my-first-blog-post',
+    description: 'ID of the blog post to update',
+    example: 'uuid-1234',
   })
   @ApiBody({
     type: UpdateBlogPostDto,
@@ -87,11 +87,11 @@ export class BlogController {
   })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Put(':slug')
+  @Put(':id')
   update(
-    @Param('slug') slug: string,
+    @Param('id') id: string,
     @Body() updateBlogPostDto: UpdateBlogPostDto,
   ): Promise<BlogPost> {
-    return this.#blogService.update(slug, updateBlogPostDto);
+    return this.#blogService.update(id, updateBlogPostDto);
   }
 }

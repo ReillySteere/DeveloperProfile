@@ -8,7 +8,11 @@ const createTestQueryClient = () =>
     defaultOptions: { queries: { retry: false } },
   });
 
-const AllTheProviders = ({ children }: { children?: React.ReactNode }) => {
+export const AllTheProviders = ({
+  children,
+}: {
+  children?: React.ReactNode;
+}) => {
   const testQueryClient = createTestQueryClient();
   return (
     <QueryClientProvider client={testQueryClient}>

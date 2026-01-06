@@ -3,7 +3,7 @@ import { Outlet, useMatches } from '@tanstack/react-router';
 import { Frame } from 'ui/shared/components';
 import { QueryState } from 'ui/shared/components/QueryState/QueryState';
 import { useBlogPosts } from './hooks/useBlog';
-import { BlogList } from './components/BlogList';
+import { BlogList } from './views/SelectBlogPost/SelectBlogPost';
 
 export default function BlogContainer() {
   const matches = useMatches();

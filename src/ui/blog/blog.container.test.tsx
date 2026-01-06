@@ -1,12 +1,18 @@
 import React from 'react';
-import { render, screen, waitFor } from 'ui/test-utils';
+import { render, screen, waitFor, fireEvent } from 'ui/test-utils';
 import BlogContainer from './blog.container';
 import BlogPostContainer from './blog-post.container';
 import axios from 'axios';
+import { useAuth } from 'ui/signin/hooks/useAuth';
+import { useAuthStore } from 'ui/shared/stores/authStore';
 
 // Mock axios
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
+
+// Mock useAuth
+jest.mock('ui/signin/hooks/useAuth');
+const mockUseAuth = useAuth as jest.MockedFunction<typeof useAuth>;
 
 // Mock react-syntax-highlighter
 jest.mock('react-syntax-highlighter', () => {
@@ -78,6 +84,7 @@ jest.mock('react-markdown', () => (props: any) => {
 // Mock router hooks
 const mockUseMatches = jest.fn();
 const mockUseParams = jest.fn();
+const mockNavigate = jest.fn();
 
 jest.mock('@tanstack/react-router', () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -87,6 +94,7 @@ jest.mock('@tanstack/react-router', () => {
     ...actual,
     useParams: (opts: any) => mockUseParams(opts) || {},
     useMatches: () => mockUseMatches() || [],
+    useNavigate: () => mockNavigate,
     Outlet: () => <div data-testid="outlet" />,
     createFileRoute: () => () => () => null,
     Link: (props: any) => React.createElement('a', props, props.children),
@@ -114,6 +122,16 @@ describe('Blog Integration', () => {
     mockUseMatches.mockReturnValue([]);
     // Default: Slug present
     mockUseParams.mockReturnValue({ slug: 'hello-world' });
+    // Default: Not authenticated
+    mockUseAuth.mockReturnValue({
+      isAuthenticated: false,
+      login: jest.fn(),
+      logout: jest.fn(),
+      isLoading: false,
+      user: null,
+      error: null,
+    });
+    useAuthStore.setState({ token: null, isAuthenticated: false, user: null });
   });
 
   describe('BlogContainer (List View)', () => {
@@ -184,6 +202,279 @@ describe('Blog Integration', () => {
         // SyntaxHighlighter mock renders a 'pre'
         expect(document.querySelector('pre')).toBeInTheDocument();
         expect(screen.getByText('const x = 1;')).toBeInTheDocument();
+      });
+    });
+
+    it('updates blog post and navigates on slug change', async () => {
+      mockedAxios.get.mockResolvedValueOnce({ data: mockPost });
+
+      // Setup authenticated state
+      mockUseAuth.mockReturnValue({
+        isAuthenticated: true,
+        login: jest.fn(),
+        logout: jest.fn(),
+        isLoading: false,
+        user: { username: 'test' },
+        error: null,
+      });
+      useAuthStore.setState({
+        token: 'fake-token',
+        isAuthenticated: true,
+        user: { username: 'test' },
+      });
+
+      // Mock update response
+      mockedAxios.put.mockResolvedValueOnce({
+        data: { ...mockPost, slug: 'new-slug' },
+      });
+
+      render(<BlogPostContainer />);
+
+      // Wait for load
+      await waitFor(() => {
+        expect(screen.getByText('Hello World')).toBeInTheDocument();
+      });
+
+      // Click Edit
+      fireEvent.click(screen.getByText('Edit Post'));
+
+      // Change slug
+      const slugInput = screen.getByLabelText('Slug');
+      fireEvent.change(slugInput, { target: { value: 'new-slug' } });
+
+      // Save
+      fireEvent.click(screen.getByText('Save Changes'));
+
+      // Verify API call
+      await waitFor(() => {
+        expect(mockedAxios.put).toHaveBeenCalledWith(
+          '/api/blog/1',
+          expect.objectContaining({ slug: 'new-slug' }),
+          expect.objectContaining({
+            headers: expect.objectContaining({
+              Authorization: 'Bearer fake-token',
+            }),
+          }),
+        );
+      });
+
+      // Check navigation
+      await waitFor(() => {
+        expect(mockNavigate).toHaveBeenCalledWith({
+          to: '/blog/$slug',
+          params: { slug: 'new-slug' },
+        });
+      });
+    });
+
+    it('handles update errors gracefully', async () => {
+      mockedAxios.get.mockResolvedValueOnce({ data: mockPost });
+      mockUseAuth.mockReturnValue({
+        isAuthenticated: true,
+        login: jest.fn(),
+        logout: jest.fn(),
+        isLoading: false,
+        user: { username: 'test' },
+        error: null,
+      });
+      useAuthStore.setState({
+        token: 'fake-token',
+        isAuthenticated: true,
+        user: { username: 'test' },
+      });
+
+      // Mock failure
+      // We must reject the promise for axios.put in order to trigger onError
+      mockedAxios.put.mockRejectedValueOnce(new Error('Update failed'));
+
+      // Mock console.error to avoid polluting output
+      const consoleErrorSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+      const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
+
+      render(<BlogPostContainer />);
+
+      // Load post
+      await waitFor(() => {
+        expect(screen.getByText('Hello World')).toBeInTheDocument();
+      });
+
+      // Edit and Save
+      fireEvent.click(screen.getByText('Edit Post'));
+      fireEvent.click(screen.getByText('Save Changes'));
+
+      // Expect alert
+      await waitFor(() => {
+        expect(alertSpy).toHaveBeenCalledWith('Failed to update post');
+      });
+
+      consoleErrorSpy.mockRestore();
+      alertSpy.mockRestore();
+    });
+
+    it('fails to update if no token is present', async () => {
+      mockedAxios.get.mockResolvedValueOnce({ data: mockPost });
+
+      // Authenticated in UI to show edit button, but store has no token
+      mockUseAuth.mockReturnValue({
+        isAuthenticated: true,
+        login: jest.fn(),
+        logout: jest.fn(),
+        isLoading: false,
+        user: { username: 'test' },
+        error: null,
+      });
+      // Set store to unauthenticated/no token to trigger the hook error
+      useAuthStore.setState({
+        token: null,
+        isAuthenticated: false,
+        user: null,
+      });
+
+      const consoleErrorSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+      const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
+
+      render(<BlogPostContainer />);
+
+      // Load post
+      await waitFor(() => {
+        expect(screen.getByText('Hello World')).toBeInTheDocument();
+      });
+
+      // Edit and Save
+      fireEvent.click(screen.getByText('Edit Post'));
+      fireEvent.click(screen.getByText('Save Changes'));
+
+      // Expect alert
+      await waitFor(() => {
+        expect(alertSpy).toHaveBeenCalledWith('Failed to update post');
+      });
+
+      // Verify the error logged was indeed the token error
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Failed to update post:',
+        expect.objectContaining({ message: 'No authentication token found' }),
+      );
+
+      consoleErrorSpy.mockRestore();
+      alertSpy.mockRestore();
+    });
+
+    it('cancels edit mode', async () => {
+      mockedAxios.get.mockResolvedValueOnce({ data: mockPost });
+      mockUseAuth.mockReturnValue({
+        isAuthenticated: true,
+        login: jest.fn(),
+        logout: jest.fn(),
+        isLoading: false,
+        user: { username: 'test' },
+        error: null,
+      });
+
+      render(<BlogPostContainer />);
+
+      // Wait for load
+      await waitFor(() => {
+        expect(screen.getByText('Hello World')).toBeInTheDocument();
+      });
+
+      // Enter edit mode
+      fireEvent.click(screen.getByText('Edit Post'));
+      expect(screen.getByText('Save Changes')).toBeInTheDocument();
+
+      // Cancel
+      fireEvent.click(screen.getByText('Cancel'));
+
+      // Should be back to view mode
+      expect(screen.queryByText('Save Changes')).not.toBeInTheDocument();
+      expect(screen.getByText('Edit Post')).toBeInTheDocument();
+    });
+
+    it('toggles preview mode in edit', async () => {
+      mockedAxios.get.mockResolvedValueOnce({ data: mockPost });
+      mockUseAuth.mockReturnValue({
+        isAuthenticated: true,
+        login: jest.fn(),
+        logout: jest.fn(),
+        isLoading: false,
+        user: { username: 'test' },
+        error: null,
+      });
+
+      render(<BlogPostContainer />);
+
+      await waitFor(() => {
+        expect(screen.getByText('Edit Post')).toBeInTheDocument();
+      });
+
+      // Enter edit mode
+      fireEvent.click(screen.getByText('Edit Post'));
+
+      // Toggle Preview
+      const previewButton = screen.getByText('Preview Mode');
+      fireEvent.click(previewButton);
+
+      // Should see "Edit Mode" button now
+      expect(screen.getByText('Edit Mode')).toBeInTheDocument();
+      // Should see preview content (using ReadBlogPost)
+      expect(screen.getByText('Back to Edit')).toBeInTheDocument();
+
+      // Go back to Edit
+      fireEvent.click(screen.getByText('Back to Edit'));
+      expect(screen.getByText('Preview Mode')).toBeInTheDocument();
+    });
+
+    it('updates various fields correctly', async () => {
+      mockedAxios.get.mockResolvedValueOnce({ data: mockPost });
+      mockUseAuth.mockReturnValue({
+        isAuthenticated: true,
+        login: jest.fn(),
+        logout: jest.fn(),
+        isLoading: false,
+        user: { username: 'test' },
+        error: null,
+      });
+      useAuthStore.setState({
+        token: 'fake-token',
+        isAuthenticated: true,
+        user: { username: 'test' },
+      });
+      mockedAxios.put.mockResolvedValueOnce({ data: mockPost });
+
+      render(<BlogPostContainer />);
+      await waitFor(() => screen.findByText('Edit Post'));
+      fireEvent.click(screen.getByText('Edit Post'));
+
+      // Update fields
+      fireEvent.change(screen.getByLabelText('Title'), {
+        target: { value: 'New Title' },
+      });
+      fireEvent.change(screen.getByLabelText('Meta Description'), {
+        target: { value: 'New Desc' },
+      });
+      fireEvent.change(screen.getByLabelText('Tags (comma separated)'), {
+        target: { value: 'tag1, tag2' },
+      });
+      fireEvent.change(screen.getByLabelText('Content (Markdown)'), {
+        target: { value: '# New Content' },
+      });
+
+      fireEvent.click(screen.getByText('Save Changes'));
+
+      await waitFor(() => {
+        expect(mockedAxios.put).toHaveBeenCalledWith(
+          '/api/blog/1',
+          expect.objectContaining({
+            title: 'New Title',
+            metaDescription: 'New Desc',
+            tags: ['tag1', 'tag2'],
+            content: '# New Content',
+          }),
+          expect.anything(),
+        );
       });
     });
 

@@ -48,6 +48,75 @@
   }
 }
 
+.editContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: var(--bg-surface);
+  border-radius: 8px;
+  border: 1px solid var(--border-default);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+  }
+
+  input,
+  textarea {
+    padding: 0.75rem;
+    border: 1px solid var(--border-default);
+    border-radius: 6px;
+    background: var(--bg-app);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: var(--primary-default);
+      box-shadow: 0 0 0 3px var(--color-indigo-100);
+    }
+  }
+
+  textarea {
+    min-height: 400px;
+    resize: vertical;
+    line-height: 1.6;
+    font-family: 'Fira Code', monospace;
+  }
+}
+
+.previewToggle {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.preview {
+  margin-top: 1rem;
+  border-top: 1px solid var(--border-default);
+  padding-top: 2rem;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-default);
+}
+
 .blogPost {
   max-width: 800px;
   margin: 0 auto;
@@ -129,4 +198,64 @@
     border-radius: 0.5rem;
     overflow: hidden;
   }
+}
+
+.editForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.editContainer {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+}
+
+.input,
+.textarea,
+.textareaLarge {
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-default);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 1rem;
+
+  &:focus {
+    outline: 2px solid var(--primary-default);
+    border-color: transparent;
+  }
+}
+
+.textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.textareaLarge {
+  min-height: 400px;
+  font-family: monospace;
+  resize: vertical;
+}
+
+.editActions {
+  display: flex;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-default);
+  justify-content: flex-end;
 }

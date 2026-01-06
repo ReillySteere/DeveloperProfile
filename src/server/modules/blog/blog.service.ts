@@ -6,7 +6,7 @@ import TOKENS from './tokens';
 export interface IBlogService {
   findAll(): Promise<Partial<BlogPost>[]>;
   findBySlug(slug: string): Promise<BlogPost>;
-  update(slug: string, post: Partial<BlogPost>): Promise<BlogPost>;
+  update(id: string, post: Partial<BlogPost>): Promise<BlogPost>;
 }
 
 @Injectable()
@@ -29,10 +29,10 @@ export class BlogService implements IBlogService {
     return post;
   }
 
-  async update(slug: string, post: Partial<BlogPost>): Promise<BlogPost> {
-    const updated = await this.#blogRepository.update(slug, post);
+  async update(id: string, post: Partial<BlogPost>): Promise<BlogPost> {
+    const updated = await this.#blogRepository.update(id, post);
     if (!updated) {
-      throw new NotFoundException(`Blog post with slug "${slug}" not found`);
+      throw new NotFoundException(`Blog post with id "${id}" not found`);
     }
     return updated;
   }

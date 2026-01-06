@@ -67,7 +67,7 @@ describe('Blog Integration', () => {
     const post = await controller.findOne('hello-world');
     expect(post).toBeDefined();
 
-    const updated = await controller.update(post.slug, {
+    const updated = await controller.update(post.id, {
       title: 'Updated Title',
       content: 'Updated Content',
     });
@@ -79,9 +79,9 @@ describe('Blog Integration', () => {
     expect(verified.title).toBe('Updated Title');
   });
 
-  it('should throw error when updating non-existent slug', async () => {
+  it('should throw error when updating non-existent id', async () => {
     await expect(
-      controller.update('non-existent-slug', {
+      controller.update('non-existent-id', {
         title: 'New',
       }),
     ).rejects.toThrow();

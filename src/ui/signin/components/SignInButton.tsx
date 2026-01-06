@@ -10,10 +10,10 @@ export const SignInButton: React.FC = () => {
   const isExpanded = useNavStore((s) => s.isExpanded);
   const { isAuthenticated, logout, user } = useAuth();
 
-  if (isAuthenticated) {
+  if (isAuthenticated && user) {
     return (
       <div className={styles.signedInContainer}>
-        <h3 className={styles.welcomeMessage}>Welcome, {user?.username}!</h3>
+        <h3 className={styles.welcomeMessage}>Welcome, {user.username}!</h3>
         <button
           onClick={logout}
           aria-label="Sign out"

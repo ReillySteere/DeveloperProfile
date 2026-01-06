@@ -6,7 +6,8 @@ import { BlogPost } from './blog.entity';
 export interface IBlogRepository {
   findAll(): Promise<Partial<BlogPost>[]>;
   findBySlug(slug: string): Promise<BlogPost | null>;
-  update(slug: string, post: Partial<BlogPost>): Promise<BlogPost | null>;
+  findById(id: string): Promise<BlogPost | null>;
+  update(id: string, post: Partial<BlogPost>): Promise<BlogPost | null>;
 }
 
 @Injectable()
@@ -33,11 +34,12 @@ export class BlogRepository implements IBlogRepository {
     return this.#repo.findOne({ where: { slug } });
   }
 
-  async update(
-    slug: string,
-    post: Partial<BlogPost>,
-  ): Promise<BlogPost | null> {
-    const existing = await this.findBySlug(slug);
+  findById(id: string): Promise<BlogPost | null> {
+    return this.#repo.findOne({ where: { id } });
+  }
+
+  async update(id: string, post: Partial<BlogPost>): Promise<BlogPost | null> {
+    const existing = await this.findById(id);
     if (!existing) {
       return null;
     }
