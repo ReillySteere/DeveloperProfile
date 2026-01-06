@@ -4,7 +4,7 @@
     "paths": {
       "ui/*": ["src/ui/*"],
       "shared/*": ["src/shared/*"],
-      "backend/*": ["src/server/*"]
+      "server/*": ["src/server/*"]
     },
     "target": "ESNext",
     "lib": ["dom", "ESNext"],

@@ -12,7 +12,7 @@
 - **Backend (`src/server`):**
   - **Framework:** NestJS + TypeORM + SQLite.
   - **Auth:** Passport JWT.
-- **Path Aliases:** `ui/*`, `shared/*`, `backend/*` (configured in `tsconfig.json`).
+- **Path Aliases:** `ui/*`, `shared/*`, `server/*` (configured in `tsconfig.json`).
 
 ## Critical Workflows
 

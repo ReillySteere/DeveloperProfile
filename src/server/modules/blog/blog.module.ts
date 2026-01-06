@@ -5,9 +5,10 @@ import { BlogService } from './blog.service';
 import { BlogRepository } from './blog.repository';
 import { BlogPost } from './blog.entity';
 import TOKENS from './tokens';
+import { AuthModule } from 'server/shared/modules/auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([BlogPost])],
+  imports: [TypeOrmModule.forFeature([BlogPost]), AuthModule],
   controllers: [BlogController],
   providers: [
     {

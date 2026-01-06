@@ -5,7 +5,7 @@ module.exports = {
   moduleDirectories: [__dirname, 'node_modules', 'test-utils'],
   moduleNameMapper: {
     '\\.([s]*css|woff)': 'identity-obj-proxy',
-    '^backend/(.*)$': '<rootDir>/src/server/$1',
+    '^server/(.*)$': '<rootDir>/src/server/$1',
   },
   setupFilesAfterEnv: ['./src/server/test-utils/jest-node-preloaded.ts'],
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],

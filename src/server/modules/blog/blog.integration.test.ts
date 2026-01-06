@@ -62,4 +62,28 @@ describe('Blog Integration', () => {
   it('should throw error for non-existent slug', async () => {
     await expect(controller.findOne('non-existent')).rejects.toThrow();
   });
+
+  it('should update an existing post', async () => {
+    const post = await controller.findOne('hello-world');
+    expect(post).toBeDefined();
+
+    const updated = await controller.update(post.slug, {
+      title: 'Updated Title',
+      content: 'Updated Content',
+    });
+
+    expect(updated.title).toBe('Updated Title');
+    expect(updated.content).toBe('Updated Content');
+
+    const verified = await controller.findOne('hello-world');
+    expect(verified.title).toBe('Updated Title');
+  });
+
+  it('should throw error when updating non-existent slug', async () => {
+    await expect(
+      controller.update('non-existent-slug', {
+        title: 'New',
+      }),
+    ).rejects.toThrow();
+  });
 });
