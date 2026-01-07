@@ -29,14 +29,19 @@ The Blog feature is a content publishing system designed to share technical arti
     - **Optimization:** Selects only metadata (`id`, `slug`, `title`, `metaDescription`, `publishedAt`, `tags`) to reduce payload size.
     - **Sorting:** Orders by `publishedAt` descending.
   - `GET /:slug`: Returns the full blog post object, including `content`.
+  - `POST /`: Creates a new blog post (Authenticated).
+  - `PUT /:id`: Updates an existing blog post (Authenticated).
 - **Service:** `BlogService`
   - Handles retrieval logic and error handling (e.g., `NotFoundException` for invalid slugs).
+  - **Authorization:** Create and Update operations are guarded and require valid authentication. Requests from unauthorized users are rejected.
 
 ### 3. Frontend Data Fetching (TanStack Query)
 
 - **Hooks:** `src/ui/blog/hooks/useBlog.ts`
   - `useBlogPosts()`: Fetches the list of posts from `/api/blog`.
   - `useBlogPost(slug)`: Fetches a single post from `/api/blog/:slug`.
+  - `useCreateBlogPost()`: Mutation to create a new post. Checks for auth token before request.
+  - `useUpdateBlogPost()`: Mutation to update an existing post. Checks for auth token before request.
 - **State Management:** Uses `QueryState` to handle loading, error, and empty states consistently.
 
 ### 4. User Interface (React)
@@ -48,17 +53,27 @@ The Blog feature is a content publishing system designed to share technical arti
     - If a child route (`$slug`) is active, it renders the `<Outlet />`.
     - If no child route is active, it renders the `BlogList`.
     - This allows for a clean separation of concerns while maintaining a unified route structure.
+  - **Authentication:** Editing and creating posts are restricted to authenticated users.
+    - `BlogContainer` conditionally renders the "Create New Post" button based on auth state.
+    - `BlogPostContainer` conditionally renders the "Edit Post" button based on auth state.
 
 - **Containers:**
   - `BlogContainer` (`src/ui/blog/blog.container.tsx`): Manages the list view and routing logic.
-  - `BlogPostContainer` (`src/ui/blog/blog-post.container.tsx`): Manages the detail view for a specific post.
+  - `BlogPostContainer` (`src/ui/blog/blog-post.container.tsx`): Manages the detail view.
+  - `CreateBlogPostContainer` (`src/ui/blog/create-blog-post.container.tsx`): Manages the creation flow, redirecting if unauthenticated.
+
+- **Views:** To manage complexity, UI components are subdivided into views:
+  - `ReadBlogPost`: Logic for displaying the rendered content (Markdown, Mermaid, Syntax Highlighting).
+  - `UpdateBlogPost`: Form for editing/creating posts. Handles form state, preview toggling, and validation.
+  - `SelectBlogPost`: List view of all available blog posts, allowing user selection of the appropriate post.
 
 - **Key Components:**
-  - `BlogList`: Renders a grid/list of `Card` components displaying post summaries.
-  - `BlogPost`: Renders the full article.
+  - `BlogList` (in `SelectBlogPost.tsx`): Renders a grid of `Card` components displaying post summaries.
+  - `ReadBlogPost`: Renders the full article content.
     - **Markdown Rendering:** Uses `react-markdown` to parse content.
     - **Syntax Highlighting:** Uses `react-syntax-highlighter` (Prism) for code blocks.
-    - **Diagrams:** Custom `Mermaid` component renders `mermaid` code blocks as SVG diagrams.
+    - **Diagrams:** Custom `Mermaid` component (`src/ui/blog/components/Mermaid.tsx`) renders `mermaid` code blocks as SVG diagrams.
+  - `UpdateBlogPost`: A form component used for both creating and updating blog posts. Includes "Edit" and "Preview" modes.
 
 ## Key Dependencies
 
@@ -75,8 +90,12 @@ The Blog feature is a content publishing system designed to share technical arti
   - Verifies data seeding.
   - Tests list retrieval (ensuring heavy content fields are excluded).
   - Tests single post retrieval by slug.
-- **Frontend Integration:** `blog.container.test.tsx`
-  - **Mocking:** Extensive mocking required for `react-markdown`, `mermaid`, and `react-syntax-highlighter` to avoid ESM/CommonJS compatibility issues in the test environment.
+  - **Authorization:** Ensures protected endpoints (POST/PUT) reject unauthenticated requests.
+- **Frontend Integration:** `blog.container.test.tsx` & `create-blog-post.container.test.tsx`
+  - **Container Level Testing:** All functionality, including edge cases and branch logic, is tested at the container level.
+    - Unit tests for child components (e.g., `UpdateBlogPost`) are avoided in favor of integration tests covering the full user flow.
+    - Internal custom hooks (e.g., `useBlog`) are exercised naturally through the container interactions and NOT mocked.
+  - **Mocking:** Extensive mocking required for `react-markdown`, `mermaid`, and `react-syntax-highlighter` to avoid ESM/CommonJS compatibility issues.
   - **Routing Tests:** Verifies that the correct view (List vs. Outlet) is rendered based on the active route.
 
 ## Future Roadmap

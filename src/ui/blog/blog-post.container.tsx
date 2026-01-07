@@ -84,7 +84,7 @@ export default function BlogPostContainer() {
                       {new Date(post.publishedAt).toLocaleDateString()}
                     </span>
                     <div className={styles.tags}>
-                      {post.tags.map((tag) => (
+                      {post.tags?.map((tag) => (
                         <Badge key={tag} variant="primary">
                           {tag}
                         </Badge>

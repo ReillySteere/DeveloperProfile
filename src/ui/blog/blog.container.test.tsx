@@ -528,6 +528,78 @@ describe('Blog Integration', () => {
       });
     });
 
+    it('updates editing form when underlying post data changes', async () => {
+      // 1. Initial Load
+      mockedAxios.get.mockResolvedValueOnce({ data: mockPost });
+      mockUseAuth.mockReturnValue({
+        isAuthenticated: true,
+        login: jest.fn(),
+        logout: jest.fn(),
+        isLoading: false,
+        user: { username: 'test' },
+        error: null,
+      });
+
+      const { rerender } = render(<BlogPostContainer />);
+
+      await waitFor(() => {
+        expect(screen.getByText('Hello World')).toBeInTheDocument();
+      });
+
+      // 2. Enter Edit Mode
+      fireEvent.click(screen.getByText('Edit Post'));
+      const titleInput = screen.getByLabelText('Title');
+      expect(titleInput).toHaveValue('Hello World');
+
+      // 3. Simulate Route Change -> Data Change
+      // Change params to trigger a refetch in useBlogPost
+      mockUseParams.mockReturnValue({ slug: 'new-slug' });
+      // Setup next API response
+      const updatedPost = {
+        ...mockPost,
+        title: 'Updated Title',
+        slug: 'new-slug',
+      };
+      mockedAxios.get.mockResolvedValueOnce({ data: updatedPost });
+
+      // Rerender with new params (simulating router update)
+      rerender(<BlogPostContainer />);
+
+      // 4. Verification
+      // The useEffect in UpdateBlogPost should detect the prop change and update the form
+      await waitFor(() => {
+        // We assert on the input value to confirm the form state was updated
+        expect(screen.getByLabelText('Title')).toHaveValue('Updated Title');
+      });
+    });
+
+    it('handles post with undefined tags', async () => {
+      const postWithNoTags = { ...mockPost, tags: undefined };
+      mockedAxios.get.mockResolvedValueOnce({ data: postWithNoTags });
+      mockUseAuth.mockReturnValue({
+        isAuthenticated: true,
+        login: jest.fn(),
+        logout: jest.fn(),
+        isLoading: false,
+        user: { username: 'test' },
+        error: null,
+      });
+
+      render(<BlogPostContainer />);
+
+      await waitFor(() => {
+        expect(screen.getByText('Hello World')).toBeInTheDocument();
+      });
+
+      fireEvent.click(screen.getByText('Edit Post'));
+
+      await waitFor(() => {
+        // Explicitly check for empty value when tags are undefined
+        // This covers the optional chaining branch in UpdateBlogPost
+        expect(screen.getByLabelText('Tags (comma separated)')).toHaveValue('');
+      });
+    });
+
     it('does not fetch if slug is missing', async () => {
       mockUseParams.mockReturnValue({}); // No slug
 

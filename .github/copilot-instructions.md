@@ -62,6 +62,10 @@
 - **Testing:**
   - Use `render` from `ui/test-utils` (wraps `QueryClientProvider`).
   - Test files: `src/ui/**/*.test.ts*`.
+  - **Strategy:** UI tests must be **integration tests** at the container level.
+    - Do not create unit tests for child components unless absolutely necessary (e.g. complex shared components).
+    - Cover all edge cases and branch logic via the container integration suite.
+    - **Do not mock internal hooks** used within the container; rely on `msw` or `axios` mocks for the network layer.
 
 ## Testing Specifics
 

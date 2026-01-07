@@ -203,4 +203,48 @@ describe('CreateBlogPostContainer', () => {
     });
     consoleSpy.mockRestore();
   });
+
+  it('fails to create if no token is present', async () => {
+    const consoleSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    // Authenticated to render, but no token to trigger error
+    useAuthStore.setState({ isAuthenticated: true, token: null });
+
+    render(<CreateBlogPostContainer />);
+
+    fireEvent.change(screen.getByLabelText(/Title/i), {
+      target: { value: 'No Token Post' },
+    });
+    fireEvent.change(screen.getByLabelText(/Slug/i), {
+      target: { value: 'no-token' },
+    });
+    fireEvent.change(screen.getByLabelText(/Meta Description/i), {
+      target: { value: 'meta' },
+    });
+    fireEvent.change(screen.getByLabelText(/Content/i), {
+      target: { value: 'cnt' },
+    });
+
+    fireEvent.click(screen.getByText('Save Changes'));
+
+    await waitFor(() => {
+      // The error is thrown inside mutationFn and caught by the component
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Failed to create blog post:',
+        expect.objectContaining({ message: 'No authentication token found' }),
+      );
+    });
+    consoleSpy.mockRestore();
+  });
+
+  it('toggles preview mode with empty content', async () => {
+    useAuthStore.setState({ isAuthenticated: true, token: 'fake-token' });
+    render(<CreateBlogPostContainer />);
+
+    // Switch to preview without adding content
+    fireEvent.click(screen.getByText('Preview Mode'));
+
+    expect(screen.getByText('Edit Mode')).toBeInTheDocument();
+  });
 });

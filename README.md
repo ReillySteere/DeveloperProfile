@@ -23,7 +23,6 @@ A full-stack developer profile application built with a modern React frontend an
 ### Testing
 
 - **Unit/Integration:** Jest (configured for both Node and Browser environments)
-- **E2E:** Cypress
 
 ## Project Setup Instructions
 
@@ -37,39 +36,33 @@ A full-stack developer profile application built with a modern React frontend an
 2. **Install dependencies:**
 
    ```bash
-   yarn install
+   npm install
    ```
 
 3. **Build the project:**
 
    ```bash
-   yarn build
+   npm run build
    ```
 
 4. **Run the application:**
    - **Development mode (UI + Server):**
 
      ```bash
-     yarn start
+     npm start
      ```
 
    - **Production mode:**
 
      ```bash
-     yarn start:server:prod
+     npm run start:server:prod
      ```
 
 5. **Run tests:**
    - **Unit Tests:**
 
      ```bash
-     yarn test:ui && yarn test:server
-     ```
-
-   - **Cypress Integration Tests:**
-
-     ```bash
-     yarn cypress:open
+     npm test
      ```
 
 ## Environment Variables
@@ -152,7 +145,7 @@ Detailed architectural documentation for each feature can be found here:
 
 - **User Interface:** React coupled with modern CSS/SCSS for responsive design.
 - **Backend:** NestJS API Gateway with TypeORM integration using SQLite.
-- **Testing:** Jest for unit tests and Cypress for integration tests.
+- **Testing:** Jest for unit and integration tests.
 - **Error Monitoring:** Sentry integrated for capturing runtime errors.
 - **Language:** TypeScript for type safety and maintainability.
 - **Bundling:** Webpack for building both client and server assets.
