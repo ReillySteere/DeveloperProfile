@@ -4,4 +4,8 @@
   width: 70%;
   border-radius: 4px;
   padding: 16px;
+
+  @media screen and (max-width: 768px) {
+    width: 100%;
+  }
 }

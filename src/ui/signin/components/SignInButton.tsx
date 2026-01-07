@@ -13,7 +13,10 @@ export const SignInButton: React.FC = () => {
   if (isAuthenticated && user) {
     return (
       <div className={styles.signedInContainer}>
-        <h3 className={styles.welcomeMessage}>Welcome, {user.username}!</h3>
+        {isExpanded && (
+          <h3 className={styles.welcomeMessage}>Welcome, {user.username}!</h3>
+        )}
+
         <button
           onClick={logout}
           aria-label="Sign out"
