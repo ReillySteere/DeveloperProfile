@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { useAuthStore } from 'ui/shared/stores/authStore';
+import { useAuthStore } from 'ui/shared/hooks/useAuthStore';
 
 export const useAuth = () => {
   const [isLoading, setIsLoading] = useState(false);

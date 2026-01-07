@@ -1,0 +1,111 @@
+/** @type {import('dependency-cruiser').IConfiguration} */
+module.exports = {
+  extends: './.dependency-cruiser.js',
+  forbidden: [
+    /* General Rules */
+    {
+      name: 'no-circular',
+      severity: 'warn',
+      comment: 'This module is part of a circular dependency',
+      from: {},
+      to: {
+        circular: true,
+      },
+    },
+    {
+      name: 'no-orphans',
+      severity: 'info',
+      comment: "This is an orphan module - it's likely not used (anymore?).",
+      from: {
+        orphan: true,
+        pathNot: [
+          '(^|/)\\.[^/]+\\.(js|ts|json)$', // dot files
+          '\\.d\\.ts$', // type definitions
+          '(^|/)tsconfig\\.json$', // tsconfig
+          '(^|/)(babel|webpack|jest|cypress)\\.config\\.(js|ts)$', // config files
+          'src/server/main.ts', // entry points
+          'src/ui/index.tsx', // entry points
+        ],
+      },
+      to: {},
+    },
+    /* UI Specific Rules */
+    {
+      name: 'ui-no-server',
+      severity: 'error',
+      comment:
+        'UI code should never import generally from Server code (use shared types instead).',
+      from: {
+        path: '^src/ui',
+      },
+      to: {
+        path: '^src/server',
+      },
+    },
+    {
+      name: 'feature-isolation',
+      severity: 'warn',
+      comment:
+        'Features should verify if they really need to import from other features directly. Prefer shared.',
+      from: {
+        path: '^src/ui/([^/]+)',
+        pathNot: '^src/ui/shared/routes', // Ignore route definitions since they act as a registry
+      },
+      to: {
+        path: '^src/ui/([^/]+)',
+        pathNot: [
+          '^src/ui/shared',
+          '^src/ui/$1', // Allow internal imports
+        ],
+      },
+    },
+    {
+      name: 'components-no-containers',
+      severity: 'warn',
+      comment:
+        'Presentational components should usually not import containers.',
+      from: {
+        path: '/components/',
+      },
+      to: {
+        path: '\\.container\\.tsx?$',
+      },
+    },
+  ],
+  options: {
+    doNotFollow: {
+      path: ['node_modules', 'test', 'spec', '\\.test\\.', '\\.spec\\.'],
+    },
+    exclude: {
+      path: [
+        'node_modules',
+        '^src/shared/types',
+        '\\.test\\.',
+        '\\.spec\\.',
+        'test-utils',
+        'routeTree.gen.ts',
+        '^src/ui/shared/routes',
+        '\\.s?css$',
+        '^src/ui/index\\.tsx$',
+      ],
+    },
+    tsPreCompilationDeps: true,
+    tsConfig: {
+      fileName: 'tsconfig.json',
+    },
+    enhancedResolveOptions: {
+      exportsFields: ['exports'],
+      conditionNames: ['import', 'require', 'node', 'default'],
+    },
+    reporterOptions: {
+      dot: {
+        collapsePattern:
+          'node_modules/[^/]+|^src/ui/shared/components+|^src/ui/shared/hooks',
+      },
+      archi: {
+        collapsePattern:
+          '^(node_modules|packages|src|lib|app|bin|test(s?)|spec(s?))/[^/]+|\\d+\\.[^/]+|[^/]+\\.(js|ts|json|vue|tsx|jsx|svelte|html)',
+      },
+    },
+  },
+};

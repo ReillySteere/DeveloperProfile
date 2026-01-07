@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { X } from 'lucide-react';
 import { Button } from 'ui/shared/components/Button/Button';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../../hooks/useAuth';
 import styles from './SignInModal.module.scss';
 
 interface SignInModalProps {

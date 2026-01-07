@@ -6,7 +6,7 @@ import AboutContainer from './about.container';
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
-jest.mock('ui/shared/stores/navStore', () => ({
+jest.mock('ui/shared/hooks/useNavStore', () => ({
   useNavStore: jest.fn((selector) => selector({ setActiveSection: jest.fn() })),
 }));
 

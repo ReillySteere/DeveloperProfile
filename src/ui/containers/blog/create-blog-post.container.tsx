@@ -3,7 +3,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { Frame } from 'ui/shared/components';
 import { UpdateBlogPost } from './views/UpdateBlogPost/UpdateBlogPost';
 import { useCreateBlogPost } from './hooks/useBlog';
-import { useAuthStore } from 'ui/shared/stores/authStore';
+import { useAuthStore } from 'ui/shared/hooks/useAuthStore';
 import { BlogPost } from 'shared/types';
 
 export default function CreateBlogPostContainer() {

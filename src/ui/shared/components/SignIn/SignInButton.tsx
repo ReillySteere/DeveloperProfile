@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { LogIn, LogOut } from 'lucide-react';
-import { useNavStore } from 'ui/shared/stores/navStore';
-import { useAuth } from '../hooks/useAuth';
+import { useNavStore } from 'ui/shared/hooks/useNavStore';
+import { useAuth } from '../../hooks/useAuth';
 import { SignInModal } from './SignInModal';
 import styles from './SignInButton.module.scss';
 

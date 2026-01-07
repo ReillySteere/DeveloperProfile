@@ -5,7 +5,7 @@ import { QueryState } from 'ui/shared/components/QueryState/QueryState';
 import { useBlogPost, useUpdateBlogPost } from './hooks/useBlog';
 import { Badge } from 'ui/shared/components/Badge/Badge';
 import { Button } from 'ui/shared/components/Button/Button';
-import { useAuth } from 'ui/signin/hooks/useAuth';
+import { useAuth } from 'ui/shared/hooks/useAuth';
 import styles from './blog.module.scss';
 import { BlogPost as BlogPostType } from 'shared/types';
 import { UpdateBlogPost } from './views/UpdateBlogPost/UpdateBlogPost';

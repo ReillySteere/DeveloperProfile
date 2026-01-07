@@ -1,7 +1,7 @@
 import React from 'react';
 import { Frame } from 'ui/shared/components';
 
-import ExperiencePage from 'ui/experience/components/ExperiencePage';
+import ExperiencePage from 'ui/containers/experience/components/ExperiencePage';
 
 export default function Experience() {
   return (

@@ -3,15 +3,15 @@ import { render, screen, waitFor, fireEvent } from 'ui/test-utils';
 import BlogContainer from './blog.container';
 import BlogPostContainer from './blog-post.container';
 import axios from 'axios';
-import { useAuth } from 'ui/signin/hooks/useAuth';
-import { useAuthStore } from 'ui/shared/stores/authStore';
+import { useAuth } from 'ui/shared/hooks/useAuth';
+import { useAuthStore } from 'ui/shared/hooks/useAuthStore';
 
 // Mock axios
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 // Mock useAuth
-jest.mock('ui/signin/hooks/useAuth');
+jest.mock('ui/shared/hooks/useAuth');
 const mockUseAuth = useAuth as jest.MockedFunction<typeof useAuth>;
 
 // Mock react-syntax-highlighter

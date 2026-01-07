@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from 'ui/test-utils';
-import { SignInButton } from './components/SignInButton';
-import { useAuthStore } from 'ui/shared/stores/authStore';
+import { SignInButton } from './SignInButton';
+import { useAuthStore } from 'ui/shared/hooks/useAuthStore';
 
 // Mock fetch
 global.fetch = jest.fn();

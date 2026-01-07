@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { BlogPost } from 'shared/types';
-import { useAuthStore } from 'ui/shared/stores/authStore';
+import { useAuthStore } from 'ui/shared/hooks/useAuthStore';
 
 const fetchBlogPosts = async (): Promise<BlogPost[]> => {
   const { data } = await axios.get<BlogPost[]>('/api/blog');

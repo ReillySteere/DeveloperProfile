@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import styles from './Frame.module.scss';
-import { useNavStore } from 'ui/shared/stores/navStore';
+import { useNavStore } from 'ui/shared/hooks/useNavStore';
 
 interface FrameProps extends React.HTMLProps<HTMLDivElement> {
   children?: React.ReactNode;

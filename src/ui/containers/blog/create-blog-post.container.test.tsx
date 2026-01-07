@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor, fireEvent } from 'ui/test-utils';
 import CreateBlogPostContainer from './create-blog-post.container';
 import axios from 'axios';
-import { useAuthStore } from 'ui/shared/stores/authStore';
+import { useAuthStore } from 'ui/shared/hooks/useAuthStore';
 
 // Mock axios
 jest.mock('axios');

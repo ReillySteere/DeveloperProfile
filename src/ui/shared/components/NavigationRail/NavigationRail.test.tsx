@@ -2,7 +2,7 @@
 import React from 'react';
 import { render, screen, fireEvent, act } from 'ui/test-utils';
 import { NavigationRail } from './NavigationRail';
-import { useNavStore } from 'ui/shared/stores/navStore';
+import { useNavStore } from 'ui/shared/hooks/useNavStore';
 
 jest.mock('@tanstack/react-router', () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
