@@ -449,7 +449,7 @@ describe('Blog Integration', () => {
 
       // Should see "Edit Mode" button now
       expect(screen.getByText('Edit Mode')).toBeInTheDocument();
-      // Should see preview content (using ReadBlogPost)
+      // Should see preview content (using BlogPostReader)
       expect(screen.getByText('Back to Edit')).toBeInTheDocument();
 
       // Go back to Edit
@@ -566,7 +566,7 @@ describe('Blog Integration', () => {
       rerender(<BlogPostContainer />);
 
       // 4. Verification
-      // The useEffect in UpdateBlogPost should detect the prop change and update the form
+      // The useEffect in BlogPostEditor should detect the prop change and update the form
       await waitFor(() => {
         // We assert on the input value to confirm the form state was updated
         expect(screen.getByLabelText('Title')).toHaveValue('Updated Title');
@@ -595,7 +595,7 @@ describe('Blog Integration', () => {
 
       await waitFor(() => {
         // Explicitly check for empty value when tags are undefined
-        // This covers the optional chaining branch in UpdateBlogPost
+        // This covers the optional chaining branch in BlogPostEditor
         expect(screen.getByLabelText('Tags (comma separated)')).toHaveValue('');
       });
     });

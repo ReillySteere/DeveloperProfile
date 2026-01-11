@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { ReadBlogPost } from '../ReadBlogPost/ReadBlogPost';
-import styles from '../../blog.module.scss';
+import { BlogPostReader } from './BlogPostReader';
+import styles from '../blog.module.scss';
 import { BlogPost as BlogPostType } from 'shared/types';
 import { Button } from 'ui/shared/components/Button/Button';
 
-interface UpdateBlogPostProps {
+interface BlogPostEditorProps {
   post?: Partial<BlogPostType>;
   onSave: (post: Partial<BlogPostType>) => void;
   onCancel: () => void;
 }
 
-export const UpdateBlogPost: React.FC<UpdateBlogPostProps> = ({
+export const BlogPostEditor: React.FC<BlogPostEditorProps> = ({
   post,
   onSave,
   onCancel,
@@ -167,7 +167,7 @@ export const UpdateBlogPost: React.FC<UpdateBlogPostProps> = ({
         <div className={styles.preview}>
           <div className={styles.blogPost}>
             <h1>{formData.title}</h1>
-            <ReadBlogPost content={formData.content || ''} />
+            <BlogPostReader content={formData.content || ''} />
           </div>
           <div className={styles.actions}>
             <Button

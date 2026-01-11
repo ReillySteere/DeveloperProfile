@@ -20,7 +20,7 @@ jest.mock('@tanstack/react-router', () => {
   };
 });
 
-// Mock react-markdown and friends to avoid ESM issues if they are imported by UpdateBlogPost -> ReadBlogPost
+// Mock react-markdown and friends to avoid ESM issues if they are imported by BlogPostEditor -> BlogPostReader
 jest.mock('react-markdown', () => (props: any) => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const React = require('react');

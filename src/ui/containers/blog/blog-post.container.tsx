@@ -8,8 +8,8 @@ import { Button } from 'ui/shared/components/Button/Button';
 import { useAuth } from 'ui/shared/hooks/useAuth';
 import styles from './blog.module.scss';
 import { BlogPost as BlogPostType } from 'shared/types';
-import { UpdateBlogPost } from './views/UpdateBlogPost/UpdateBlogPost';
-import { ReadBlogPost } from './views/ReadBlogPost/ReadBlogPost';
+import { BlogPostEditor } from './views/BlogPostEditor';
+import { BlogPostReader } from './views/BlogPostReader';
 
 export default function BlogPostContainer() {
   const { slug } = useParams({ from: '/blog/$slug' });
@@ -52,7 +52,7 @@ export default function BlogPostContainer() {
       >
         {(post) =>
           isEditing ? (
-            <UpdateBlogPost
+            <BlogPostEditor
               post={post}
               onSave={handleSave}
               onCancel={() => setIsEditing(false)}
@@ -100,7 +100,7 @@ export default function BlogPostContainer() {
                   </div>
                 )}
               </div>
-              <ReadBlogPost content={post.content} />
+              <BlogPostReader content={post.content} />
             </article>
           )
         }

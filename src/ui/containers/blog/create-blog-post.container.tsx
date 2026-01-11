@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { Frame } from 'ui/shared/components';
-import { UpdateBlogPost } from './views/UpdateBlogPost/UpdateBlogPost';
+import { BlogPostEditor } from './views/BlogPostEditor';
 import { useCreateBlogPost } from './hooks/useBlog';
 import { useAuthStore } from 'ui/shared/hooks/useAuthStore';
 import { BlogPost } from 'shared/types';
@@ -36,7 +36,7 @@ export default function CreateBlogPostContainer() {
   return (
     <Frame id="blog">
       <h1>Create New Blog Post</h1>
-      <UpdateBlogPost onSave={handleSave} onCancel={handleCancel} />
+      <BlogPostEditor onSave={handleSave} onCancel={handleCancel} />
     </Frame>
   );
 }

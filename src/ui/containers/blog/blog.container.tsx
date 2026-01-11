@@ -4,7 +4,7 @@ import { Frame } from 'ui/shared/components';
 import { Button } from 'ui/shared/components/Button/Button';
 import { QueryState } from 'ui/shared/components/QueryState/QueryState';
 import { useBlogPosts } from './hooks/useBlog';
-import { BlogList } from './views/SelectBlogPost/SelectBlogPost';
+import { BlogList } from './views/BlogList';
 import { useAuthStore } from 'ui/shared/hooks/useAuthStore';
 import styles from './blog.module.scss';
 

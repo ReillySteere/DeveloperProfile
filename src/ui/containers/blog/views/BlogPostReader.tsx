@@ -6,8 +6,8 @@ import bash from 'react-syntax-highlighter/dist/cjs/languages/prism/bash';
 import json from 'react-syntax-highlighter/dist/cjs/languages/prism/json';
 import markdown from 'react-syntax-highlighter/dist/cjs/languages/prism/markdown';
 import { oneDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
-import { Mermaid } from '../../components/Mermaid';
-import styles from '../../blog.module.scss';
+import { Mermaid } from '../components/Mermaid';
+import styles from '../blog.module.scss';
 
 // Register languages
 SyntaxHighlighter.registerLanguage('typescript', ts);
@@ -15,11 +15,11 @@ SyntaxHighlighter.registerLanguage('bash', bash);
 SyntaxHighlighter.registerLanguage('json', json);
 SyntaxHighlighter.registerLanguage('markdown', markdown);
 
-interface BlogPostProps {
+interface BlogPostReaderProps {
   content: string;
 }
 
-export const ReadBlogPost: React.FC<BlogPostProps> = ({ content }) => {
+export const BlogPostReader: React.FC<BlogPostReaderProps> = ({ content }) => {
   return (
     <div className={styles.blogPost}>
       <ReactMarkdown
