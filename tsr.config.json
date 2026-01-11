@@ -1,0 +1,6 @@
+{
+  "routesDirectory": "./src/ui/shared/routes",
+  "generatedRouteTree": "./src/ui/routeTree.gen.ts",
+  "semicolons": true,
+  "quoteStyle": "single"
+}

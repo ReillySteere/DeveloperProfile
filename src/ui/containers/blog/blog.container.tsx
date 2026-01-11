@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet, useMatches, Link } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { Frame } from 'ui/shared/components';
 import { Button } from 'ui/shared/components/Button/Button';
 import { QueryState } from 'ui/shared/components/QueryState/QueryState';
@@ -9,16 +9,8 @@ import { useAuthStore } from 'ui/shared/hooks/useAuthStore';
 import styles from './blog.module.scss';
 
 export default function BlogContainer() {
-  const matches = useMatches();
-  const isChildActive = matches.some(
-    (m) => m.routeId === '/blog/$slug' || m.routeId === '/blog/create',
-  );
   const { data, isLoading, isError, error, refetch } = useBlogPosts();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-
-  if (isChildActive) {
-    return <Outlet />;
-  }
 
   return (
     <Frame id="blog">
