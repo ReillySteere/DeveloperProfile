@@ -63,6 +63,33 @@ module.exports = {
         path: '\\.controller\\.ts$',
       },
     },
+    {
+      name: 'module-isolation',
+      severity: 'error',
+      comment:
+        'Modules should be isolated. They should not import from other feature modules directly (use Shared or Public API if strictly needed, but prefer decoupling).',
+      from: {
+        path: '^src/server/modules/([^/]+)',
+      },
+      to: {
+        path: '^src/server/modules/([^/]+)',
+        pathNot: [
+          '^src/server/modules/$1', // Allow internal imports
+        ],
+      },
+    },
+    {
+      name: 'shared-no-modules',
+      severity: 'error',
+      comment:
+        'Shared server code cannot import from specific feature modules.',
+      from: {
+        path: '^src/server/shared',
+      },
+      to: {
+        path: '^src/server/modules',
+      },
+    },
   ],
   options: {
     doNotFollow: {

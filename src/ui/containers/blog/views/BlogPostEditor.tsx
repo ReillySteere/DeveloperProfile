@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BlogPostReader } from './BlogPostReader';
+import { BlogContent } from '../components/BlogContent';
 import styles from '../blog.module.scss';
 import { BlogPost as BlogPostType } from 'shared/types';
 import { Button } from 'ui/shared/components/Button/Button';
@@ -167,7 +167,7 @@ export const BlogPostEditor: React.FC<BlogPostEditorProps> = ({
         <div className={styles.preview}>
           <div className={styles.blogPost}>
             <h1>{formData.title}</h1>
-            <BlogPostReader content={formData.content || ''} />
+            <BlogContent content={formData.content || ''} />
           </div>
           <div className={styles.actions}>
             <Button

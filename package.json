@@ -15,14 +15,17 @@
     "start:server:prod": "node dist/src/server/main",
     "test:server": "jest --config jest.node.ts --coverage",
     "test:ui": "jest --config jest.browser.ts --coverage",
+    "depcruise:verify": "npm run depcruise:server && npm run depcruise:ui",
     "depcruise:server": "depcruise src/server --config .dependency-cruiser.server.js",
     "depcruise:ui": "depcruise src/ui --config .dependency-cruiser.ui.js",
     "depcruise:graph:server": "depcruise src/server --config .dependency-cruiser.server.js --output-type dot | node scripts/dot-to-svg.js > dependency-graph-server.svg",
     "depcruise:graph:ui": "depcruise src/ui --config .dependency-cruiser.ui.js --output-type dot | node scripts/dot-to-svg.js > dependency-graph-ui.svg",
     "lint": "eslint \"src/**/*.{ts,tsx}\" --fix",
     "format": "npm run format:server && npm run format:ui",
+    "check-format": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "format:server": "prettier --write \"src/{server,shared}/**/*.ts\"",
-    "format:ui": "prettier --write \"src/ui/**/*.{ts,tsx,js,jsx,json,css,md}\""
+    "format:ui": "prettier --write \"src/ui/**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@babel/core": "^7.26.10",
@@ -67,6 +70,7 @@
     "eslint-plugin-prettier": "^5.2.5",
     "eslint-plugin-react-compiler": "^19.0.0-beta-ebf51a3-20250411",
     "globals": "^16.0.0",
+    "husky": "^9.1.7",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
@@ -130,3 +134,4 @@
     "zustand": "^5.0.3"
   }
 }
+

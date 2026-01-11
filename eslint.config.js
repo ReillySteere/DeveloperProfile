@@ -6,7 +6,7 @@ import pluginRouter from '@tanstack/eslint-plugin-router';
 
 export default [
   {
-    ignores: ['**/*.d.ts'],
+    ignores: ['**/*.d.ts', '.github/**'],
   },
   {
     files: ['**/*.ts', '**/*.tsx'],

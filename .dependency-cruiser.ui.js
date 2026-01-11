@@ -44,18 +44,16 @@ module.exports = {
     },
     {
       name: 'feature-isolation',
-      severity: 'warn',
+      severity: 'error',
       comment:
-        'Features should verify if they really need to import from other features directly. Prefer shared.',
+        'Feature containers should be isolated. They should not import from other feature containers.',
       from: {
-        path: '^src/ui/([^/]+)',
-        pathNot: '^src/ui/shared/routes', // Ignore route definitions since they act as a registry
+        path: '^src/ui/containers/([^/]+)',
       },
       to: {
-        path: '^src/ui/([^/]+)',
+        path: '^src/ui/containers/([^/]+)',
         pathNot: [
-          '^src/ui/shared',
-          '^src/ui/$1', // Allow internal imports
+          '^src/ui/containers/$1', // Allow internal imports
         ],
       },
     },
@@ -69,6 +67,53 @@ module.exports = {
       },
       to: {
         path: '\\.container\\.tsx?$',
+      },
+    },
+    {
+      name: 'ui-no-dto',
+      severity: 'error',
+      comment:
+        'UI code should never import DTOs (Data Transfer Objects). Use shared types instead.',
+      from: {
+        path: '^src/ui',
+      },
+      to: {
+        path: '\\.dto\\.ts$',
+      },
+    },
+    {
+      name: 'view-isolation',
+      severity: 'error',
+      comment:
+        'Views should not import other views. Share logic via components/ or hooks/.',
+      from: {
+        path: '^src/ui/containers/([^/]+)/views/',
+      },
+      to: {
+        path: '^src/ui/containers/$1/views/',
+      },
+    },
+    {
+      name: 'shared-no-features',
+      severity: 'error',
+      comment: 'Shared UI code cannot import from specific feature containers.',
+      from: {
+        path: '^src/ui/shared',
+      },
+      to: {
+        path: '^src/ui/containers',
+      },
+    },
+    {
+      name: 'only-containers-access-views',
+      severity: 'error',
+      comment:
+        'Views are private to their containers. Only .container.tsx files can import from /views/.',
+      from: {
+        pathNot: '\\.container\\.tsx?$',
+      },
+      to: {
+        path: '/views/',
       },
     },
   ],

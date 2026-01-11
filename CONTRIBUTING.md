@@ -8,6 +8,18 @@ Welcome to the project! This guide will help you get started with contributing t
 2.  **Branching:** Use descriptive feature branches (e.g., `feature/add-blog-search`).
 3.  **Commits:** Write clear, concise commit messages.
 
+## Git Hooks
+
+We use **Husky** to enforce quality standards. A `pre-push` hook runs automatically when you push to the remote repository.
+
+It validates:
+1.  **Tests passes** (`npm run test`)
+2.  **Linting passes** (`npm run lint`)
+3.  **Formatting is correct** (`npm run check-format`)
+4.  **Dependency rules are respected** (`npm run depcruise:verify`)
+
+**Tip:** If you need to bypass this for WIP branches (not recommended), use `git push --no-verify`.
+
 ## Code Style
 
 - **Linting:** We use ESLint and Prettier.

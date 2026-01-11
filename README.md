@@ -24,6 +24,7 @@ A full-stack developer profile application built with a modern React frontend an
 ### Testing
 
 - **Unit/Integration:** Jest (configured for both Node and Browser environments)
+- **Quality Gates:** Husky `pre-push` hooks enforce strict testing, linting, and dependency validation before code can be pushed.
 
 ## Project Setup Instructions
 
