@@ -62,22 +62,30 @@ erDiagram
 ## Entity Details
 
 ### User
+
 Manages authentication credentials.
+
 - **PK**: `userId` (Auto-increment integer)
 - `username`: Unique identifier.
 
 ### BlogPost
+
 Content for the technical blog.
+
 - **PK**: `id` (UUID)
 - `slug`: Human-readable identifier for URLs (e.g., `/blog/my-post`).
 - `content`: Markdown text of the post.
 
 ### Project
+
 Displays technical projects in the portfolio.
+
 - **PK**: `id` (UUID)
 - `execution`, `results`, `requirements`: JSON arrays storing bullet points for the UI.
 
 ### Experience
+
 Represents professional career timeline.
+
 - **PK**: `id` (UUID)
 - `bulletPoints`: Key achievements or responsibilities as a JSON array.
