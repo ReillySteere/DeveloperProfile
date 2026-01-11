@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { LogIn, LogOut } from 'lucide-react';
 import { useNavStore } from 'ui/shared/hooks/useNavStore';
+import { useAuthStore } from 'ui/shared/hooks/useAuthStore';
 import { useAuth } from '../../hooks/useAuth';
-import { SignInModal } from './SignInModal';
 import styles from './SignInButton.module.scss';
 
 export const SignInButton: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const isExpanded = useNavStore((s) => s.isExpanded);
+  const openLoginModal = useAuthStore((s) => s.openLoginModal);
   const { isAuthenticated, logout, user } = useAuth();
 
   if (isAuthenticated && user) {
@@ -30,17 +30,13 @@ export const SignInButton: React.FC = () => {
   }
 
   return (
-    <>
-      <button
-        onClick={() => setIsModalOpen(true)}
-        aria-label="Sign in"
-        className={styles.signInButton}
-      >
-        <LogIn size={24} />
-        {isExpanded && <span className={styles.label}>Sign In</span>}
-      </button>
-
-      <SignInModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-    </>
+    <button
+      onClick={() => openLoginModal()}
+      aria-label="Sign in"
+      className={styles.signInButton}
+    >
+      <LogIn size={24} />
+      {isExpanded && <span className={styles.label}>Sign In</span>}
+    </button>
   );
 };

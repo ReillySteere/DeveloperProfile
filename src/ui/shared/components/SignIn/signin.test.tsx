@@ -1,15 +1,29 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from 'ui/test-utils';
 import { SignInButton } from './SignInButton';
+import { SignInModal } from './SignInModal';
 import { useAuthStore } from 'ui/shared/hooks/useAuthStore';
 
 // Mock fetch
 global.fetch = jest.fn();
 
+const SignInIntegration = () => (
+  <>
+    <SignInButton />
+    <SignInModal />
+  </>
+);
+
 describe('SignIn Integration', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    useAuthStore.setState({ isAuthenticated: false, token: null, user: null });
+    useAuthStore.setState({
+      isAuthenticated: false,
+      token: null,
+      user: null,
+      isLoginModalOpen: false,
+      authError: null,
+    });
   });
 
   it('completes the full sign in flow successfully', async () => {
@@ -18,7 +32,7 @@ describe('SignIn Integration', () => {
       json: async () => ({ access_token: 'fake-token' }),
     });
 
-    render(<SignInButton />);
+    render(<SignInIntegration />);
 
     // 1. Verify button exists and click it
     const signInButton = screen.getByRole('button', { name: /sign in/i });
@@ -60,7 +74,7 @@ describe('SignIn Integration', () => {
       json: async () => ({ message: 'Invalid credentials' }),
     });
 
-    render(<SignInButton />);
+    render(<SignInIntegration />);
 
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
@@ -87,9 +101,10 @@ describe('SignIn Integration', () => {
       isAuthenticated: true,
       token: 'fake',
       user: { username: 'demo' },
+      isLoginModalOpen: false,
     });
 
-    render(<SignInButton />);
+    render(<SignInIntegration />);
 
     const signOutButton = screen.getByRole('button', { name: /sign out/i });
     expect(signOutButton).toBeInTheDocument();
@@ -101,8 +116,21 @@ describe('SignIn Integration', () => {
     ).toBeInTheDocument();
   });
 
+  it('displays session expired message when triggered globally', async () => {
+    useAuthStore.setState({
+      isLoginModalOpen: true,
+      authError: 'Your session has expired.',
+    });
+
+    render(<SignInIntegration />);
+
+    const modal = screen.getByRole('dialog');
+    expect(modal).toBeInTheDocument();
+    expect(screen.getByText('Your session has expired.')).toBeInTheDocument();
+  });
+
   it('closes modal when cancel is clicked', async () => {
-    render(<SignInButton />);
+    render(<SignInIntegration />);
 
     // Open modal
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
@@ -118,7 +146,7 @@ describe('SignIn Integration', () => {
   });
 
   it('closes modal when close (X) button is clicked', async () => {
-    render(<SignInButton />);
+    render(<SignInIntegration />);
 
     // Open modal
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
@@ -134,7 +162,7 @@ describe('SignIn Integration', () => {
   });
 
   it('closes modal when pressing escape', async () => {
-    render(<SignInButton />);
+    render(<SignInIntegration />);
 
     // Open modal
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
@@ -143,7 +171,6 @@ describe('SignIn Integration', () => {
     // Press Escape
     fireEvent.keyDown(window, { key: 'Escape' });
 
-    // Verify closed
     await waitFor(() => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
@@ -155,7 +182,7 @@ describe('SignIn Integration', () => {
       json: async () => ({}), // No access_token
     });
 
-    render(<SignInButton />);
+    render(<SignInIntegration />);
 
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
     fireEvent.change(screen.getByLabelText(/username/i), {
@@ -176,7 +203,7 @@ describe('SignIn Integration', () => {
   it('handles non-standard errors', async () => {
     (global.fetch as jest.Mock).mockRejectedValueOnce('Network Error'); // Not an Error object
 
-    render(<SignInButton />);
+    render(<SignInIntegration />);
 
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
     fireEvent.change(screen.getByLabelText(/username/i), {
@@ -198,7 +225,7 @@ describe('SignIn Integration', () => {
       json: async () => ({}), // No message
     });
 
-    render(<SignInButton />);
+    render(<SignInIntegration />);
 
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
     fireEvent.change(screen.getByLabelText(/username/i), {
@@ -213,10 +240,11 @@ describe('SignIn Integration', () => {
       expect(screen.getByText('Invalid credentials')).toBeInTheDocument();
     });
   });
+
   it('handles null error rejection', async () => {
     (global.fetch as jest.Mock).mockRejectedValueOnce(null);
 
-    render(<SignInButton />);
+    render(<SignInIntegration />);
 
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
     fireEvent.change(screen.getByLabelText(/username/i), {

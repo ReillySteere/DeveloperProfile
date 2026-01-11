@@ -7,6 +7,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { routeTree } from './routeTree.gen';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { useNavStore } from 'ui/shared/hooks/useNavStore';
+import { AuthInterceptor } from 'ui/shared/components/AuthInterceptor/AuthInterceptor';
+import { SignInModal } from 'ui/shared/components/SignIn/SignInModal';
 
 Sentry.init({
   dsn: 'https://349f5174f58c6bcd4b3b5fb5fb738ff3@o4509070478147584.ingest.de.sentry.io/4509070482210896', // Replace with your Sentry DSN
@@ -52,6 +54,8 @@ if (!rootElement.innerHTML) {
   root.render(
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
+        <AuthInterceptor />
+        <SignInModal />
         <RouterProvider router={router} />
       </ThemeProvider>
     </QueryClientProvider>,

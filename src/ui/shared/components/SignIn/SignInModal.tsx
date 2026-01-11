@@ -3,21 +3,15 @@ import ReactDOM from 'react-dom';
 import { X } from 'lucide-react';
 import { Button } from 'ui/shared/components/Button/Button';
 import { useAuth } from '../../hooks/useAuth';
+import { useAuthStore } from 'ui/shared/hooks/useAuthStore';
 import styles from './SignInModal.module.scss';
 
-interface SignInModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-export const SignInModal: React.FC<SignInModalProps> = ({
-  isOpen,
-  onClose,
-}) => {
+export const SignInModal: React.FC = () => {
+  const { isLoginModalOpen, closeLoginModal, authError } = useAuthStore();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isMounted, setIsMounted] = useState(false);
-  const { login, isLoading, error } = useAuth();
+  const { login, isLoading, error: loginError } = useAuth();
 
   useEffect(() => {
     setIsMounted(true);
@@ -27,10 +21,10 @@ export const SignInModal: React.FC<SignInModalProps> = ({
   // Close on escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') closeLoginModal();
     };
 
-    if (isOpen) {
+    if (isLoginModalOpen) {
       window.addEventListener('keydown', handleEscape);
       // Prevent scrolling when modal is open
       document.body.style.overflow = 'hidden';
@@ -40,15 +34,15 @@ export const SignInModal: React.FC<SignInModalProps> = ({
       window.removeEventListener('keydown', handleEscape);
       document.body.style.overflow = 'unset';
     };
-  }, [isOpen, onClose]);
+  }, [isLoginModalOpen, closeLoginModal]);
 
-  if (!isOpen || !isMounted) return null;
+  if (!isLoginModalOpen || !isMounted) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const success = await login(username, password);
     if (success) {
-      onClose();
+      closeLoginModal();
     }
     // Reset form
     setUsername('');
@@ -56,7 +50,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({
   };
 
   const modalContent = (
-    <div className={styles.overlay} onClick={onClose}>
+    <div className={styles.overlay} onClick={closeLoginModal}>
       <div
         className={styles.modal}
         onClick={(e) => e.stopPropagation()}
@@ -69,7 +63,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({
             Sign In
           </h2>
           <button
-            onClick={onClose}
+            onClick={closeLoginModal}
             className={styles.closeButton}
             aria-label="Close modal"
           >
@@ -77,7 +71,8 @@ export const SignInModal: React.FC<SignInModalProps> = ({
           </button>
         </div>
 
-        {error && <div className={styles.error}>{error}</div>}
+        {authError && <div className={styles.error}>{authError}</div>}
+        {loginError && <div className={styles.error}>{loginError}</div>}
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.formGroup}>
@@ -115,7 +110,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({
             <Button
               type="button"
               variant="secondary"
-              onClick={onClose}
+              onClick={closeLoginModal}
               disabled={isLoading}
             >
               Cancel
