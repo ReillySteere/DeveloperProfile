@@ -10,6 +10,7 @@ A full-stack developer profile application built with a modern React frontend an
 - **Routing:** TanStack Router
 - **Data Fetching:** TanStack Query
 - **State Management:** Zustand
+- **Authentication:** Axios Interceptors (JWT)
 - **Styling:** SCSS Modules with CSS Variables
 - **Build Tool:** Webpack
 
@@ -127,10 +128,16 @@ graph TD
 
 Detailed architectural documentation for each feature can be found here:
 
-- [About Feature](architecture/logicalComponents/about.md)
-- [Experience Feature](architecture/logicalComponents/experience.md)
-- [Projects Feature](architecture/logicalComponents/projects.md)
-- [Blog Feature](architecture/logicalComponents/blog.md)
+- [About Feature](architecture/components/about.md)
+- [Experience Feature](architecture/components/experience.md)
+- [Projects Feature](architecture/components/projects.md)
+- [Blog Feature](architecture/components/blog.md)
+
+## Architectural Decisions
+
+- [ADR-001: Persistent Storage for Blog](architecture/decisions/ADR-001-persistent-storage-for-blog.md)
+- [ADR-002: SQLite & TypeORM](architecture/decisions/ADR-002-SQLite-TypeOrm-for-persistence.md)
+- [ADR-003: Centralized Axios Interceptors](architecture/decisions/ADR-003-centralized-axios-interceptors.md)
 
 ## Key Features
 

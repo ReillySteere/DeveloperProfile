@@ -9,51 +9,80 @@ jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 describe('AuthInterceptor', () => {
-  let interceptorCallback: (error: any) => Promise<any>;
-  let successCallback: (response: any) => any;
-  let ejectMock: jest.Mock;
+  let responseErrorCallback: (error: any) => Promise<any>;
+  let responseSuccessCallback: (response: any) => any;
+  let requestSuccessCallback: (config: any) => any;
+  let ejectResponseMock: jest.Mock;
+  let ejectRequestMock: jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
 
     // Mock the interceptors.response object structure
-    ejectMock = jest.fn();
+    ejectResponseMock = jest.fn();
+    ejectRequestMock = jest.fn();
+
     mockedAxios.interceptors = {
       response: {
         use: jest.fn((successCb, errorCb) => {
-          successCallback = successCb;
-          interceptorCallback = errorCb;
+          responseSuccessCallback = successCb;
+          responseErrorCallback = errorCb;
           return 123; // Return an interceptor ID
         }),
-        eject: ejectMock,
+        eject: ejectResponseMock,
+      } as any,
+      request: {
+        use: jest.fn((successCb) => {
+          requestSuccessCallback = successCb;
+          return 456;
+        }),
+        eject: ejectRequestMock,
       } as any,
     } as any;
 
     // Reset store
     useAuthStore.setState({
       isAuthenticated: true,
+      token: 'test-token',
       user: { username: 'test' },
       isLoginModalOpen: false,
       authError: null,
     });
   });
 
-  it('registers an interceptor on mount', () => {
+  it('registers interceptors on mount', () => {
     render(<AuthInterceptor />);
     expect(mockedAxios.interceptors.response.use).toHaveBeenCalled();
+    expect(mockedAxios.interceptors.request.use).toHaveBeenCalled();
   });
 
-  it('ejects the interceptor on unmount', () => {
+  it('ejects interceptors on unmount', () => {
     const { unmount } = render(<AuthInterceptor />);
     unmount();
-    expect(ejectMock).toHaveBeenCalledWith(123);
+    expect(ejectResponseMock).toHaveBeenCalledWith(123);
+    expect(ejectRequestMock).toHaveBeenCalledWith(456);
+  });
+
+  it('injects Authorization header when token exists', () => {
+    render(<AuthInterceptor />);
+    const config = { headers: {} };
+    const result = requestSuccessCallback(config);
+    expect(result.headers.Authorization).toBe('Bearer test-token');
+  });
+
+  it('does not inject Authorization header when token is missing', () => {
+    useAuthStore.setState({ token: null });
+    render(<AuthInterceptor />);
+    const config = { headers: {} };
+    const result = requestSuccessCallback(config);
+    expect(result.headers.Authorization).toBeUndefined();
   });
 
   it('passes through successful responses', () => {
     render(<AuthInterceptor />);
 
     const response = { data: 'ok', status: 200 };
-    const result = successCallback(response);
+    const result = responseSuccessCallback(response);
 
     expect(result).toBe(response);
   });
@@ -69,7 +98,7 @@ describe('AuthInterceptor', () => {
     mockedAxios.isAxiosError.mockReturnValue(true);
 
     try {
-      await interceptorCallback(error);
+      await responseErrorCallback(error);
     } catch (e) {
       expect(e).toBe(error);
     }
@@ -91,7 +120,7 @@ describe('AuthInterceptor', () => {
     mockedAxios.isAxiosError.mockReturnValue(true);
 
     try {
-      await interceptorCallback(error);
+      await responseErrorCallback(error);
     } catch (e) {
       expect(e).toBe(error);
     }
@@ -108,7 +137,7 @@ describe('AuthInterceptor', () => {
     mockedAxios.isAxiosError.mockReturnValue(false);
 
     try {
-      await interceptorCallback(error);
+      await responseErrorCallback(error);
     } catch (e) {
       expect(e).toBe(error);
     }
@@ -119,7 +148,6 @@ describe('AuthInterceptor', () => {
 
   it('ignores axios errors without response (e.g. network error)', async () => {
     render(<AuthInterceptor />);
-
     const error = {
       isAxiosError: true,
       response: undefined,
@@ -127,7 +155,7 @@ describe('AuthInterceptor', () => {
     mockedAxios.isAxiosError.mockReturnValue(true);
 
     try {
-      await interceptorCallback(error);
+      await responseErrorCallback(error);
     } catch (e) {
       expect(e).toBe(error);
     }

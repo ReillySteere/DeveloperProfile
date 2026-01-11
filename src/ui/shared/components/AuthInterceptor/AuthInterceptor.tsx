@@ -9,10 +9,12 @@ import { useAuthStore } from 'ui/shared/hooks/useAuthStore';
 export const AuthInterceptor = () => {
   const logout = useAuthStore((state) => state.logout);
   const openLoginModal = useAuthStore((state) => state.openLoginModal);
-  const interceptorId = useRef<number | null>(null);
+  const responseInterceptorId = useRef<number | null>(null);
+  const requestInterceptorId = useRef<number | null>(null);
 
   useEffect(() => {
-    interceptorId.current = axios.interceptors.response.use(
+    // Response Interceptor (Handle 401s)
+    responseInterceptorId.current = axios.interceptors.response.use(
       (response) => response,
       (error) => {
         if (axios.isAxiosError(error) && error.response?.status === 401) {
@@ -25,10 +27,23 @@ export const AuthInterceptor = () => {
       },
     );
 
+    // Request Interceptor (Inject Token)
+    requestInterceptorId.current = axios.interceptors.request.use((config) => {
+      const token = useAuthStore.getState().token;
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    });
+
     return () => {
-      if (interceptorId.current !== null) {
-        axios.interceptors.response.eject(interceptorId.current);
-        interceptorId.current = null;
+      if (responseInterceptorId.current !== null) {
+        axios.interceptors.response.eject(responseInterceptorId.current);
+        responseInterceptorId.current = null;
+      }
+      if (requestInterceptorId.current !== null) {
+        axios.interceptors.request.eject(requestInterceptorId.current);
+        requestInterceptorId.current = null;
       }
     };
   }, [logout, openLoginModal]);

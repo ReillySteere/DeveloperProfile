@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { BlogPost } from 'shared/types';
-import { useAuthStore } from 'ui/shared/hooks/useAuthStore';
 
 const fetchBlogPosts = async (): Promise<BlogPost[]> => {
   const { data } = await axios.get<BlogPost[]>('/api/blog');
@@ -32,7 +31,6 @@ export function useBlogPost(slug: string) {
 
 export function useUpdateBlogPost() {
   const queryClient = useQueryClient();
-  const token = useAuthStore((state) => state.token);
 
   return useMutation({
     mutationFn: async ({
@@ -42,14 +40,7 @@ export function useUpdateBlogPost() {
       id: string;
       data: Partial<BlogPost>;
     }) => {
-      if (!token) {
-        throw new Error('No authentication token found');
-      }
-      const response = await axios.put<BlogPost>(`/api/blog/${id}`, data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.put<BlogPost>(`/api/blog/${id}`, data);
       return response.data;
     },
     onSuccess: (data) => {
@@ -63,18 +54,10 @@ export function useUpdateBlogPost() {
 
 export function useCreateBlogPost() {
   const queryClient = useQueryClient();
-  const token = useAuthStore((state) => state.token);
 
   return useMutation({
     mutationFn: async (data: Partial<BlogPost>) => {
-      if (!token) {
-        throw new Error('No authentication token found');
-      }
-      const response = await axios.post<BlogPost>('/api/blog', data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.post<BlogPost>('/api/blog', data);
       return response.data;
     },
     onSuccess: () => {

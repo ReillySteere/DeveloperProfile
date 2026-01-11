@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from 'ui/test-utils';
-import { SignInButton } from './SignInButton';
-import { SignInModal } from './SignInModal';
+import { SignInButton } from 'ui/shared/components/SignIn/SignInButton';
+import { SignInModal } from 'ui/shared/components/SignIn/SignInModal';
 import { useAuthStore } from 'ui/shared/hooks/useAuthStore';
 
 // Mock fetch

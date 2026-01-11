@@ -30,13 +30,14 @@ Provide a clear, comprehensive, step-by-step implementation plan for the provide
 
 **Project Context:**
 
-- Library: '@unisporkal' components can be directly modified
-- Testing: Jest and Mock Service Worker available; testing required for all changes
-- Communication: Frontend-backend via react-query and axios
-- Documentation: All new components/features must be documented
-- Modularity: Prefer modular, maintainable code organization
-- Backend: NestJS ([docs](https://docs.nestjs.com/))
-- Frontend: React ([docs](https://react.dev/reference/react)), using react-query ([docs](https://tanstack.com/query/latest/docs/framework/react/overview)) and axios
+- Components: Reusable UI components located in `src/ui/shared/components`.
+- Testing: Jest configured for Node (backend) and Browser (frontend).
+- Communication: Frontend-backend via TanStack Query and Axios.
+- Authentication: Global Axios interceptors handle token injection. **Do not manually add Authorization headers.**
+- Documentation: All new components/features must be documented.
+- Modularity: Prefer modular, maintainable code organization.
+- Backend: NestJS ([docs](https://docs.nestjs.com/)).
+- Frontend: React ([docs](https://react.dev/reference/react)), using TanStack Query ([docs](https://tanstack.com/query/latest/docs/framework/react/overview)).
 
 **Key Considerations:**
 

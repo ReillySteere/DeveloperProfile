@@ -292,7 +292,6 @@ describe('Blog Integration', () => {
         expect(mockedAxios.put).toHaveBeenCalledWith(
           '/api/blog/1',
           expect.objectContaining({ tags: ['tag1', 'tag2'], slug: 'new-slug' }),
-          expect.any(Object),
         );
       });
 
@@ -383,7 +382,6 @@ describe('Blog Integration', () => {
         expect(mockedAxios.put).toHaveBeenCalledWith(
           '/api/blog/1',
           expect.objectContaining({ tags: ['new-tag'] }),
-          expect.any(Object),
         );
       });
     });

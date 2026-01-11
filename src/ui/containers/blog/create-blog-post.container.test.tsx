@@ -118,7 +118,6 @@ describe('CreateBlogPostContainer', () => {
           slug: 'new-post',
           content: 'New Content',
         }),
-        expect.any(Object),
       );
     });
 
@@ -204,12 +203,17 @@ describe('CreateBlogPostContainer', () => {
     consoleSpy.mockRestore();
   });
 
-  it('fails to create if no token is present', async () => {
+  it('fails to create if no token is present (backend 401)', async () => {
     const consoleSpy = jest
       .spyOn(console, 'error')
       .mockImplementation(() => {});
     // Authenticated to render, but no token to trigger error
     useAuthStore.setState({ isAuthenticated: true, token: null });
+
+    // Mock backend returning 401
+    mockedAxios.post.mockRejectedValueOnce({
+      response: { status: 401 },
+    });
 
     render(<CreateBlogPostContainer />);
 
@@ -229,10 +233,10 @@ describe('CreateBlogPostContainer', () => {
     fireEvent.click(screen.getByText('Save Changes'));
 
     await waitFor(() => {
-      // The error is thrown inside mutationFn and caught by the component
+      // The error is thrown by axios (401) and caught by the component
       expect(consoleSpy).toHaveBeenCalledWith(
         'Failed to create blog post:',
-        expect.objectContaining({ message: 'No authentication token found' }),
+        expect.anything(),
       );
     });
     consoleSpy.mockRestore();

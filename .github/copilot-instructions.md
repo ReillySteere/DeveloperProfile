@@ -58,6 +58,7 @@
 - **State Management:**
   - **Server State:** TanStack Query via custom hooks. Use `QueryState` component for handling loading/error/empty states.
   - **Global State:** Zustand (e.g., `navStore`).
+  - **Authentication:** Handled globally via `AuthInterceptor` (Request & Response). **DO NOT** manually add Authorization headers in hooks.
 - **Components:** Functional components. Use `Frame` component for page layout.
 - **Testing:**
   - Use `render` from `ui/test-utils` (wraps `QueryClientProvider`).
