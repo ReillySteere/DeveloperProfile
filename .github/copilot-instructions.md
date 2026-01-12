@@ -24,6 +24,9 @@
 - **Type Check:** `npm run type-check` (runs `tsc --noEmit`).
 - **Dependency Check:** `npm run depcruise:verify` (validates architectural boundaries).
 - **Build:** `npm run build` (runs `build:server` and `build:ui`).
+- **Docker:**
+  - Build: `docker build -t profile-app .`
+  - Run: `docker run -p 3000:3000 profile-app`
 
 ## Code Generation Requirements
 

@@ -12,9 +12,16 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 @Module({
   imports: [
     PassportModule,
-    JwtModule.register({
-      secret: process.env.JWT_AUTH_SECRET,
-      signOptions: { expiresIn: '1h' },
+    JwtModule.registerAsync({
+      useFactory: () => {
+        if (!process.env.JWT_AUTH_SECRET) {
+          throw new Error('JWT_AUTH_SECRET is not defined');
+        }
+        return {
+          secret: process.env.JWT_AUTH_SECRET,
+          signOptions: { expiresIn: '1h' },
+        };
+      },
     }),
     TypeOrmModule.forFeature([User]),
   ],

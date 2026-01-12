@@ -1,0 +1,31 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Server (NestJS)",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start:server:debug"],
+      "console": "integratedTerminal",
+      "restart": true,
+      "port": 9229,
+      "autoAttachChildProcesses": true
+    },
+    {
+      "name": "Debug UI (Chrome)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:8081",
+      "webRoot": "${workspaceFolder}/src/ui",
+      "sourceMaps": true,
+      "userDataDir": "${workspaceFolder}/.vscode/chrome"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Full Stack Debug",
+      "configurations": ["Debug Server (NestJS)", "Debug UI (Chrome)"]
+    }
+  ]
+}

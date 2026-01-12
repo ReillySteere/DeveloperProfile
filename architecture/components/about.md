@@ -63,7 +63,6 @@ The resume download is a specialized workflow that handles binary data streaming
 ## Testing Strategy
 
 - **Backend Integration:** `src/server/modules/about/about.integration.test.ts`
-
   - Verifies that the `/resume` endpoint returns a `StreamableFile`.
   - Asserts that `Content-Type` and `Content-Disposition` headers are correctly set.
   - Validates that the `AboutService` can successfully locate and read the physical file from disk.

@@ -24,11 +24,12 @@
     "depcruise:graph:server": "depcruise src/server --config .dependency-cruiser.server.js --output-type dot | node scripts/dot-to-svg.js > dependency-graph-server.svg",
     "depcruise:graph:ui": "depcruise src/ui --config .dependency-cruiser.ui.js --output-type dot | node scripts/dot-to-svg.js > dependency-graph-ui.svg",
     "lint": "eslint \"src/**/*.{ts,tsx}\" --fix",
-    "format": "npm run format:server && npm run format:ui",
-    "check-format": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "format": "npm run format:server && npm run format:ui && npm run format:root",
+    "check-format": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,md}\" \"*.{js,mjs,ts,json,md}\" \".github/**/*.{md,yml,yaml}\" \".vscode/*.json\" \"architecture/**/*.md\" \"scripts/**/*.{js,ts}\"",
+    "format:root": "prettier --write \"*.{js,mjs,ts,json,md}\" \".github/**/*.{md,yml,yaml}\" \".vscode/*.json\" \"architecture/**/*.md\" \"scripts/**/*.{js,ts}\"",
     "format:server": "prettier --write \"src/{server,shared}/**/*.{ts,json,md}\"",
     "format:ui": "prettier --write \"src/ui/**/*.{ts,tsx,js,jsx,json,css,md}\"",
-    "prepare": "husky"
+    "prepare": "husky || true"
   },
   "devDependencies": {
     "@babel/core": "^7.26.10",

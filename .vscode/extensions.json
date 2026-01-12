@@ -4,8 +4,6 @@
     "dbaeumer.vscode-eslint",
     "tamtamchik.snyk-vscode",
     "firsttris.vscode-jest-runner",
-    "orta.vscode-jest",
-    "sbutler2901.dependency-cruiser-extension",
-    "gamunu.vscode-yarn"
+    "sbutler2901.dependency-cruiser-extension"
   ]
 }

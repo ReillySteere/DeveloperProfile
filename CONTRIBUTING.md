@@ -92,3 +92,6 @@ This will generate:
 - The application is a single monorepo deployable.
 - **Build:** `npm run build` produces the `dist/` folder.
 - **Production Run:** `npm run start:server:prod` serves the API and static frontend assets.
+- **Docker:**
+  - Build: `docker build -t profile-app .`
+  - Run: `docker run -p 3000:3000 profile-app`

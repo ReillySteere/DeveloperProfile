@@ -65,10 +65,23 @@ A full-stack developer profile application built with a modern React frontend an
      ```
 
 6. **Run tests:**
-   - **Unit Tests:**
+   - **All Tests:**
 
      ```bash
      npm test
+     ```
+
+7. **Docker:**
+   - **Build:**
+
+     ```bash
+     docker build -t profile-app .
+     ```
+
+   - **Run:**
+
+     ```bash
+     docker run -p 3000:3000 profile-app
      ```
 
 ## Environment Variables
