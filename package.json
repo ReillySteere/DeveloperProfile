@@ -7,7 +7,7 @@
     "build": "npm run build:server && npm run build:ui",
     "build:ui": "webpack --config webpack.browser.js --mode production",
     "build:server": "nest build && tsc-alias",
-    "test": "npm run test:server && npm run test:ui",
+    "test": "jest --coverage",
     "start": "concurrently \"npm run start:server:dev \" \"npm run start:ui \"",
     "start:ui": "webpack serve --config webpack.browser.js --mode development",
     "start:server:debug": "nest start --debug --watch",

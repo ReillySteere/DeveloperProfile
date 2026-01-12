@@ -2,6 +2,70 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "start:all",
+      "type": "npm",
+      "script": "start",
+      "isBackground": true,
+      "problemMatcher": ["$tsc-watch"],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "start:server:dev",
+      "type": "npm",
+      "script": "start:server:dev",
+      "isBackground": true,
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build"
+    },
+    {
+      "label": "start:ui",
+      "type": "npm",
+      "script": "start:ui",
+      "isBackground": true,
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "test:all",
+      "type": "npm",
+      "script": "test",
+      "group": "test"
+    },
+    {
+      "label": "test:server",
+      "type": "npm",
+      "script": "test:server",
+      "group": "test"
+    },
+    {
+      "label": "test:ui",
+      "type": "npm",
+      "script": "test:ui",
+      "group": "test"
+    },
+    {
+      "label": "build:all",
+      "type": "npm",
+      "script": "build",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "lint",
+      "type": "npm",
+      "script": "lint",
+      "problemMatcher": ["$eslint-stylish"]
+    },
+    {
+      "label": "type-check",
+      "type": "npm",
+      "script": "type-check",
+      "problemMatcher": ["$tsc"]
+    },
+    {
       "label": "depcruise verify",
       "type": "shell",
       "command": "npx depcruise src --config .dependency-cruiser.js",
