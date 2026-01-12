@@ -13,6 +13,7 @@ Welcome to the project! This guide will help you get started with contributing t
 We use **Husky** to enforce quality standards. A `pre-push` hook runs automatically when you push to the remote repository.
 
 It validates:
+
 1.  **Tests passes** (`npm run test`)
 2.  **Linting passes** (`npm run lint`)
 3.  **Formatting is correct** (`npm run check-format`)
@@ -34,6 +35,20 @@ It validates:
   - Components: PascalCase (`MyComponent.tsx`).
   - Hooks: camelCase (`useHook.ts`).
   - Files: kebab-case (`my-component.tsx`).
+
+## Feature Scaffolding
+
+To quickly start a new feature that follows our architectural standards (BFF pattern, Modular Monolith), use the scaffold command:
+
+\`\`\`bash
+npm run scaffold <feature-name>
+\`\`\`
+
+This will generate:
+
+- **Server:** Module, Controller, Service, and Unit Tests in \`src/server/modules/<feature>\`.
+- **UI:** Container, Hook, and Integration Tests in \`src/ui/containers/<feature>\`.
+- **Shared:** Types in \`src/shared/types\`.
 
 ## Testing Standards
 

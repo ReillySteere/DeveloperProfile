@@ -177,6 +177,41 @@ export const use${PascalCase} = () => {
 `,
 );
 
+// UI Integration Test
+writeFile(
+  path.join(srcUi, `${featureName}.container.test.tsx`),
+  `
+import React from 'react';
+import { render, screen, waitFor } from 'ui/test-utils';
+import axios from 'axios';
+import { ${PascalCase}Container } from './${featureName}.container';
+
+jest.mock('axios');
+const mockedAxios = axios as jest.Mocked<typeof axios>;
+
+describe('${PascalCase}Container', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('renders loading state initially', () => {
+    mockedAxios.get.mockImplementation(() => new Promise(() => {}));
+    render(<${PascalCase}Container />);
+    expect(screen.getByText(/Loading.../i)).toBeInTheDocument();
+  });
+
+  it('renders content when data fetching succeeds', async () => {
+    mockedAxios.get.mockResolvedValueOnce({ data: {} });
+    render(<${PascalCase}Container />);
+    
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { level: 1, name: /${PascalCase} Feature/i })).toBeInTheDocument();
+    });
+  });
+});
+`,
+);
+
 // Shared Types
 createDir(srcShared);
 writeFile(
