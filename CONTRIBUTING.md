@@ -34,7 +34,7 @@ It validates:
 
 ### Continuous Integration (GitHub Actions)
 
-The pipeline defined in `.github/workflows/ci.yml` runs the same checks on every Push and Pull Request to ensure the build remains stable across environments.
+The pipeline defined in `.github/workflows/ci.yml` runs the same checks on every Push and Pull Request to ensure the build remains stable across environments. It also verifies that the **Docker image** can be built successfully.
 
 ## Code Style
 

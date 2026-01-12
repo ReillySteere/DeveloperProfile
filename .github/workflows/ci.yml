@@ -52,3 +52,6 @@ jobs:
         run: npm run test
         env:
           CI: true
+
+      - name: 🐳 Docker Build
+        run: docker build . --file Dockerfile --tag profile-app:latest
