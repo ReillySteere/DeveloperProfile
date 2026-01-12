@@ -96,28 +96,21 @@ describe('AboutContainer', () => {
     expect(screen.getByText('Email')).toBeInTheDocument();
   });
 
-  it('opens LinkedIn link on click', () => {
-    const openSpy = jest.spyOn(window, 'open').mockImplementation(() => null);
+  it('renders LinkedIn link with correct attributes', () => {
     render(<AboutContainer />);
-    const button = screen.getByText('LinkedIn');
-    fireEvent.click(button);
-    expect(openSpy).toHaveBeenCalledWith(
+    const link = screen.getByRole('link', { name: /Connect on LinkedIn/i });
+    expect(link).toHaveAttribute(
+      'href',
       'https://www.linkedin.com/in/reillysteere/',
-      '_blank',
     );
-    openSpy.mockRestore();
+    expect(link).toHaveAttribute('target', '_blank');
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer');
   });
 
-  it('opens Email link on click', () => {
-    mockNavigate.mockClear();
-
+  it('renders Email link with correct attributes', () => {
     render(<AboutContainer />);
-    const button = screen.getByText('Email');
-    fireEvent.click(button);
-
-    expect(mockNavigate).toHaveBeenCalledWith({
-      to: 'mailto:reilly.steere@gmail.com',
-    });
+    const link = screen.getByRole('link', { name: /Send an email/i });
+    expect(link).toHaveAttribute('href', 'mailto:reilly.steere@gmail.com');
   });
 
   it('handles the resume download process', async () => {
