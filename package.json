@@ -16,6 +16,7 @@
     "test:server": "jest --config jest.node.ts --coverage",
     "test:ui": "jest --config jest.browser.ts --coverage",
     "scaffold": "node .github/skills/feature-scaffold/scaffold-feature.js",
+    "generate-routes": "tsr generate",
     "type-check": "tsc --noEmit",
     "depcruise:verify": "npm run depcruise:server && npm run depcruise:ui",
     "depcruise:server": "depcruise src/server --config .dependency-cruiser.server.js",
@@ -135,4 +136,3 @@
     "zustand": "^5.0.3"
   }
 }
-
