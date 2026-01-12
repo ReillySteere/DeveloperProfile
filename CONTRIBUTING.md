@@ -8,7 +8,18 @@ Welcome to the project! This guide will help you get started with contributing t
 2.  **Branching:** Use descriptive feature branches (e.g., `feature/add-blog-search`).
 3.  **Commits:** Write clear, concise commit messages.
 
-## Git Hooks
+## Editor Setup
+
+We highly recommend using **Visual Studio Code** for this project. This workspace comes pre-configured with:
+
+1.  **Recommended Extensions:** Upon opening, accept the prompt to install ESLint, Prettier, Jest, and Dependency Cruiser extensions.
+2.  **Workspace Settings:** Ensures consistent formatting and linting behavior across the team.
+
+## Quality Gates
+
+We use both local Git hooks and cloud-based CI to enforce quality.
+
+### Local (Husky)
 
 We use **Husky** to enforce quality standards. A `pre-push` hook runs automatically when you push to the remote repository.
 
@@ -20,6 +31,10 @@ It validates:
 4.  **Dependency rules are respected** (`npm run depcruise:verify`)
 
 **Tip:** If you need to bypass this for WIP branches (not recommended), use `git push --no-verify`.
+
+### Continuous Integration (GitHub Actions)
+
+The pipeline defined in `.github/workflows/ci.yml` runs the same checks on every Push and Pull Request to ensure the build remains stable across environments.
 
 ## Code Style
 

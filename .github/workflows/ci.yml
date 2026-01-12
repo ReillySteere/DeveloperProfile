@@ -1,0 +1,51 @@
+name: Quality Gates
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: Validate (Lint, Test, Build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+
+    steps:
+      - name: ⬇️ Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: ⎔ Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: 📥 Install Dependencies
+        run: npm ci
+
+      - name: 📐 Check Formatting
+        run: npm run check-format
+
+      - name: 🧐 Lint Code
+        run: npm run lint
+
+      - name: 🔎 Type Check
+        run: npm run type-check
+
+      - name: 🏗️ Build Application
+        run: npm run build
+
+      - name: 🕸️ Verify Architecture (Dependency Cruiser)
+        run: npm run depcruise:verify
+
+      - name: 🧪 Run Tests (Server & UI)
+        run: npm run test
+        env:
+          CI: true

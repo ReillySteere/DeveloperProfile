@@ -41,13 +41,17 @@ A full-stack developer profile application built with a modern React frontend an
    npm install
    ```
 
-3. **Build the project:**
+3. **Editor Setup (Recommended):**
+
+   Open the project in **VS Code** and accept the prompt to install the recommended extensions (ESLint, Prettier, Jest, Dependency Cruiser).
+
+4. **Build the project:**
 
    ```bash
    npm run build
    ```
 
-4. **Run the application:**
+5. **Run the application:**
    - **Development mode (UI + Server):**
 
      ```bash
@@ -60,7 +64,7 @@ A full-stack developer profile application built with a modern React frontend an
      npm run start:server:prod
      ```
 
-5. **Run tests:**
+6. **Run tests:**
    - **Unit Tests:**
 
      ```bash
