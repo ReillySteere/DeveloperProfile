@@ -1,21 +1,16 @@
 module.exports = {
   testRegex: ['./src/ui/.*test\\.[jt]s[x]*$'],
-  preset: 'ts-jest/presets/js-with-ts-esm',
+  extensionsToTreatAsEsm: ['.ts', '.tsx'],
   transform: {
-    '^.+\\.(ts|tsx)?$': [
-      'ts-jest',
-      {
-        useESM: true,
-        babelConfig: true,
-        isolatedModules: process.env.ISOLATED_MODULES === 'true',
-      },
+    '^.+\\.(t|j)sx?$': [
+      '@swc/jest',
+      // Load config from .swcrc
     ],
-    '^.+\\.(js|jsx)$': 'babel-jest',
   },
-  extensionsToTreatAsEsm: ['.ts'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   moduleNameMapper: {
     '^ui/(.*)$': '<rootDir>/src/ui/$1',
+    '^shared/(.*)$': '<rootDir>/src/shared/$1',
     '\\.(css|scss)$': 'identity-obj-proxy',
   },
   modulePaths: ['<rootDir>/node_modules'],
@@ -23,7 +18,7 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/src/ui/test-utils/jest-preloaded.ts'],
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],
   clearMocks: true,
-  testEnvironment: 'jest-fixed-jsdom',
+  testEnvironment: 'jest-environment-jsdom',
   testEnvironmentOptions: {
     url: 'http://jest',
   },

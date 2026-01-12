@@ -163,4 +163,25 @@ describe('AuthInterceptor', () => {
     const state = useAuthStore.getState();
     expect(state.isLoginModalOpen).toBe(false);
   });
+
+  it('ejects interceptors on unmount', () => {
+    const { unmount } = render(<AuthInterceptor />);
+
+    unmount();
+
+    expect(ejectResponseMock).toHaveBeenCalledWith(123);
+    expect(ejectRequestMock).toHaveBeenCalledWith(456);
+  });
+
+  it('handles interceptor setup failure gracefully during cleanup', () => {
+    mockedAxios.interceptors.response.use = jest.fn(() => null as any);
+    mockedAxios.interceptors.request.use = jest.fn(() => null as any);
+
+    const { unmount } = render(<AuthInterceptor />);
+    unmount();
+
+    // Expect eject NOT to be called because refs are null
+    expect(ejectResponseMock).not.toHaveBeenCalled();
+    expect(ejectRequestMock).not.toHaveBeenCalled();
+  });
 });

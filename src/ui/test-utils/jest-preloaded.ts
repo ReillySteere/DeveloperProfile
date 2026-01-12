@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 import '@testing-library/jest-dom';
+import { TextEncoder, TextDecoder } from 'util';
+
+Object.assign(global, { TextEncoder, TextDecoder });
 
 import { enableFetchMocks } from 'jest-fetch-mock';
 import { cleanup } from './test-utils';

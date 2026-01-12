@@ -1,1 +1,1 @@
-npm run test && npm run lint && npm run check-format && npm run depcruise:verify
+npm run type-check && npm run test && npm run lint && npm run check-format && npm run depcruise:verify

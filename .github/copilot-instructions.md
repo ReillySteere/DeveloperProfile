@@ -21,6 +21,8 @@
   - **Coverage:** 100% required for statements, branches, functions, lines.
 - **Lint:** `npm run lint` (ESLint + Prettier + React Compiler).
 - **Format:** `npm run format` (runs `format:server` and `format:ui`).
+- **Type Check:** `npm run type-check` (runs `tsc --noEmit`).
+- **Dependency Check:** `npm run depcruise:verify` (validates architectural boundaries).
 - **Build:** `npm run build` (runs `build:server` and `build:ui`).
 
 ## Code Generation Requirements
@@ -70,6 +72,8 @@
 
 ## Testing Specifics
 
+- **Engine:** `@swc/jest` (fast compilation for tests).
+- **Framework:** Jest 30+.
 - **Configs:** `jest.browser.ts` (UI) and `jest.node.ts` (Server).
 - **UI Utils:** Located in `src/ui/test-utils/` (aliased as `test-utils` in Jest).
 - **Mocks:**

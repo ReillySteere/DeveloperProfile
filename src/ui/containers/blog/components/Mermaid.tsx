@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import mermaid from 'mermaid';
 
 interface MermaidProps {
@@ -12,11 +12,10 @@ mermaid.initialize({
 });
 
 export const Mermaid: React.FC<MermaidProps> = ({ chart }) => {
-  const ref = useRef<HTMLDivElement>(null);
   const [svg, setSvg] = useState<string>('');
 
   useEffect(() => {
-    if (ref.current && chart) {
+    if (chart) {
       const id = `mermaid-${Math.random().toString(36).substr(2, 9)}`;
       mermaid.render(id, chart).then(({ svg }) => {
         setSvg(svg);
@@ -24,11 +23,5 @@ export const Mermaid: React.FC<MermaidProps> = ({ chart }) => {
     }
   }, [chart]);
 
-  return (
-    <div
-      ref={ref}
-      className="mermaid"
-      dangerouslySetInnerHTML={{ __html: svg }}
-    />
-  );
+  return <div className="mermaid" dangerouslySetInnerHTML={{ __html: svg }} />;
 };

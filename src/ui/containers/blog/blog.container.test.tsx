@@ -59,16 +59,20 @@ jest.mock('react-markdown', () => (props: any) => {
     typeof props.children === 'string'
   ) {
     if (props.children.includes('```mermaid')) {
-      const content =
-        props.children.match(/```mermaid([\s\S]*?)```/)?.[1] || '';
-      elements.push(
-        props.components.code({
-          key: 'mermaid',
-          node: {},
-          className: 'language-mermaid',
-          children: content.trim(),
-        }),
-      );
+      const regex = /```mermaid([\s\S]*?)```/g;
+      let match;
+      let i = 0;
+      while ((match = regex.exec(props.children)) !== null) {
+        const content = match[1] || '';
+        elements.push(
+          props.components.code({
+            key: `mermaid-${i++}`,
+            node: {},
+            className: 'language-mermaid',
+            children: content.trim(),
+          }),
+        );
+      }
     }
 
     if (props.children.includes('```typescript')) {
@@ -130,6 +134,9 @@ const mockPosts = [
 \`\`\`mermaid
 graph TD;
     A-->B;
+\`\`\`
+
+\`\`\`mermaid
 \`\`\`
 
 \`\`\`typescript
@@ -222,6 +229,15 @@ describe('Blog Integration', () => {
 
       // Check for code blocks being processed
       expect(screen.getByText(/graph TD;/)).toBeInTheDocument();
+
+      // Verify Mermaid component rendered and effect ran
+      await waitFor(() => {
+        const mermaidEl = document.querySelector('.mermaid');
+        expect(mermaidEl).toBeInTheDocument();
+        // The mock returns { svg: '<svg>mock</svg>' }
+        expect(mermaidEl?.innerHTML).toContain('<svg>mock</svg>');
+      });
+
       // Code might appear twice (raw + highlight), so checks length
       const codeBlocks = screen.getAllByText(/const x = 1;/);
       expect(codeBlocks.length).toBeGreaterThan(0);

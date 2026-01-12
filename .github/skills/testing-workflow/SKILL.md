@@ -21,6 +21,7 @@ npm run test:server
 
 - **Scope**: `src/server/**/*.test.ts`
 - **Environment**: Node.js (`jest.node.ts`)
+- **Transformer**: `@swc/jest`
 
 ### UI Tests
 
@@ -32,6 +33,7 @@ npm run test:ui
 
 - **Scope**: `src/ui/**/*.test.tsx`
 - **Environment**: jsdom (`jest.browser.ts`)
+- **Transformer**: `@swc/jest`
 
 ## 2. Writing Server Tests (`src/server`)
 
@@ -67,3 +69,10 @@ If a test fails, use the VS Code Test Explorer or run the specific file:
 ```bash
 npx jest src/ui/path/to/test.test.tsx --config jest.browser.ts
 ```
+
+## 5. Pre-push Checks
+
+The project enforces quality checks via Husky hooks. Before pushing, the following commands are run:
+
+- `npm run type-check`: Ensures no TypeScript errors (`tsc --noEmit`).
+- `npm run depcruise:verify`: Ensures strict dependency boundaries.

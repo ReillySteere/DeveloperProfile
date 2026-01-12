@@ -50,7 +50,11 @@ export const SignInModal: React.FC = () => {
   };
 
   const modalContent = (
-    <div className={styles.overlay} onClick={closeLoginModal}>
+    <div
+      className={styles.overlay}
+      onClick={closeLoginModal}
+      data-testid="signin-overlay"
+    >
       <div
         className={styles.modal}
         onClick={(e) => e.stopPropagation()}

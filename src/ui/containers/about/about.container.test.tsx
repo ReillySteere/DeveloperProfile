@@ -3,6 +3,12 @@ import { render, screen, fireEvent, waitFor } from 'ui/test-utils';
 import axios from 'axios';
 import AboutContainer from './about.container';
 
+const mockNavigate = jest.fn();
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useNavigate: () => mockNavigate,
+}));
+
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
@@ -103,20 +109,14 @@ describe('AboutContainer', () => {
   });
 
   it('opens Email link on click', () => {
-    const originalLocation = window.location;
-    Object.defineProperty(window, 'location', {
-      writable: true,
-      value: { href: '' },
-    });
+    mockNavigate.mockClear();
 
     render(<AboutContainer />);
     const button = screen.getByText('Email');
     fireEvent.click(button);
-    expect(window.location.href).toBe('mailto:reilly.steere@gmail.com');
 
-    Object.defineProperty(window, 'location', {
-      writable: true,
-      value: originalLocation,
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: 'mailto:reilly.steere@gmail.com',
     });
   });
 

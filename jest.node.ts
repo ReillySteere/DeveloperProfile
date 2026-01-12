@@ -1,6 +1,9 @@
 module.exports = {
   testRegex: '.*/src/(server|shared)/.*\\.test\\.ts$',
-  preset: 'ts-jest/presets/js-with-ts-esm',
+  extensionsToTreatAsEsm: ['.ts', '.tsx'],
+  transform: {
+    '^.+\\.(t|j)s$': ['@swc/jest'],
+  },
   modulePaths: ['<rootDir>/node_modules'],
   moduleDirectories: [__dirname, 'node_modules', 'test-utils'],
   moduleNameMapper: {
@@ -10,23 +13,6 @@ module.exports = {
   setupFilesAfterEnv: ['./src/server/test-utils/jest-node-preloaded.ts'],
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],
   clearMocks: true,
-  transform: {
-    '.*/src/(server|shared)/.*\\.test\\.ts$': [
-      'ts-jest',
-      {
-        useESM: true,
-        babelConfig: true,
-        tsconfig: './tsconfig.jest.json',
-      },
-    ],
-    '^.+\\.(t|j)sx?$': [
-      'ts-jest',
-      {
-        useESM: true,
-        tsconfig: './tsconfig.jest.json',
-      },
-    ],
-  },
   collectCoverageFrom: [
     'src/shared/**/*.ts',
     'src/server/**/*.ts',

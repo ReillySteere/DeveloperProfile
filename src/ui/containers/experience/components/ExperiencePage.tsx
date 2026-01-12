@@ -26,9 +26,9 @@ const ExperiencePage: React.FC = () => {
       { threshold: 0.5 },
     );
 
-    sectionRefs.current.forEach((el) => {
+    for (const el of sectionRefs.current) {
       if (el) observer.observe(el);
-    });
+    }
 
     return () => observer.disconnect();
   }, [experiences]);

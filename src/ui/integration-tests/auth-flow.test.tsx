@@ -168,6 +168,10 @@ describe('SignIn Integration', () => {
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
     expect(screen.getByRole('dialog')).toBeInTheDocument();
 
+    // Verify other keys don't close it
+    fireEvent.keyDown(window, { key: 'Enter' });
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+
     // Press Escape
     fireEvent.keyDown(window, { key: 'Escape' });
 
@@ -257,6 +261,60 @@ describe('SignIn Integration', () => {
 
     await waitFor(() => {
       expect(screen.getByText('An error occurred')).toBeInTheDocument();
+    });
+  });
+
+  it('focuses the username input when opened', () => {
+    render(<SignInIntegration />);
+    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+
+    const usernameInput = screen.getByLabelText(/username/i);
+    expect(usernameInput).toHaveFocus();
+  });
+
+  it('closes modal when clicking the overlay backdrop', async () => {
+    render(<SignInIntegration />);
+    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+
+    const overlay = screen.getByTestId('signin-overlay');
+    fireEvent.click(overlay);
+
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+  });
+
+  it('disables inputs while loading', async () => {
+    let resolveRef: (val: any) => void;
+    (global.fetch as jest.Mock).mockReturnValue(
+      new Promise((resolve) => {
+        resolveRef = resolve;
+      }),
+    );
+
+    render(<SignInIntegration />);
+    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+
+    fireEvent.change(screen.getByLabelText(/username/i), {
+      target: { value: 'user' },
+    });
+    fireEvent.change(screen.getByLabelText(/password/i), {
+      target: { value: 'pass' },
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Sign In' }));
+
+    expect(screen.getByLabelText(/username/i)).toBeDisabled();
+    expect(screen.getByRole('button', { name: /signing in/i })).toBeDisabled();
+
+    // Resolve successfully
+    resolveRef!({
+      ok: true,
+      json: async () => ({ access_token: 'valid-token' }),
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
   });
 });
