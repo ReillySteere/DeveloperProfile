@@ -32,14 +32,14 @@ The Experience feature provides a visual timeline of professional history. It is
 
 ### 3. Frontend Data Fetching (TanStack Query)
 
-- **Hook:** `useExperience` (`src/ui/experience/hooks/useExperience.ts`)
+- **Hook:** `useExperience` (`src/ui/containers/experience/hooks/useExperience.ts`)
   - Fetches data from `/api/experience`.
   - Returns `experiences`, `isLoading`, `isError`, `error`, `refetch`.
   - Uses `QueryState` component to handle UI states.
 
 ### 4. User Interface (React)
 
-- **Page:** `ExperiencePage` (`src/ui/experience/components/ExperiencePage.tsx`)
+- **Page:** `ExperienceContainer` (`src/ui/containers/experience/experience.container.tsx`)
   - **Layout:** Uses `Frame` for consistent page structure.
   - **Scroll Container:** Implements scroll snapping for section-by-section navigation.
   - **Navigation:** "Progress Dots" on the right side allow quick navigation to specific entries.

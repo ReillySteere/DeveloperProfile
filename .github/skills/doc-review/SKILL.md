@@ -33,6 +33,14 @@ Run this skill after implementing a feature, refactoring code, or fixing a bug.
 - **Trigger:** Did you change `src/shared/types`?
 - **Action:** Ensure the JSDoc comments on the types reflect the new reality, as these are the contract between FE and BE.
 
+### Shared UI Components
+
+- **Trigger:** Did you add, remove, or rename a component in `src/ui/shared/components/`?
+- **Action:** Update the following:
+  1. **Barrel export:** Ensure `src/ui/shared/components/index.ts` exports the component
+  2. **Architecture doc:** Update `architecture/components/shared-ui.md` with the new component in the appropriate category table
+  3. **Usage example:** If the component has non-obvious usage, add an example to the architecture doc
+
 ### Public API (Swagger/OpenAPI)
 
 - **Trigger:** Did you change `src/server/**/*.controller.ts`?
@@ -49,13 +57,14 @@ Run this skill after implementing a feature, refactoring code, or fixing a bug.
 
 **Files to cross-check:**
 
-| Changed File                     | Also Review                                |
-| -------------------------------- | ------------------------------------------ |
-| `copilot-instructions.md`        | All skills, all prompts                    |
-| Any skill in `.github/skills/`   | `copilot-instructions.md`, related prompts |
-| Any prompt in `.github/prompts/` | Related skills, `copilot-instructions.md`  |
-| `architecture/decisions/*.md`    | `copilot-instructions.md` if architectural |
-| `architecture/components/*.md`   | Related skills (e.g., `architecture-nav`)  |
+| Changed File                     | Also Review                                         |
+| -------------------------------- | --------------------------------------------------- |
+| `copilot-instructions.md`        | All skills, all prompts                             |
+| Any skill in `.github/skills/`   | `copilot-instructions.md`, related prompts          |
+| Any prompt in `.github/prompts/` | Related skills, `copilot-instructions.md`           |
+| `architecture/decisions/*.md`    | `copilot-instructions.md` if architectural          |
+| `architecture/components/*.md`   | Related skills (e.g., `architecture-nav`)           |
+| `src/ui/shared/components/*`     | `architecture/components/shared-ui.md`, barrel file |
 
 ## 3. Consistency Quick Reference
 
@@ -80,3 +89,4 @@ If documentation updates are needed, list them clearly:
 3.  **Missing Swagger**: Controller [Name] is missing decorators.
 4.  **Inconsistent Path**: [File] references `[wrong]`, should be `[correct]`.
 5.  **Outdated Pattern**: [File] shows `[old pattern]`, should use `[new pattern]`.
+6.  **Missing Shared Component**: `[ComponentName]` added but not documented in `shared-ui.md`.

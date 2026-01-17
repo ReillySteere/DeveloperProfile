@@ -33,14 +33,14 @@ The Projects feature showcases a portfolio of technical projects. It provides a 
 
 ### 3. Frontend Data Fetching (TanStack Query)
 
-- **Hook:** `useProjects` (`src/ui/projects/hooks/useProjects.ts`)
+- **Hook:** `useProjects` (`src/ui/containers/projects/hooks/useProjects.ts`)
   - Fetches data from `/api/projects`.
   - Returns `projects`, `isLoading`, `isError`, `error`, `refetch`.
   - Uses `QueryState` component to handle UI states.
 
 ### 4. User Interface (React)
 
-- **Page:** `ProjectsPage` (`src/ui/projects/components/ProjectsPage.tsx`)
+- **Page:** `ProjectsContainer` (`src/ui/containers/projects/projects.container.tsx`)
   - **Layout:** Uses `Frame` for consistent page structure.
   - **Container:** Displays a list of `ProjectCard` components.
 - **Component:** `ProjectCard`

@@ -40,109 +40,31 @@ This document tracks the ongoing effort to enhance AI agent support in this repo
 - Build-debug prompt covers: npm scripts, port conflicts, database issues, Docker troubleshooting, environment variables
 - Database-migration skill covers: creating, running, reverting migrations, SQLite-specific patterns, troubleshooting
 - Skills now reference VS Code task IDs (e.g., `npm: test:server`) for reliable execution
+- Added documentation consistency requirement to `copilot-instructions.md` and enhanced `doc-review` skill with cross-reference guidance
+
+---
+
+### Phase 3: Discoverability & Onboarding ✅
+
+**Completed on:** January 17, 2026
+
+| Item                                         | Status  | Notes                                                        |
+| -------------------------------------------- | ------- | ------------------------------------------------------------ |
+| 3.1 Create Skills Index/README               | ✅ Done | Created `.github/skills/README.md`                           |
+| 3.2 Add Onboarding Chat Mode                 | ✅ Done | Created `.github/chatmodes/onboarding.chatmode.md`           |
+| 3.3 Document Missing Component Architectures | ✅ Done | Created `architecture/components/auth.md` and `shared-ui.md` |
+
+**Key additions in Phase 3:**
+
+- Skills README with decision tree and categorized skill list
+- Onboarding chat mode for new contributors with guided tour topics
+- Auth architecture doc covering JWT flow, AuthInterceptor, and token management
+- Shared UI architecture doc covering component catalog and import conventions
+- Fixed outdated paths in existing architecture docs (`blog.md`, `experience.md`, `projects.md`, `about.md`)
 
 ---
 
 ## Remaining Work
-
-### Phase 3: Discoverability & Onboarding
-
-**Effort:** Low-Medium | **Impact:** Medium
-
-#### 3.1 Create Skills Index/README
-
-**File:** `.github/skills/README.md`
-
-**Why:** 8 skills exist now, but no central index explains when to use each.
-
-**Content structure:**
-
-```markdown
-# Skills Index
-
-## Decision Tree
-
-- Need to find code? → `architecture-nav`
-- Need to create a new feature? → `feature-scaffold`
-- Need to write/debug tests? → `testing-workflow`
-- Encountering errors? → `error-handling`
-- Reviewing code? → `code-review`
-- Checking dependencies? → `dependency-enforcement`
-- Writing documentation? → `documentation-standards`
-- Reviewing doc changes? → `doc-review`
-
-## Skills by Category
-
-### Development
-
-- feature-scaffold
-- architecture-nav
-
-### Quality
-
-- testing-workflow
-- code-review
-- dependency-enforcement
-- error-handling
-
-### Documentation
-
-- documentation-standards
-- doc-review
-```
-
-#### 3.2 Add "New Contributor Onboarding" Chat Mode
-
-**File:** `.github/chatmodes/onboarding.chatmode.md`
-
-**Why:** The `planning` chat mode is generic. A dedicated onboarding mode helps new contributors.
-
-**Content structure:**
-
-```markdown
----
-description: Guide new contributors through the codebase architecture and workflows.
-tools: ['codebase', 'search', 'findTestFiles']
----
-
-# Onboarding Mode
-
-You are helping a new contributor understand this codebase.
-
-## Guided Tour
-
-1. Architecture overview (Modular Monolith, BFF)
-2. Key directories (`src/server`, `src/ui`, `src/shared`)
-3. Development workflow (`npm start`, testing, linting)
-4. Feature structure (vertical slices)
-5. Testing patterns (integration tests at container level)
-```
-
-#### 3.3 Document Missing Component Architectures
-
-**Files:**
-
-- `architecture/components/auth.md`
-- `architecture/components/shared-ui.md`
-
-**Why:** Only `about.md`, `blog.md`, `experience.md`, `projects.md` exist.
-
-**Content for `auth.md`:**
-
-- Authentication flow (JWT)
-- AuthInterceptor (centralized token injection)
-- AuthStore (Zustand)
-- Backend: `src/server/shared/modules/auth/`
-- Frontend: `src/ui/signin/`, `src/ui/shared/hooks/useAuth.ts`
-
-**Content for `shared-ui.md`:**
-
-- Shared components location (`src/ui/shared/components/`)
-- Component patterns (Button, Card, Frame, QueryState)
-- SCSS Modules usage
-- Import conventions (barrel exports)
-
----
 
 ### Phase 4: Advanced Agent Capabilities
 
@@ -287,15 +209,15 @@ Use this skill when...
 
 ## Contribution Priority Order
 
-| Priority | Item                                 | Effort | Impact |
-| -------- | ------------------------------------ | ------ | ------ |
-| 1        | Skills README/index                  | Low    | Medium |
-| 2        | Document auth/shared-ui architecture | Low    | Medium |
-| 3        | Create build-debug prompt            | Medium | Medium |
-| 4        | Create database-migration skill      | Medium | Medium |
-| 5        | Update skills to use VS Code tasks   | Low    | Low    |
-| 6        | Add onboarding chat mode             | Medium | Medium |
-| 7        | Add refactoring prompt               | Medium | Low    |
-| 8        | Add API design skill                 | Medium | Low    |
-| 9        | Add validation prompt                | Low    | Low    |
-| 10       | Add instructions changelog           | Low    | Low    |
+| Priority | Item                                 | Effort | Impact | Status  |
+| -------- | ------------------------------------ | ------ | ------ | ------- |
+| 1        | Skills README/index                  | Low    | Medium | Phase 3 |
+| 2        | Document auth/shared-ui architecture | Low    | Medium | Phase 3 |
+| 3        | Create build-debug prompt            | Medium | Medium | ✅ Done |
+| 4        | Create database-migration skill      | Medium | Medium | ✅ Done |
+| 5        | Update skills to use VS Code tasks   | Low    | Low    | ✅ Done |
+| 6        | Add onboarding chat mode             | Medium | Medium | Phase 3 |
+| 7        | Add refactoring prompt               | Medium | Low    | Phase 4 |
+| 8        | Add API design skill                 | Medium | Low    | Phase 4 |
+| 9        | Add validation prompt                | Low    | Low    | Phase 4 |
+| 10       | Add instructions changelog           | Low    | Low    | Phase 5 |

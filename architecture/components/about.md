@@ -29,7 +29,7 @@ The resume download is a specialized workflow that handles binary data streaming
 
 **Client-Side Requirements:**
 
-- **Hook:** `useDownloadResume` (`src/ui/about/hooks/useDownloadResume.ts`)
+- **Hook:** `useDownloadResume` (`src/ui/containers/about/hooks/useDownloadResume.ts`)
   - Uses `axios` with `responseType: 'blob'` to correctly handle binary data.
   - **Filename Extraction:** Parses the `Content-Disposition` header to extract the server-provided filename. This ensures the downloaded file matches the server's versioning.
 - **Browser Trigger:**
@@ -39,7 +39,7 @@ The resume download is a specialized workflow that handles binary data streaming
 
 ### 3. User Interface (React)
 
-- **Container:** `AboutContainer` (`src/ui/about/about.container.tsx`)
+- **Container:** `AboutContainer` (`src/ui/containers/about/about.container.tsx`)
   - Orchestrates the layout of the page sections.
 - **Key Components:**
   - **HeroSection:** Displays the user's name, role, location, and hosts the `DownloadResumeButton`.
@@ -67,7 +67,7 @@ The resume download is a specialized workflow that handles binary data streaming
   - Asserts that `Content-Type` and `Content-Disposition` headers are correctly set.
   - Validates that the `AboutService` can successfully locate and read the physical file from disk.
 
-- **Frontend Integration:** `src/ui/about/about.container.test.ts`
+- **Frontend Integration:** `src/ui/containers/about/about.container.test.tsx`
   - **Mocking:**
     - Mocks `axios` to simulate binary responses and header variations.
     - Mocks `window.URL.createObjectURL` and `window.URL.revokeObjectURL`.

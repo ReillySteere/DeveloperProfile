@@ -37,7 +37,7 @@ The Blog feature is a content publishing system designed to share technical arti
 
 ### 3. Frontend Data Fetching (TanStack Query)
 
-- **Hooks:** `src/ui/blog/hooks/useBlog.ts`
+- **Hooks:** `src/ui/containers/blog/hooks/useBlog.ts`
   - `useBlogPosts()`: Fetches the list of posts from `/api/blog`.
   - `useBlogPost(slug)`: Fetches a single post from `/api/blog/:slug`.
   - `useCreateBlogPost()`: Mutation to create a new post. Checks for auth token before request.
@@ -58,9 +58,9 @@ The Blog feature is a content publishing system designed to share technical arti
     - `BlogPostContainer` conditionally renders the "Edit Post" button based on auth state.
 
 - **Containers:**
-  - `BlogContainer` (`src/ui/blog/blog.container.tsx`): Manages the list view and routing logic.
-  - `BlogPostContainer` (`src/ui/blog/blog-post.container.tsx`): Manages the detail view.
-  - `CreateBlogPostContainer` (`src/ui/blog/create-blog-post.container.tsx`): Manages the creation flow, redirecting if unauthenticated.
+  - `BlogContainer` (`src/ui/containers/blog/blog.container.tsx`): Manages the list view and routing logic.
+  - `BlogPostContainer` (`src/ui/containers/blog/blog-post.container.tsx`): Manages the detail view.
+  - `CreateBlogPostContainer` (`src/ui/containers/blog/create-blog-post.container.tsx`): Manages the creation flow, redirecting if unauthenticated.
 
 - **Views:** To manage complexity, UI components are subdivided into views:
   - `BlogPostReader`: Logic for displaying the rendered content (Markdown, Mermaid, Syntax Highlighting).
@@ -72,7 +72,7 @@ The Blog feature is a content publishing system designed to share technical arti
   - `BlogPostReader`: Renders the full article content.
     - **Markdown Rendering:** Uses `react-markdown` to parse content.
     - **Syntax Highlighting:** Uses `react-syntax-highlighter` (Prism) for code blocks.
-    - **Diagrams:** Custom `Mermaid` component (`src/ui/blog/components/Mermaid.tsx`) renders `mermaid` code blocks as SVG diagrams.
+    - **Diagrams:** Custom `Mermaid` component (`src/ui/containers/blog/components/Mermaid.tsx`) renders `mermaid` code blocks as SVG diagrams.
   - `BlogPostEditor`: A form component used for both creating and updating blog posts. Includes "Edit" and "Preview" modes.
 
 ## Key Dependencies
