@@ -117,7 +117,7 @@
     "@tanstack/react-router": "^1.122.0",
     "axios": "^1.10.0",
     "bcrypt": "^6.0.0",
-    "better-sqlite3": "^11.7.0",
+    "better-sqlite3": "^12.6.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "copy-webpack-plugin": "^13.0.1",
