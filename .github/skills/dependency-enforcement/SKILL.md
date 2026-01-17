@@ -22,19 +22,29 @@ Use this skill to verify that code changes (especially imports) respect the stri
 
 The project uses `dependency-cruiser`.
 
-### Check All
+### VS Code Task (Recommended)
+
+Use the VS Code task for reliable execution:
+
+| Task ID                   | Description                    |
+| ------------------------- | ------------------------------ |
+| `shell: depcruise verify` | Run full dependency validation |
+
+### Terminal Commands
+
+#### Check All
 
 ```bash
 npm run depcruise:verify
 ```
 
-### Check Server
+#### Check Server
 
 ```bash
 npm run depcruise:server
 ```
 
-### Check UI
+#### Check UI
 
 ```bash
 npm run depcruise:ui
