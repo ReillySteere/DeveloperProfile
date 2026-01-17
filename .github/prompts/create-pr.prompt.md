@@ -51,7 +51,7 @@ git push -u origin <branch-name>
 
 After pushing, provide the user with:
 
-1. **PR Creation URL**: `https://github.com/<owner>/<repo>/compare/main...<branch-name>?expand=1`
+1. **PR Creation URL**: `https://github.com/<owner>/<repo>/compare/master...<branch-name>?expand=1`
 2. **Suggested PR Title**: Based on the changes
 3. **PR Description**: Ready to copy-paste (see template below)
 
@@ -111,7 +111,7 @@ After executing the git commands, provide:
 
 **Branch:** `<branch-name>`
 
-**Create PR here:** https://github.com/<owner>/<repo>/compare/main...<branch-name>?expand=1
+**Create PR here:** https://github.com/<owner>/<repo>/compare/master...<branch-name>?expand=1
 
 ---
 

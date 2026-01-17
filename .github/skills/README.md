@@ -13,12 +13,29 @@ Before pushing changes, run an AI code review using your project's conventions:
 
 This leverages the `code-review` and `doc-review` skills automatically.
 
+### Full Documentation Audit
+
+For comprehensive documentation verification (recommended before major releases):
+
+```
+/pre-push-review --full-doc-audit
+```
+
+Or run standalone:
+
+```
+/doc-audit
+```
+
+This verifies ALL AI agent documentation matches the current codebase structure.
+
 ## Quick Reference: Which Skill Do I Need?
 
 | I want to...                         | Use this skill            |
 | ------------------------------------ | ------------------------- |
 | Find code in the codebase            | `architecture-nav`        |
 | Create a new feature (full stack)    | `feature-scaffold`        |
+| Design a new API endpoint            | `api-design`              |
 | Write or debug tests                 | `testing-workflow`        |
 | Fix TypeScript, Jest, or lint errors | `error-handling`          |
 | Review code changes                  | `code-review`             |
@@ -37,6 +54,7 @@ Start
   │
   ├─ Building something new?
   │    ├─ Full feature (UI + API)? → feature-scaffold
+  │    ├─ New API endpoint? → api-design
   │    └─ Database schema change? → database-migration
   │
   ├─ Something broken?
@@ -77,6 +95,12 @@ Start
 | ------------------------- | ---------------------------------------- |
 | `documentation-standards` | Guidelines for code comments, ADRs, APIs |
 | `doc-review`              | Check if docs need updates after changes |
+
+### 🔧 API Development
+
+| Skill        | Purpose                                              |
+| ------------ | ---------------------------------------------------- |
+| `api-design` | Design RESTful endpoints with Swagger and validation |
 
 ## Skill File Structure
 
