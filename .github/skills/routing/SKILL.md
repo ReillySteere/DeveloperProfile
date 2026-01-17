@@ -20,8 +20,9 @@ src/ui/shared/routes/
 ├── about.tsx           # /about
 ├── experience.tsx      # /experience
 ├── projects.tsx        # /projects
-├── blog.tsx            # /blog (parent route)
-└── blog.$slug.tsx      # /blog/:slug (nested route)
+├── blog.index.tsx      # /blog (list view)
+├── blog.$slug.tsx      # /blog/:slug (post detail)
+└── blog.create.tsx     # /blog/create (new post)
 ```
 
 ### Route Generation
@@ -399,15 +400,14 @@ expect(screen.getByText('Test Post')).toBeInTheDocument();
 
 ### File Naming → URL Mapping
 
-| File Name        | URL Path          |
-| ---------------- | ----------------- |
-| `index.tsx`      | `/`               |
-| `about.tsx`      | `/about`          |
-| `blog.tsx`       | `/blog` (layout)  |
-| `blog.index.tsx` | `/blog` (content) |
-| `blog.$slug.tsx` | `/blog/:slug`     |
-| `blog.new.tsx`   | `/blog/new`       |
-| `$.tsx`          | `/*` (catch-all)  |
+| File Name         | URL Path         |
+| ----------------- | ---------------- |
+| `index.tsx`       | `/`              |
+| `about.tsx`       | `/about`         |
+| `blog.index.tsx`  | `/blog`          |
+| `blog.$slug.tsx`  | `/blog/:slug`    |
+| `blog.create.tsx` | `/blog/create`   |
+| `$.tsx`           | `/*` (catch-all) |
 
 ### Hooks Quick Reference
 

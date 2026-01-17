@@ -178,7 +178,7 @@ useMutation({
 
 ### Store Structure
 
-This project has focused stores in `src/ui/shared/stores/`:
+This project has focused stores in `src/ui/shared/hooks/` (exported as hooks):
 
 ```typescript
 // src/ui/shared/hooks/useNavStore.ts
