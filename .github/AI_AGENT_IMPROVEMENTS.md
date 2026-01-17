@@ -25,78 +25,25 @@ This document tracks the ongoing effort to enhance AI agent support in this repo
 
 ---
 
-## Remaining Work
+### Phase 2: Tool Utilization & Automation ✅
 
-### Phase 2: Tool Utilization & Automation
+**Completed on:** January 17, 2026
 
-**Effort:** Medium | **Impact:** Medium
+| Item                                  | Status  | Notes                                                   |
+| ------------------------------------- | ------- | ------------------------------------------------------- |
+| 2.1 Add "Build & Run" Prompt          | ✅ Done | Created `.github/prompts/build-debug.prompt.md`         |
+| 2.2 Create "Migration" Skill          | ✅ Done | Created `.github/skills/database-migration/SKILL.md`    |
+| 2.3 Integrate VS Code Tasks in Skills | ✅ Done | Updated `testing-workflow` and `dependency-enforcement` |
 
-#### 2.1 Add "Build & Run" Prompt
+**Key additions in Phase 2:**
 
-**File:** `.github/prompts/build-debug.prompt.md`
-
-**Why:** No prompt guides agents through build failures, server startup issues, or Docker debugging.
-
-**Content to cover:**
-
-- npm script failures and debugging
-- Port conflicts (`EADDRINUSE`)
-- Database connection issues
-- Docker build/run troubleshooting
-- Environment variable problems
-
-**Reference files:**
-
-- `package.json` (scripts section)
-- `Dockerfile`
-- `heroku.yml`
-
-#### 2.2 Create "Migration" Skill
-
-**File:** `.github/skills/database-migration/SKILL.md`
-
-**Why:** The project uses TypeORM migrations, but no guidance exists for agents.
-
-**Content to cover:**
-
-- Creating new migrations
-- Running migrations
-- Rolling back migrations
-- Troubleshooting migration failures
-- Best practices for schema changes
-
-**Reference files:**
-
-- `architecture/database-schema.md`
-- `src/server/migrations/`
-- TypeORM configuration in `app.module.ts`
-
-#### 2.3 Integrate VS Code Tasks into Skills
-
-**Why:** Workspace has 10 defined tasks, but skills reference `npm run` commands instead of task IDs.
-
-**Updates needed:**
-
-| Skill                    | Current                    | Update to                                |
-| ------------------------ | -------------------------- | ---------------------------------------- |
-| `testing-workflow`       | `npm run test:server`      | Reference `npm: test:server` task        |
-| `testing-workflow`       | `npm run test:ui`          | Reference `npm: test:ui` task            |
-| `dependency-enforcement` | `npm run depcruise:verify` | Reference `shell: depcruise verify` task |
-
-**Available tasks (from `.vscode/tasks.json`):**
-
-- `npm: start:all` - Start both server and UI
-- `npm: start:server:dev` - Start server in dev mode
-- `npm: start:ui` - Start UI dev server
-- `npm: test:all` - Run all tests
-- `npm: test:server` - Run server tests
-- `npm: test:ui` - Run UI tests
-- `npm: build:all` - Build everything
-- `npm: lint` - Run linting
-- `npm: type-check` - TypeScript type checking
-- `shell: depcruise verify` - Dependency validation
+- Build-debug prompt covers: npm scripts, port conflicts, database issues, Docker troubleshooting, environment variables
+- Database-migration skill covers: creating, running, reverting migrations, SQLite-specific patterns, troubleshooting
+- Skills now reference VS Code task IDs (e.g., `npm: test:server`) for reliable execution
 
 ---
+
+## Remaining Work
 
 ### Phase 3: Discoverability & Onboarding
 

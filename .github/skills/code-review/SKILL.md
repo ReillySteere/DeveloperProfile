@@ -50,7 +50,7 @@ import { BlogPost } from 'shared/types/blog'; // ✅ CORRECT
 New features should follow the vertical slice pattern:
 
 - **Server:** `src/server/modules/<feature>/`
-- **UI:** `src/ui/containers/<feature>/` or `src/ui/<feature>/`
+- **UI:** `src/ui/containers/<feature>/`
 - **Shared Types:** `src/shared/types/<feature>.ts`
 
 ## 3. SOLID Principles Check

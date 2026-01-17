@@ -270,7 +270,7 @@ npm run depcruise:verify
 **Error:**
 
 ```
-error no-orphans: src/ui/blog/hooks/useBlog.ts → src/server/modules/blog/blog.entity.ts
+error no-orphans: src/ui/containers/blog/hooks/useBlog.ts → src/server/modules/blog/blog.entity.ts
 ```
 
 **Fix:** The UI should not import server entities. Create a shared type:

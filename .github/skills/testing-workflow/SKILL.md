@@ -11,25 +11,36 @@ Use this skill when you need to run tests, debug failures, or write new tests fo
 
 This project distinguishes between Server and UI tests.
 
-### Server Tests
+### VS Code Tasks (Recommended)
 
-Run all server tests (Unit + Integration):
+Use VS Code tasks for reliable test execution:
+
+| Task ID            | Description                 |
+| ------------------ | --------------------------- |
+| `npm: test:all`    | Run all tests (server + UI) |
+| `npm: test:server` | Run server tests only       |
+| `npm: test:ui`     | Run UI tests only           |
+
+### Terminal Commands
 
 ```bash
+# Run all tests
+npm test
+
+# Run server tests only
 npm run test:server
+
+# Run UI tests only
+npm run test:ui
 ```
+
+### Server Tests
 
 - **Scope**: `src/server/**/*.test.ts`
 - **Environment**: Node.js (`jest.node.ts`)
 - **Transformer**: `@swc/jest`
 
 ### UI Tests
-
-Run all UI tests:
-
-```bash
-npm run test:ui
-```
 
 - **Scope**: `src/ui/**/*.test.tsx`
 - **Environment**: jsdom (`jest.browser.ts`)

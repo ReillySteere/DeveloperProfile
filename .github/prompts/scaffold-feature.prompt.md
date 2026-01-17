@@ -14,9 +14,9 @@ Generate the foundational file structure and boilerplate code for a new feature 
     - **Controller:** Define standard CRUD endpoints (`/api/{feature}`).
     - **Service:** Implement business logic methods.
     - **Entity:** Define the TypeORM entity with standard fields (`id`, `createdAt`, `updatedAt`).
-    - **Unit Tests:** Scaffold basic unit tests for the service using `Test.createTestingModule`.
+    - **Unit Tests:** Scaffold unit tests for the service using **Manual Dependency Injection** (e.g., `new Service(mockDep)`). See `src/server/sentry-exception.filter.test.ts` for pattern.
 
-2.  **Frontend (`src/ui/{feature}`):**
+2.  **Frontend (`src/ui/containers/{feature}`):**
     - **Container:** Main entry point (`{feature}.container.tsx`).
     - **Hook:** Custom TanStack Query hook (`use{Feature}.ts`) for data fetching. **Do NOT add Authorization headers manually.**
     - **Components:** A placeholder component (e.g., `{Feature}List.tsx`) in `components/`.
@@ -32,7 +32,7 @@ Generate the foundational file structure and boilerplate code for a new feature 
 
 2.  **Code Generation:**
     For each file, provide the complete boilerplate code.
-    - _Backend Style:_ Use Manual Dependency Injection for unit tests. Use `TypeOrmModule.forFeature` in the module.
+    - _Backend Style:_ Use Manual Dependency Injection for unit tests (e.g., `new Service(mockDep)`). Use `TypeOrmModule.forFeature` in the module.
     - _Frontend Style:_ Functional components. Use `ui/test-utils` for testing. Use `ui/shared/components` for UI elements (Card, Button, etc.).
 
 # Example Output
@@ -45,7 +45,7 @@ todo.controller.ts
 todo.service.ts
 todo.entity.ts
 todo.service.test.ts
-src/ui/todo/
+src/ui/containers/todo/
 todo.container.tsx
 todo.container.test.tsx
 hooks/
@@ -73,7 +73,7 @@ export interface Todo {
 ```typescript
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { TodoService } from './todo.service';
-import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../../shared/modules/auth/jwt-auth.guard';
 
 @Controller('api/todo')
 export class TodoController {

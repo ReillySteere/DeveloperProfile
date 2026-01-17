@@ -34,21 +34,23 @@
 - **Safety:** Always run tests after changes.
 - **Style:** Follow existing patterns (functional components, manual DI for server unit tests).
 - **Before/After Protocol:** Include clear before/after code snippets when proposing changes.
+- **Documentation Consistency:** When modifying any `.md` file in `.github/` or `architecture/`, review related documentation for consistency before marking the task complete. Use the `doc-review` skill.
 
 ## Backend Patterns (`src/server`)
 
 - **Structure:** Modules, Controllers, Services.
 - **Data Access:** TypeORM with SQLite (`data/database.sqlite`).
 - **Testing:**
-  - **Unit:** Manual dependency injection (e.g., `new Service(mockDep)`). See `src/server/auth/auth.service.test.ts`.
+  - **Unit:** Manual dependency injection (e.g., `new Filter()`). See `src/server/sentry-exception.filter.test.ts`.
   - **Integration:** Use `Test.createTestingModule` with `:memory:` database. See `src/server/modules/experience/experience.integration.test.ts`.
 - **API:** Controllers mapped to `/api/*`. Global ValidationPipe enabled.
 - **Error Handling:** Global `SentryExceptionFilter`.
+- **Auth:** Located in `src/server/shared/modules/auth/` (Passport JWT).
 
 ## Frontend Patterns (`src/ui`)
 
 - **Directory Structure:**
-  - **Feature Folders:** `src/ui/<feature>/` (e.g., `src/ui/experience/`) containing:
+  - **Feature Folders:** `src/ui/containers/<feature>/` (e.g., `src/ui/containers/experience/`) containing:
     - `components/`: Feature-specific components.
     - `hooks/`: Feature-specific hooks (e.g., `useExperience.ts`).
     - `*.container.tsx`: Main feature container.
@@ -83,12 +85,12 @@
   - Use `jest.mock` with `__esModule: true`.
   - Prefix mock variables with `mock` (e.g., `mockUpdate`).
   - Remember Jest hoists `jest.mock()` calls.
-  - **ESM Modules:** Libraries like `react-markdown` and `mermaid` require specific mocking strategies (see `src/ui/blog/blog.container.test.tsx`).
+  - **ESM Modules:** Libraries like `react-markdown` and `mermaid` require specific mocking strategies (see `src/ui/containers/blog/blog.container.test.tsx`).
 
 ## Key Files
 
 - `src/server/app.module.ts`: Main backend module.
 - `src/ui/routeTree.gen.ts`: Generated routes.
-- `src/ui/experience/hooks/useExperience.ts`: Example data fetching hook.
+- `src/ui/containers/experience/hooks/useExperience.ts`: Example data fetching hook.
 - `src/server/modules/experience/experience.controller.ts`: Example controller.
-- `src/ui/blog/blog.container.tsx`: Example of nested routing and list/detail views.
+- `src/ui/containers/blog/blog.container.tsx`: Example of nested routing and list/detail views.
