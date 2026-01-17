@@ -35,6 +35,7 @@
 - **Style:** Follow existing patterns (functional components, manual DI for server unit tests).
 - **Before/After Protocol:** Include clear before/after code snippets when proposing changes.
 - **Documentation Consistency:** When modifying any `.md` file in `.github/` or `architecture/`, review related documentation for consistency before marking the task complete. Use the `doc-review` skill.
+- **Pre-Push Audit:** Before major pushes, run `/pre-push-review --full-doc-audit` to verify all documentation matches the current codebase.
 
 ## Backend Patterns (`src/server`)
 

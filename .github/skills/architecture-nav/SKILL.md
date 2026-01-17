@@ -23,7 +23,7 @@ Features are vertical slices split across the two main directories.
 |Details|---|---|
 | **Blog** | `src/ui/containers/blog/` | `src/server/modules/blog/` |
 | **Experience** | `src/ui/containers/experience/` | `src/server/modules/experience/` |
-| **Auth** | `src/ui/signin/` | `src/server/shared/modules/auth/` |
+| **Auth** | `src/ui/shared/components/SignIn/` | `src/server/shared/modules/auth/` |
 
 ### Example: Finding Code for a Feature
 

@@ -26,7 +26,7 @@ Use this skill when you need to create a new feature set (UI + Server).
     - `<feature>.service.ts`: Business Logic.
     - `<feature>.service.spec.ts`: Unit test (Manual DI).
 
-    **UI**: `src/ui/<feature>`
+    **UI**: `src/ui/containers/<feature>`
     - `<feature>.container.tsx`: Main route container.
     - `hooks/use<Feature>.ts`: Data fetching hook.
     - `components/`: Folder for sub-components.

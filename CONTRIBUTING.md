@@ -12,7 +12,7 @@ Welcome to the project! This guide will help you get started with contributing t
 
 We highly recommend using **Visual Studio Code** for this project. This workspace comes pre-configured with:
 
-1.  **Recommended Extensions:** Upon opening, accept the prompt to install ESLint, Prettier, Jest, and Dependency Cruiser extensions.
+1.  **Recommended Extensions:** Upon opening, accept the prompt to install ESLint, Prettier, Jest Runner, Dependency Cruiser, and Snyk security extensions.
 2.  **Workspace Settings:** Ensures consistent formatting and linting behavior across the team.
 
 ## Quality Gates
@@ -44,7 +44,7 @@ The pipeline defined in `.github/workflows/ci.yml` runs the same checks on every
   npm run format
   ```
 - **Structure:**
-  - **UI:** Feature-based folder structure (`src/ui/<feature>`).
+  - **UI:** Feature-based folder structure (`src/ui/containers/<feature>`).
   - **Server:** Modular (NestJS Modules).
 - **Naming:**
   - Components: PascalCase (`MyComponent.tsx`).
@@ -72,7 +72,7 @@ This will generate:
   - `npm run test:ui` (Browser/JSDOM)
   - `npm run test:server` (Node)
 - **Integration over Unit:**
-  - **Frontend:** Focus on **Intergration Tests** at the _Container_ level (`src/ui/containers/feature/*.container.test.tsx`). These should test the full user flow (render -> interact -> API call mocked -> update UI).
+  - **Frontend:** Focus on **Integration Tests** at the _Container_ level (`src/ui/containers/<feature>/*.container.test.tsx`). These should test the full user flow (render -> interact -> API call mocked -> update UI).
   - **Backend:** Use NestJS `Test.createTestingModule` for integration tests.
 
 ## Authentication
@@ -85,7 +85,12 @@ This will generate:
 ## Developer Tools
 
 - **Architecture:** Check the `architecture/` folder for ADRs and component docs.
-- **AI Instructions:** See `.github/copilot-instructions.md` for the prompts and rules we use with AI assistants.
+- **AI Assistance:** This project has extensive AI agent support:
+  - **Instructions:** `.github/copilot-instructions.md` - Core rules and patterns.
+  - **Skills:** `.github/skills/` - Domain-specific guides (testing, migrations, error handling, etc.).
+  - **Prompts:** `.github/prompts/` - Reusable task templates (scaffold features, debug builds, create PRs).
+  - **Chat Modes:** `.github/chatmodes/` - Specialized AI personas (onboarding, planning).
+  - See `.github/skills/README.md` for a full directory of available skills.
 
 ## Deployment
 

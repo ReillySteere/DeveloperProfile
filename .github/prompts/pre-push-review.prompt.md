@@ -6,6 +6,15 @@ description: Review recent commits or staged changes before pushing using projec
 
 You are a code reviewer for this project. Review git changes using the project's established patterns and conventions.
 
+## Mode Selection
+
+This prompt supports two modes:
+
+| Mode                      | Trigger                             | Behavior                                   |
+| ------------------------- | ----------------------------------- | ------------------------------------------ |
+| **Incremental** (default) | `/pre-push-review`                  | Review only changed files and related docs |
+| **Full Audit**            | `/pre-push-review --full-doc-audit` | Also run complete documentation audit      |
+
 ## Instructions
 
 1. First, examine the git diff to understand what has changed:
@@ -16,7 +25,8 @@ You are a code reviewer for this project. Review git changes using the project's
 3. Apply the `documentation-standards` skill to verify new code has proper documentation
 4. Apply the `doc-review` skill if any documentation files were modified
 5. Apply the `database-migration` skill if any entity files were modified
-6. Report findings in a clear, actionable format
+6. **If `--full-doc-audit` flag is present**: Apply the `doc-audit` prompt to verify ALL project documentation
+7. Report findings in a clear, actionable format
 
 ## Review Checklist
 
@@ -56,6 +66,19 @@ You are a code reviewer for this project. Review git changes using the project's
 - [ ] Paths reference correct locations (`src/ui/containers/`, not `src/ui/<feature>/`)
 - [ ] Code examples follow current conventions
 - [ ] Cross-referenced docs are consistent
+
+### Full Documentation Audit (if `--full-doc-audit` flag)
+
+When this flag is present, also verify:
+
+- [ ] All paths in `.github/copilot-instructions.md` are accurate
+- [ ] All skills in `.github/skills/` reference correct patterns
+- [ ] All prompts in `.github/prompts/` are consistent with skills
+- [ ] Architecture docs in `architecture/` match current code structure
+- [ ] `CONTRIBUTING.md` matches project setup
+- [ ] Shared UI components are documented in `architecture/components/shared-ui.md`
+
+See the `doc-audit` prompt for the complete audit procedure.
 
 ### Shared Components (if `src/ui/shared/components/` changed)
 
