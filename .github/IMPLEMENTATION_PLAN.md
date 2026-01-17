@@ -11,10 +11,44 @@ This document outlines the implementation plan for approved quality-of-life impr
 | Phase                    | Status      | Tasks                                                       |
 | ------------------------ | ----------- | ----------------------------------------------------------- |
 | Phase 1: Foundation      | ✅ Complete | `.env.example`, Dependabot, Health check, Security scanning |
-| Phase 2: DX Improvements | ⏳ Pending  | lint-staged, snippets, extensions, eslint-plugin-security   |
+| Phase 1.5: Security Fix  | ✅ Complete | Migrated `sqlite3` → `better-sqlite3` (unplanned)           |
+| Phase 2: DX Improvements | ✅ Complete | lint-staged, snippets, extensions, eslint-plugin-security   |
 | Phase 3: AI Agent Skills | ⏳ Pending  | Security, State-management, Routing, Debugging              |
 | Phase 4: Testing/CI      | ⏳ Pending  | test-utils routing, Commitlint, Semantic-release            |
 | Phase 5: Infrastructure  | ⏳ Pending  | Logging + Sentry, docker-compose                            |
+
+---
+
+## Unplanned Work: Phase 1.5 - Security Remediation
+
+### Context
+
+After implementing Phase 1's security scanning (`npm audit --audit-level=high` in CI),
+we discovered that the `sqlite3` package had **6 high-severity vulnerabilities** in its
+transitive dependency chain (`sqlite3` → `node-gyp` → `tar`). These could not be patched
+because `sqlite3` (TryGhost/node-sqlite3) is deprecated and in maintenance-only mode.
+
+### Resolution
+
+Migrated from `sqlite3` to `better-sqlite3`. See [ADR-004](../architecture/decisions/ADR-004-better-sqlite3-driver.md) for full details.
+
+### Changes Made
+
+| File                                                      | Change                                              |
+| --------------------------------------------------------- | --------------------------------------------------- |
+| `package.json`                                            | Replaced `sqlite3` with `better-sqlite3`            |
+| `src/server/app.module.ts`                                | Changed `type: 'sqlite'` → `type: 'better-sqlite3'` |
+| 6 integration test files                                  | Updated TypeORM config to use `better-sqlite3`      |
+| `architecture/decisions/ADR-004-better-sqlite3-driver.md` | New ADR documenting the migration                   |
+| `architecture/database-schema.md`                         | Updated driver reference                            |
+| 3 skill files                                             | Updated code examples to use `better-sqlite3`       |
+| `README.md`                                               | Updated database and ADR references                 |
+
+### Outcome
+
+- Vulnerabilities reduced from 12 (6 high, 6 low) to 7 (all low severity)
+- CI pipeline now passes `npm audit --audit-level=high`
+- 3-5x performance improvement from synchronous API
 
 ---
 
