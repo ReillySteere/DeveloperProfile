@@ -17,7 +17,7 @@ describe('Projects Integration', () => {
     moduleRef = await Test.createTestingModule({
       imports: [
         TypeOrmModule.forRoot({
-          type: 'sqlite',
+          type: 'better-sqlite3',
           database: ':memory:',
           entities: [Project],
           synchronize: true,

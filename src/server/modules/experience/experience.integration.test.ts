@@ -17,7 +17,7 @@ describe('Experience Integration', () => {
     module = await Test.createTestingModule({
       imports: [
         TypeOrmModule.forRoot({
-          type: 'sqlite',
+          type: 'better-sqlite3',
           database: ':memory:',
           entities: [Experience],
           synchronize: true,

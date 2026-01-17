@@ -17,7 +17,7 @@ A full-stack developer profile application built with a modern React frontend an
 ### Backend
 
 - **Framework:** NestJS
-- **Database:** SQLite
+- **Database:** SQLite (via `better-sqlite3`)
 - **ORM:** TypeORM
 - **Authentication:** Passport JWT
 
@@ -167,6 +167,7 @@ Detailed architectural documentation for each feature can be found here:
 - [ADR-001: Persistent Storage for Blog](architecture/decisions/ADR-001-persistent-storage-for-blog.md)
 - [ADR-002: SQLite & TypeORM](architecture/decisions/ADR-002-SQLite-TypeOrm-for-persistence.md)
 - [ADR-003: Centralized Axios Interceptors](architecture/decisions/ADR-003-centralized-axios-interceptors.md)
+- [ADR-004: Migrate to better-sqlite3](architecture/decisions/ADR-004-better-sqlite3-driver.md)
 
 ## Key Features
 

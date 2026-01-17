@@ -38,7 +38,7 @@ In development, the project uses `synchronize: true`, which automatically syncs 
 ```typescript
 // src/server/app.module.ts
 TypeOrmModule.forRoot({
-  type: 'sqlite',
+  type: 'better-sqlite3',
   database: 'data/database.sqlite',
   entities: [Experience, Project, BlogPost, User],
   synchronize: true, // ← Auto-sync enabled
