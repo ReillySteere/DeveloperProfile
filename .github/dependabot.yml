@@ -33,9 +33,6 @@ updates:
         update-types:
           - 'minor'
           - 'patch'
-    labels:
-      - 'dependencies'
-      - 'automated'
     commit-message:
       prefix: 'chore(deps)'
 
@@ -44,8 +41,5 @@ updates:
     directory: '/'
     schedule:
       interval: 'weekly'
-    labels:
-      - 'dependencies'
-      - 'github-actions'
     commit-message:
       prefix: 'chore(ci)'

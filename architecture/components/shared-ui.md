@@ -20,12 +20,11 @@ src/ui/shared/
 │   ├── SignIn/
 │   ├── Skeleton/
 │   └── index.ts     # Barrel export
-├── hooks/           # Shared hooks
+├── hooks/           # Shared hooks (includes Zustand stores)
 │   ├── useAuth.ts
-│   ├── useAuthStore.ts
+│   ├── useAuthStore.ts   # Zustand store for auth state
 │   ├── useDateFormatter.ts
-│   └── useNavStore.ts
-├── stores/          # Zustand stores (if separate from hooks)
+│   └── useNavStore.ts    # Zustand store for nav state
 └── routes/          # TanStack Router route definitions
 ```
 
