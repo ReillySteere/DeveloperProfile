@@ -3,6 +3,7 @@ import tsParser from '@typescript-eslint/parser';
 import prettierPlugin from 'eslint-plugin-prettier';
 import reactCompilerPlugin from 'eslint-plugin-react-compiler';
 import pluginRouter from '@tanstack/eslint-plugin-router';
+import securityPlugin from 'eslint-plugin-security';
 
 export default [
   {
@@ -30,6 +31,7 @@ export default [
       '@typescript-eslint': eslintPluginTs,
       prettier: prettierPlugin,
       'react-compiler': reactCompilerPlugin,
+      security: securityPlugin,
     },
     rules: {
       ...eslintPluginTs.configs.recommended.rules,
@@ -37,6 +39,14 @@ export default [
       'react-compiler/react-compiler': 'error',
       '@typescript-eslint/no-explicit-any': 'error',
       'prettier/prettier': 'error',
+      // Security rules
+      'security/detect-object-injection': 'warn',
+      'security/detect-non-literal-regexp': 'warn',
+      'security/detect-unsafe-regex': 'error',
+      'security/detect-buffer-noassert': 'error',
+      'security/detect-eval-with-expression': 'error',
+      'security/detect-no-csrf-before-method-override': 'error',
+      'security/detect-possible-timing-attacks': 'warn',
     },
   },
   {

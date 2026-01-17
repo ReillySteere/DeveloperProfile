@@ -1,9 +1,19 @@
 {
   "recommendations": [
+    // Code Quality
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
-    "tamtamchik.snyk-vscode",
     "firsttris.vscode-jest-runner",
-    "sbutler2901.dependency-cruiser-extension"
+    "sbutler2901.dependency-cruiser-extension",
+
+    // Security
+    "tamtamchik.snyk-vscode",
+
+    // Productivity
+    "eamodio.gitlens",
+    "usernamehw.errorlens",
+    "gruntfuggly.todo-tree",
+    "streetsidesoftware.code-spell-checker",
+    "christian-kohler.path-intellisense"
   ]
 }
