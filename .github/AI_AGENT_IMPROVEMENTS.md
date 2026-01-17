@@ -8,13 +8,14 @@ This document tracks the ongoing effort to enhance AI agent support in this repo
 
 **Completed on:** January 17, 2026
 
-| Item | Status | Notes |
-|------|--------|-------|
-| 1.1 Add error-handling skill | ✅ Done | Created `.github/skills/error-handling/SKILL.md` |
-| 1.2 Add code-review skill | ✅ Done | Created `.github/skills/code-review/SKILL.md` |
+| Item                             | Status  | Notes                                                              |
+| -------------------------------- | ------- | ------------------------------------------------------------------ |
+| 1.1 Add error-handling skill     | ✅ Done | Created `.github/skills/error-handling/SKILL.md`                   |
+| 1.2 Add code-review skill        | ✅ Done | Created `.github/skills/code-review/SKILL.md`                      |
 | 1.3 Enhance skills with examples | ✅ Done | Updated `testing-workflow`, `architecture-nav`, `feature-scaffold` |
 
 **Key fixes applied during Phase 1:**
+
 - Fixed incorrect paths (e.g., `src/server/auth/` → `src/server/shared/modules/auth/`)
 - Added proper imports to code examples
 - Clarified hook mocking guidance: mock global state hooks (`useAuth`), don't mock feature hooks
@@ -27,14 +28,17 @@ This document tracks the ongoing effort to enhance AI agent support in this repo
 ## Remaining Work
 
 ### Phase 2: Tool Utilization & Automation
+
 **Effort:** Medium | **Impact:** Medium
 
 #### 2.1 Add "Build & Run" Prompt
+
 **File:** `.github/prompts/build-debug.prompt.md`
 
 **Why:** No prompt guides agents through build failures, server startup issues, or Docker debugging.
 
 **Content to cover:**
+
 - npm script failures and debugging
 - Port conflicts (`EADDRINUSE`)
 - Database connection issues
@@ -42,16 +46,19 @@ This document tracks the ongoing effort to enhance AI agent support in this repo
 - Environment variable problems
 
 **Reference files:**
+
 - `package.json` (scripts section)
 - `Dockerfile`
 - `heroku.yml`
 
 #### 2.2 Create "Migration" Skill
+
 **File:** `.github/skills/database-migration/SKILL.md`
 
 **Why:** The project uses TypeORM migrations, but no guidance exists for agents.
 
 **Content to cover:**
+
 - Creating new migrations
 - Running migrations
 - Rolling back migrations
@@ -59,22 +66,25 @@ This document tracks the ongoing effort to enhance AI agent support in this repo
 - Best practices for schema changes
 
 **Reference files:**
+
 - `architecture/database-schema.md`
 - `src/server/migrations/`
 - TypeORM configuration in `app.module.ts`
 
 #### 2.3 Integrate VS Code Tasks into Skills
+
 **Why:** Workspace has 10 defined tasks, but skills reference `npm run` commands instead of task IDs.
 
 **Updates needed:**
 
-| Skill | Current | Update to |
-|-------|---------|-----------|
-| `testing-workflow` | `npm run test:server` | Reference `npm: test:server` task |
-| `testing-workflow` | `npm run test:ui` | Reference `npm: test:ui` task |
+| Skill                    | Current                    | Update to                                |
+| ------------------------ | -------------------------- | ---------------------------------------- |
+| `testing-workflow`       | `npm run test:server`      | Reference `npm: test:server` task        |
+| `testing-workflow`       | `npm run test:ui`          | Reference `npm: test:ui` task            |
 | `dependency-enforcement` | `npm run depcruise:verify` | Reference `shell: depcruise verify` task |
 
 **Available tasks (from `.vscode/tasks.json`):**
+
 - `npm: start:all` - Start both server and UI
 - `npm: start:server:dev` - Start server in dev mode
 - `npm: start:ui` - Start UI dev server
@@ -89,18 +99,22 @@ This document tracks the ongoing effort to enhance AI agent support in this repo
 ---
 
 ### Phase 3: Discoverability & Onboarding
+
 **Effort:** Low-Medium | **Impact:** Medium
 
 #### 3.1 Create Skills Index/README
+
 **File:** `.github/skills/README.md`
 
 **Why:** 8 skills exist now, but no central index explains when to use each.
 
 **Content structure:**
+
 ```markdown
 # Skills Index
 
 ## Decision Tree
+
 - Need to find code? → `architecture-nav`
 - Need to create a new feature? → `feature-scaffold`
 - Need to write/debug tests? → `testing-workflow`
@@ -111,27 +125,33 @@ This document tracks the ongoing effort to enhance AI agent support in this repo
 - Reviewing doc changes? → `doc-review`
 
 ## Skills by Category
+
 ### Development
+
 - feature-scaffold
 - architecture-nav
 
 ### Quality
+
 - testing-workflow
 - code-review
 - dependency-enforcement
 - error-handling
 
 ### Documentation
+
 - documentation-standards
 - doc-review
 ```
 
 #### 3.2 Add "New Contributor Onboarding" Chat Mode
+
 **File:** `.github/chatmodes/onboarding.chatmode.md`
 
 **Why:** The `planning` chat mode is generic. A dedicated onboarding mode helps new contributors.
 
 **Content structure:**
+
 ```markdown
 ---
 description: Guide new contributors through the codebase architecture and workflows.
@@ -143,6 +163,7 @@ tools: ['codebase', 'search', 'findTestFiles']
 You are helping a new contributor understand this codebase.
 
 ## Guided Tour
+
 1. Architecture overview (Modular Monolith, BFF)
 2. Key directories (`src/server`, `src/ui`, `src/shared`)
 3. Development workflow (`npm start`, testing, linting)
@@ -151,13 +172,16 @@ You are helping a new contributor understand this codebase.
 ```
 
 #### 3.3 Document Missing Component Architectures
+
 **Files:**
+
 - `architecture/components/auth.md`
 - `architecture/components/shared-ui.md`
 
 **Why:** Only `about.md`, `blog.md`, `experience.md`, `projects.md` exist.
 
 **Content for `auth.md`:**
+
 - Authentication flow (JWT)
 - AuthInterceptor (centralized token injection)
 - AuthStore (Zustand)
@@ -165,6 +189,7 @@ You are helping a new contributor understand this codebase.
 - Frontend: `src/ui/signin/`, `src/ui/shared/hooks/useAuth.ts`
 
 **Content for `shared-ui.md`:**
+
 - Shared components location (`src/ui/shared/components/`)
 - Component patterns (Button, Card, Frame, QueryState)
 - SCSS Modules usage
@@ -173,12 +198,15 @@ You are helping a new contributor understand this codebase.
 ---
 
 ### Phase 4: Advanced Agent Capabilities
+
 **Effort:** Medium-High | **Impact:** Low-Medium
 
 #### 4.1 Add "Refactoring" Prompt
+
 **File:** `.github/prompts/refactor.prompt.md`
 
 **Content to cover:**
+
 - Extract component pattern
 - Extract hook pattern
 - Move to shared (types, utils)
@@ -186,9 +214,11 @@ You are helping a new contributor understand this codebase.
 - Incremental changes principle
 
 #### 4.2 Create "API Design" Skill
+
 **File:** `.github/skills/api-design/SKILL.md`
 
 **Content to cover:**
+
 - RESTful endpoint naming (`/api/<resource>`)
 - Required Swagger decorators (`@ApiOperation`, `@ApiResponse`, `@ApiTags`)
 - Error response patterns (`NotFoundException`, `UnauthorizedException`)
@@ -196,11 +226,14 @@ You are helping a new contributor understand this codebase.
 - Guard usage (`@UseGuards(JwtAuthGuard)`)
 
 #### 4.3 Add Validation Automation Prompt
+
 **File:** `.github/prompts/validate-changes.prompt.md`
 
 **Content:**
+
 ```markdown
 After making changes, run validation:
+
 1. `npm test` - All tests pass
 2. `npm run lint` - No lint errors
 3. `npm run type-check` - No type errors
@@ -210,12 +243,15 @@ After making changes, run validation:
 ---
 
 ### Phase 5: Maintenance & Sustainability
+
 **Effort:** Low | **Impact:** Low
 
 #### 5.1 Add Documentation Maintenance Checklist
+
 **Location:** Add to `documentation-standards` skill OR create separate file
 
 **Checklist:**
+
 - [ ] JSDoc on new public methods
 - [ ] Swagger decorators on new endpoints
 - [ ] ADR for architectural decisions
@@ -223,13 +259,16 @@ After making changes, run validation:
 - [ ] Update README if setup changes
 
 #### 5.2 Version/Changelog for AI Instructions
+
 **File:** `.github/INSTRUCTIONS_CHANGELOG.md`
 
 **Format:**
+
 ```markdown
 # AI Instructions Changelog
 
 ## 2026-01-17
+
 - Added `error-handling` skill
 - Added `code-review` skill
 - Enhanced existing skills with examples
@@ -241,6 +280,7 @@ After making changes, run validation:
 ## Key Patterns & Conventions Discovered
 
 ### Skill File Format
+
 ```markdown
 ---
 name: skill-name
@@ -252,27 +292,32 @@ description: Brief description for skill selection.
 Use this skill when...
 
 ## 1. Section
+
 ### Subsection
+
 #### Example: Descriptive Name
 ```
 
 ### Path Conventions
-| Layer | Path Pattern |
-|-------|--------------|
-| Server modules | `src/server/modules/<feature>/` |
+
+| Layer                | Path Pattern                      |
+| -------------------- | --------------------------------- |
+| Server modules       | `src/server/modules/<feature>/`   |
 | Server shared (auth) | `src/server/shared/modules/auth/` |
-| UI containers | `src/ui/containers/<feature>/` |
-| UI shared | `src/ui/shared/` |
-| Shared types | `src/shared/types/<feature>.ts` |
+| UI containers        | `src/ui/containers/<feature>/`    |
+| UI shared            | `src/ui/shared/`                  |
+| Shared types         | `src/shared/types/<feature>.ts`   |
 
 ### Test File Patterns
-| Type | Pattern | Config |
-|------|---------|--------|
-| Server integration | `*.integration.test.ts` | `jest.node.ts` |
-| Server unit | `*.test.ts` | `jest.node.ts` |
-| UI integration | `*.test.tsx` | `jest.browser.ts` |
+
+| Type               | Pattern                 | Config            |
+| ------------------ | ----------------------- | ----------------- |
+| Server integration | `*.integration.test.ts` | `jest.node.ts`    |
+| Server unit        | `*.test.ts`             | `jest.node.ts`    |
+| UI integration     | `*.test.tsx`            | `jest.browser.ts` |
 
 ### Import Conventions
+
 - UI test utils: `import { render } from 'ui/test-utils';`
 - Shared types: `import { Type } from 'shared/types/<feature>';`
 - Server path alias: `import { X } from 'server/<path>';`
@@ -295,15 +340,15 @@ Use this skill when...
 
 ## Contribution Priority Order
 
-| Priority | Item | Effort | Impact |
-|----------|------|--------|--------|
-| 1 | Skills README/index | Low | Medium |
-| 2 | Document auth/shared-ui architecture | Low | Medium |
-| 3 | Create build-debug prompt | Medium | Medium |
-| 4 | Create database-migration skill | Medium | Medium |
-| 5 | Update skills to use VS Code tasks | Low | Low |
-| 6 | Add onboarding chat mode | Medium | Medium |
-| 7 | Add refactoring prompt | Medium | Low |
-| 8 | Add API design skill | Medium | Low |
-| 9 | Add validation prompt | Low | Low |
-| 10 | Add instructions changelog | Low | Low |
+| Priority | Item                                 | Effort | Impact |
+| -------- | ------------------------------------ | ------ | ------ |
+| 1        | Skills README/index                  | Low    | Medium |
+| 2        | Document auth/shared-ui architecture | Low    | Medium |
+| 3        | Create build-debug prompt            | Medium | Medium |
+| 4        | Create database-migration skill      | Medium | Medium |
+| 5        | Update skills to use VS Code tasks   | Low    | Low    |
+| 6        | Add onboarding chat mode             | Medium | Medium |
+| 7        | Add refactoring prompt               | Medium | Low    |
+| 8        | Add API design skill                 | Medium | Low    |
+| 9        | Add validation prompt                | Low    | Low    |
+| 10       | Add instructions changelog           | Low    | Low    |
