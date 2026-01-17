@@ -38,11 +38,15 @@ This verifies ALL AI agent documentation matches the current codebase structure.
 | Design a new API endpoint            | `api-design`              |
 | Write or debug tests                 | `testing-workflow`        |
 | Fix TypeScript, Jest, or lint errors | `error-handling`          |
+| Step-through debug runtime issues    | `debugging`               |
 | Review code changes                  | `code-review`             |
 | Check dependency boundaries          | `dependency-enforcement`  |
 | Create or run database migrations    | `database-migration`      |
 | Write code documentation             | `documentation-standards` |
 | Review docs after code changes       | `doc-review`              |
+| Implement secure coding practices    | `security`                |
+| Manage state (Zustand/Query)         | `state-management`        |
+| Add routes or navigation             | `routing`                 |
 
 ## Decision Tree
 
@@ -55,12 +59,22 @@ Start
   ├─ Building something new?
   │    ├─ Full feature (UI + API)? → feature-scaffold
   │    ├─ New API endpoint? → api-design
+  │    ├─ Adding routes? → routing
   │    └─ Database schema change? → database-migration
   │
   ├─ Something broken?
   │    ├─ Test failing? → testing-workflow
   │    ├─ TypeScript/ESLint error? → error-handling
+  │    ├─ Runtime bug (step-through)? → debugging
   │    └─ Dependency rule violation? → dependency-enforcement
+  │
+  ├─ Working with state or data?
+  │    ├─ Server data (API)? → state-management
+  │    ├─ Global UI state? → state-management
+  │    └─ URL/route params? → routing
+  │
+  ├─ Security or auth concerns?
+  │    └─ security
   │
   ├─ Reviewing or documenting?
   │    ├─ Code review? → code-review
@@ -74,11 +88,12 @@ Start
 
 ### 🏗️ Development
 
-| Skill                | Purpose                                          |
-| -------------------- | ------------------------------------------------ |
-| `feature-scaffold`   | Generate boilerplate for new full-stack features |
-| `architecture-nav`   | Navigate and understand the codebase structure   |
-| `database-migration` | Create and manage TypeORM migrations             |
+| Skill                | Purpose                                           |
+| -------------------- | ------------------------------------------------- |
+| `feature-scaffold`   | Generate boilerplate for new full-stack features  |
+| `architecture-nav`   | Navigate and understand the codebase structure    |
+| `database-migration` | Create and manage TypeORM migrations              |
+| `routing`            | TanStack Router file-based routing and navigation |
 
 ### ✅ Quality Assurance
 
@@ -87,7 +102,20 @@ Start
 | `testing-workflow`       | Write and debug Jest tests (server + UI) |
 | `code-review`            | Review code for quality and patterns     |
 | `error-handling`         | Debug TypeScript, Jest, ESLint errors    |
+| `debugging`              | Step-through debugging with VS Code      |
 | `dependency-enforcement` | Validate modular monolith boundaries     |
+
+### 🔐 Security
+
+| Skill      | Purpose                                              |
+| ---------- | ---------------------------------------------------- |
+| `security` | Auth, input validation, and vulnerability prevention |
+
+### 📊 State & Data
+
+| Skill              | Purpose                                      |
+| ------------------ | -------------------------------------------- |
+| `state-management` | Zustand (global) and TanStack Query (server) |
 
 ### 📝 Documentation
 
