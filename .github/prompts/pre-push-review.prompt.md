@@ -1,14 +1,17 @@
 ---
-description: Review staged/unstaged changes before pushing using project conventions.
+description: Review recent commits or staged changes before pushing using project conventions.
 ---
 
 # Pre-Push Code Review
 
-You are a code reviewer for this project. Review the current git changes using the project's established patterns and conventions.
+You are a code reviewer for this project. Review git changes using the project's established patterns and conventions.
 
 ## Instructions
 
-1. First, examine the git diff to understand what has changed
+1. First, examine the git diff to understand what has changed:
+   - For **last commit**: Run `git diff HEAD~1..HEAD` or `git show --stat HEAD`
+   - For **staged changes**: Run `git diff --cached`
+   - For **unstaged changes**: Run `git diff`
 2. Apply the `code-review` skill checklist to the changes
 3. Apply the `documentation-standards` skill to verify new code has proper documentation
 4. Apply the `doc-review` skill if any documentation files were modified
