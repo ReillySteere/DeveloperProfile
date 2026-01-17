@@ -108,7 +108,7 @@
     "@nestjs/typeorm": "^11.0.0",
     "@sentry/integrations": "^7.114.0",
     "@sentry/node": "^9.11.0",
-    "@sentry/react": "^9.10.1",
+    "@sentry/react": "^10.34.0",
     "@sentry/tracing": "^7.120.3",
     "@sentry/webpack-plugin": "^3.2.4",
     "@tanstack/react-query": "^5.71.0",
