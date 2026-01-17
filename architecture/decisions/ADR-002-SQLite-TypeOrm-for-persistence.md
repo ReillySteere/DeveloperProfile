@@ -2,7 +2,10 @@
 
 ## Status
 
-Accepted - Jan 07/ 2026
+Accepted - Jan 07, 2026
+
+**See also:** [ADR-004](./ADR-004-better-sqlite3-driver.md) - Driver migration
+from `sqlite3` to `better-sqlite3`
 
 ## Context
 

@@ -4,7 +4,7 @@ This document outlines the database schema used in the application. It is visual
 
 ## Overview
 
-- **Database:** SQLite
+- **Database:** SQLite (via `better-sqlite3` driver)
 - **ORM:** TypeORM
 - **Entities:**
   - `User`: Authentication credentials.

@@ -121,7 +121,7 @@ describe('BlogModule (Integration)', () => {
     const moduleRef = await Test.createTestingModule({
       imports: [
         TypeOrmModule.forRoot({
-          type: 'sqlite',
+          type: 'better-sqlite3',
           database: ':memory:',
           entities: [BlogPost],
           synchronize: true,

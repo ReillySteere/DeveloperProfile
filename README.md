@@ -17,7 +17,7 @@ A full-stack developer profile application built with a modern React frontend an
 ### Backend
 
 - **Framework:** NestJS
-- **Database:** SQLite
+- **Database:** SQLite (via `better-sqlite3`)
 - **ORM:** TypeORM
 - **Authentication:** Passport JWT
 
@@ -86,9 +86,20 @@ A full-stack developer profile application built with a modern React frontend an
 
 ## Environment Variables
 
-The application requires the following environment variables to be set. You can create a `.env` file in the root directory:
+Copy the example file and configure your environment:
 
-- `JWT_AUTH_SECRET`: A secret key used for signing and verifying JSON Web Tokens (JWT). This is required for the authentication module to function correctly.
+```bash
+cp .env.example .env
+# Edit .env with your values
+```
+
+See [.env.example](.env.example) for all available variables. Key variables:
+
+| Variable          | Required | Description                                                          |
+| ----------------- | -------- | -------------------------------------------------------------------- |
+| `JWT_AUTH_SECRET` | Yes      | Secret key for signing JWTs. Generate with `openssl rand -base64 32` |
+| `SENTRY_DSN`      | No       | Sentry DSN for error tracking                                        |
+| `PORT`            | No       | Server port (default: 3000)                                          |
 
 ## Architecture
 
@@ -156,6 +167,7 @@ Detailed architectural documentation for each feature can be found here:
 - [ADR-001: Persistent Storage for Blog](architecture/decisions/ADR-001-persistent-storage-for-blog.md)
 - [ADR-002: SQLite & TypeORM](architecture/decisions/ADR-002-SQLite-TypeOrm-for-persistence.md)
 - [ADR-003: Centralized Axios Interceptors](architecture/decisions/ADR-003-centralized-axios-interceptors.md)
+- [ADR-004: Migrate to better-sqlite3](architecture/decisions/ADR-004-better-sqlite3-driver.md)
 
 ## Key Features
 

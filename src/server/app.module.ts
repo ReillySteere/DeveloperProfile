@@ -12,11 +12,12 @@ import { BlogModule } from './modules/blog/blog.module';
 import { BlogPost } from './modules/blog/blog.entity';
 import { User } from 'server/shared/modules/auth/user.entity';
 import { SeedingModule } from './modules/seeding/seeding.module';
+import { HealthModule } from './modules/health/health.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'sqlite',
+      type: 'better-sqlite3',
       database: 'data/database.sqlite',
       entities: [Experience, Project, BlogPost, User],
       synchronize: true,
@@ -29,6 +30,7 @@ import { SeedingModule } from './modules/seeding/seeding.module';
     ProjectModule,
     BlogModule,
     SeedingModule,
+    HealthModule,
   ],
 })
 export class AppModule {}
