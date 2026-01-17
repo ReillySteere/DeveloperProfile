@@ -86,9 +86,20 @@ A full-stack developer profile application built with a modern React frontend an
 
 ## Environment Variables
 
-The application requires the following environment variables to be set. You can create a `.env` file in the root directory:
+Copy the example file and configure your environment:
 
-- `JWT_AUTH_SECRET`: A secret key used for signing and verifying JSON Web Tokens (JWT). This is required for the authentication module to function correctly.
+```bash
+cp .env.example .env
+# Edit .env with your values
+```
+
+See [.env.example](.env.example) for all available variables. Key variables:
+
+| Variable          | Required | Description                                                          |
+| ----------------- | -------- | -------------------------------------------------------------------- |
+| `JWT_AUTH_SECRET` | Yes      | Secret key for signing JWTs. Generate with `openssl rand -base64 32` |
+| `SENTRY_DSN`      | No       | Sentry DSN for error tracking                                        |
+| `PORT`            | No       | Server port (default: 3000)                                          |
 
 ## Architecture
 
