@@ -24,6 +24,7 @@ A full-stack developer profile application built with a modern React frontend an
 ### Testing
 
 - **Unit/Integration:** Jest (configured for both Node and Browser environments)
+- **E2E:** Playwright (Chromium) for end-to-end testing
 - **Quality Gates:** Husky `pre-push` hooks enforce strict testing, linting, and dependency validation before code can be pushed.
 
 ## Project Setup Instructions
@@ -65,10 +66,16 @@ A full-stack developer profile application built with a modern React frontend an
      ```
 
 6. **Run tests:**
-   - **All Tests:**
+   - **All Unit/Integration Tests:**
 
      ```bash
      npm test
+     ```
+
+   - **E2E Tests (requires dev server running):**
+
+     ```bash
+     npm run test:e2e
      ```
 
 7. **Docker:**

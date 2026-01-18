@@ -66,3 +66,8 @@ src/ui/routeTree.gen.ts
 *.sqlite
 
 dependency-graph*
+
+# Playwright
+/playwright-report
+/playwright/.cache
+/test-results

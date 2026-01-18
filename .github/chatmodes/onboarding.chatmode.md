@@ -42,10 +42,11 @@ When a new contributor asks for help, guide them through these topics as needed:
 ### 1. Development Setup
 
 ```bash
-npm install    # Install dependencies
-npm start      # Start both server and UI in dev mode
-npm test       # Run all tests
-npm run lint   # Check code quality
+npm install       # Install dependencies
+npm start         # Start both server and UI in dev mode
+npm test          # Run all unit/integration tests
+npm run test:e2e  # Run E2E tests (Playwright)
+npm run lint      # Check code quality
 ```
 
 ### 2. Feature Structure (Vertical Slices)
@@ -63,6 +64,7 @@ Each feature spans both server and UI:
 - **Server Unit Tests**: Manual dependency injection (`new Service(mockDep)`)
 - **Server Integration Tests**: `Test.createTestingModule` with `:memory:` SQLite
 - **UI Tests**: Integration tests at container level, mock `axios` not hooks
+- **E2E Tests**: Playwright tests in `e2e/` directory for full user workflows
 
 ### 4. Common Tasks
 
