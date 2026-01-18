@@ -123,7 +123,7 @@
     "copy-webpack-plugin": "^13.0.1",
     "framer-motion": "^12.19.2",
     "html-webpack-plugin": "^5.6.5",
-    "lucide-react": "^0.525.0",
+    "lucide-react": "^0.562.0",
     "mermaid": "^11.12.2",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
