@@ -36,8 +36,8 @@
     "jest.browser.ts",
     "jest.node.ts",
     "jest.setup.ts",
-    "cypress.config.ts",
-    "cypress/**/*"
+    "e2e/**/*",
+    "**/*.spec.ts"
   ],
   "exclude": ["node_modules", "dist", ".github"]
 }

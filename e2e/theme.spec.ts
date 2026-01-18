@@ -10,22 +10,6 @@ test.describe('Theme Toggle', () => {
     const themeToggle = page.getByRole('button', { name: /toggle theme/i });
     await expect(themeToggle).toBeVisible();
 
-    // Get the initial theme state by checking for sun or moon icon
-    // The Moon icon appears in light mode (to switch to dark)
-    // The Sun icon appears in dark mode (to switch to light)
-    const hasMoonIcon = await page
-      .locator('nav')
-      .getByRole('button', { name: /toggle theme/i })
-      .locator('svg')
-      .evaluate((svg) => {
-        // Check the SVG path or class to determine which icon is shown
-        return (
-          svg.innerHTML.includes('moon') ||
-          svg.classList.contains('lucide-moon')
-        );
-      })
-      .catch(() => false);
-
     // Click to toggle theme
     await themeToggle.click();
 
