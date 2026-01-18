@@ -1,4 +1,4 @@
-import { Injectable, LoggerService, Scope } from '@nestjs/common';
+import { Injectable, LoggerService } from '@nestjs/common';
 
 /**
  * Structured logging service that outputs JSON in production
@@ -12,7 +12,7 @@ import { Injectable, LoggerService, Scope } from '@nestjs/common';
  *
  * this.logger.log('User logged in', { userId: 123 });
  */
-@Injectable({ scope: Scope.TRANSIENT })
+@Injectable()
 export class AppLoggerService implements LoggerService {
   private context?: string;
 

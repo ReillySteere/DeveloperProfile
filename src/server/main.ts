@@ -20,8 +20,8 @@ async function bootstrap() {
   const sentryDsn =
     process.env.SENTRY_DSN ||
     (process.env.NODE_ENV === 'production'
-      ? 'https://34ddf84a2659f61386813917cc3a3a48@o4509070478147584.ingest.de.sentry.io/4510728549236816'
-      : undefined);
+      ? 'https://eb783d6134fbc05925302caf50fc87bf@o4510728628797440.ingest.us.sentry.io/4510728630042624'
+      : '');
 
   // Initialize Sentry with enhanced configuration
   Sentry.init({
@@ -31,6 +31,7 @@ async function bootstrap() {
     integrations: [Sentry.httpIntegration()],
     tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
     enabled: !!sentryDsn,
+    enableLogs: true,
   });
 
   const app = await NestFactory.create(AppModule, {

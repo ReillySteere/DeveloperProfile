@@ -1,6 +1,8 @@
 const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
 const { tanstackRouter } = require('@tanstack/router-plugin/webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
+require('dotenv').config();
 
 const path = require('path');
 
@@ -83,6 +85,12 @@ module.exports = {
   devtool: 'source-map',
 
   plugins: [
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify(
+        process.env.NODE_ENV || 'development',
+      ),
+      'process.env.SENTRY_DSN': JSON.stringify(process.env.SENTRY_DSN || ''),
+    }),
     sentryWebpackPlugin({
       authToken: process.env.SENTRY_AUTH_TOKEN,
       org: 'freeland-f7',
