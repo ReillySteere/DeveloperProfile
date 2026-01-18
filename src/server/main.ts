@@ -6,7 +6,7 @@ import { AppModule } from './app.module';
 import * as Sentry from '@sentry/node';
 import { ValidationPipe } from '@nestjs/common';
 import { SentryExceptionFilter } from './sentry-exception.filter';
-import { AppLoggerService } from './shared/logger';
+import { AppLoggerService } from './shared/modules/logger';
 
 import * as fs from 'fs';
 

@@ -101,6 +101,7 @@ export class AppLoggerService implements LoggerService {
         return '\x1b[36m'; // Cyan
       case 'verbose':
         return '\x1b[35m'; // Magenta
+      /* istanbul ignore next -- defensive: all valid levels handled above */
       default:
         return '';
     }

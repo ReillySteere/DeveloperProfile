@@ -21,7 +21,7 @@ import {
   ApiBody,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'server/shared/modules/auth/jwt-auth.guard';
+import { AuthGuardAdapter } from 'server/shared/adapters/auth';
 
 @ApiTags('Blog')
 @Controller('api/blog')
@@ -74,7 +74,7 @@ export class BlogController {
     description: 'The created blog post',
   })
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AuthGuardAdapter)
   @Post()
   create(@Body() createBlogPostDto: CreateBlogPostDto): Promise<BlogPost> {
     return this.#blogService.create(createBlogPostDto);
@@ -104,7 +104,7 @@ export class BlogController {
     description: 'Unauthorized',
   })
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AuthGuardAdapter)
   @Put(':id')
   update(
     @Param('id') id: string,

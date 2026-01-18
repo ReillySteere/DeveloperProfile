@@ -73,14 +73,14 @@ export interface Todo {
 ```typescript
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { TodoService } from './todo.service';
-import { JwtAuthGuard } from '../../shared/modules/auth/jwt-auth.guard';
+import { AuthGuardAdapter } from '../../shared/adapters/auth';
 
 @Controller('api/todo')
 export class TodoController {
   constructor(private readonly todoService: TodoService) {}
 
   @Get()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AuthGuardAdapter)
   findAll() {
     return this.todoService.findAll();
   }

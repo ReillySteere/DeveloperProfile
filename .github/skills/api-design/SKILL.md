@@ -56,7 +56,7 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../../shared/modules/auth/jwt-auth.guard';
+import { AuthGuardAdapter } from '../../shared/adapters/auth';
 
 @ApiTags('Blog')
 @Controller('api/blog')
@@ -79,7 +79,7 @@ export class BlogController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AuthGuardAdapter)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new blog post' })
   @ApiResponse({ status: 201, description: 'Post created successfully' })
@@ -113,7 +113,7 @@ Every endpoint MUST have these decorators:
 
 ```typescript
 @Post()
-@UseGuards(JwtAuthGuard)
+@UseGuards(AuthGuardAdapter)
 @ApiBearerAuth()
 @ApiOperation({
   summary: 'Create a new blog post',
@@ -141,30 +141,30 @@ create(@Body() dto: CreateBlogPostDto): Promise<BlogPost> {
 
 ### Protecting Routes
 
-Use `JwtAuthGuard` for routes requiring authentication:
+Use `AuthGuardAdapter` for routes requiring authentication (see ADR-005 for hexagonal architecture details):
 
 ```typescript
-import { JwtAuthGuard } from '../../shared/modules/auth/jwt-auth.guard';
+import { AuthGuardAdapter } from '../../shared/adapters/auth';
 
 // Protect single route
 @Post()
-@UseGuards(JwtAuthGuard)
+@UseGuards(AuthGuardAdapter)
 create(@Body() dto: CreateDto) { ... }
 
 // Protect entire controller
-@UseGuards(JwtAuthGuard)
+@UseGuards(AuthGuardAdapter)
 @Controller('api/admin')
 export class AdminController { ... }
 ```
 
 ### Public vs Protected Endpoints
 
-| Action        | Auth Required | Guard          |
-| ------------- | ------------- | -------------- |
-| Read (GET)    | Usually No    | None           |
-| Create (POST) | Usually Yes   | `JwtAuthGuard` |
-| Update (PUT)  | Usually Yes   | `JwtAuthGuard` |
-| Delete        | Usually Yes   | `JwtAuthGuard` |
+| Action        | Auth Required | Guard              |
+| ------------- | ------------- | ------------------ |
+| Read (GET)    | Usually No    | None               |
+| Create (POST) | Usually Yes   | `AuthGuardAdapter` |
+| Update (PUT)  | Usually Yes   | `AuthGuardAdapter` |
+| Delete        | Usually Yes   | `AuthGuardAdapter` |
 
 ## 5. Error Handling
 
@@ -301,7 +301,7 @@ When adding a new endpoint:
 - [ ] Controller has `@ApiTags` decorator
 - [ ] Endpoint has `@ApiOperation` with summary
 - [ ] Endpoint has `@ApiResponse` for all possible status codes
-- [ ] Protected endpoints have `@UseGuards(JwtAuthGuard)` and `@ApiBearerAuth`
+- [ ] Protected endpoints have `@UseGuards(AuthGuardAdapter)` and `@ApiBearerAuth`
 - [ ] Request body validated with DTO
 - [ ] DTO has `@ApiProperty` decorators for Swagger
 - [ ] Service throws appropriate exceptions (404, 400, etc.)

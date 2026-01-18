@@ -224,8 +224,10 @@ describe('CommentsContainer', () => {
 
 ```typescript
 // In the controller
+import { AuthGuardAdapter } from '../../shared/adapters/auth';
+
 @Post()
-@UseGuards(JwtAuthGuard)  // ← Add this
+@UseGuards(AuthGuardAdapter)  // ← Add this (see ADR-005 for hexagonal architecture)
 @ApiOperation({ summary: 'Create a comment' })
 create(@Body() dto: CreateCommentDto, @Req() req: Request) {
   return this.service.create(dto, req.user.id);

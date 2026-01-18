@@ -90,6 +90,36 @@ module.exports = {
         path: '^src/server/modules',
       },
     },
+
+    /* Hexagonal Architecture Rules for Shared Modules (ADR-005) */
+    {
+      name: 'shared-module-encapsulation',
+      severity: 'error',
+      comment:
+        'Business modules must use adapters, not shared module internals. See ADR-005.',
+      from: {
+        path: '^src/server/modules/',
+      },
+      to: {
+        path: '^src/server/shared/modules/[^/]+/',
+        pathNot: [
+          // Allow importing from barrel files (public API)
+          '^src/server/shared/modules/[^/]+/index\\.ts$',
+        ],
+      },
+    },
+    {
+      name: 'ports-no-implementation-deps',
+      severity: 'error',
+      comment:
+        'Ports should not import implementations (modules or adapters). See ADR-005.',
+      from: {
+        path: '^src/server/shared/ports/',
+      },
+      to: {
+        path: '^src/server/shared/(modules|adapters)/',
+      },
+    },
   ],
   options: {
     doNotFollow: {
