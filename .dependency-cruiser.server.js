@@ -24,6 +24,7 @@ module.exports = {
           '(^|/)tsconfig\\.json$', // tsconfig
           '(^|/)(babel|webpack|jest|cypress)\\.config\\.(js|ts)$', // config files
           'src/server/main.ts', // entry points
+          'src/server/sentry-exception.filter.ts', // global filter used in main
           'src/ui/index.tsx', // entry points
         ],
       },
