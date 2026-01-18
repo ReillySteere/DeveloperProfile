@@ -22,8 +22,6 @@ module.exports = {
     ],
     // Allow longer subject lines for descriptive commits
     'header-max-length': [2, 'always', 100],
-    // Require lowercase type
-    'type-case': [2, 'always', 'lower-case'],
     // Require non-empty subject
     'subject-empty': [2, 'never'],
     // Require non-empty type
