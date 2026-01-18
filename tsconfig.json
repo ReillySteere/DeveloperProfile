@@ -37,7 +37,8 @@
     "jest.node.ts",
     "jest.setup.ts",
     "e2e/**/*",
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "playwright.config.ts"
   ],
   "exclude": ["node_modules", "dist", ".github"]
 }
