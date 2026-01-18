@@ -46,7 +46,11 @@
   - **Integration:** Use `Test.createTestingModule` with `:memory:` database. See `src/server/modules/experience/experience.integration.test.ts`.
 - **API:** Controllers mapped to `/api/*`. Global ValidationPipe enabled.
 - **Error Handling:** Global `SentryExceptionFilter`.
-- **Auth:** Located in `src/server/shared/modules/auth/` (Passport JWT).
+- **Auth:** Shared module at `src/server/shared/modules/auth/` (Passport JWT).
+  - **Hexagonal Architecture:** Shared modules follow ports/adapters pattern (see ADR-005).
+  - **Adapters:** `src/server/shared/adapters/` - Use these to consume shared modules.
+  - **Ports:** `src/server/shared/ports/` - Interface contracts for adapters.
+  - **Business Auth Controller:** `src/server/modules/auth/` - Application endpoints.
 
 ## Frontend Patterns (`src/ui`)
 
@@ -57,8 +61,8 @@
     - `*.container.tsx`: Main feature container.
   - **Shared:** `src/ui/shared/` containing:
     - `components/`: Reusable UI components (Button, Card, etc.). **ALWAYS** import from `ui/shared/components` (barrel file).
+    - `hooks/`: Shared hooks including Zustand stores (`useAuthStore`, `useNavStore`).
     - `routes/`: Route definitions (TanStack Router).
-    - `stores/`: Global state (Zustand).
   - **Test Utils:** `src/ui/test-utils/`.
 - **Routing:** TanStack Router.
   - **DO NOT EDIT** `src/ui/routeTree.gen.ts`.

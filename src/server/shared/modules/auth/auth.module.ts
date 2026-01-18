@@ -4,11 +4,24 @@ import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
-import { AuthController } from './auth.controller';
 import { User } from './user.entity';
-import TOKENS from './tokens';
+import { AUTH_TOKENS } from './tokens';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
+/**
+ * Shared Auth Module
+ *
+ * This module provides core authentication functionality including:
+ * - User validation and password hashing
+ * - JWT token generation and verification
+ * - Authentication guards
+ *
+ * This is a shared module following hexagonal architecture.
+ * Business modules should consume this via adapters, not directly.
+ *
+ * Note: The AuthController has been extracted to src/server/modules/auth/
+ * as it contains application-specific endpoints.
+ */
 @Module({
   imports: [
     PassportModule,
@@ -27,19 +40,18 @@ import { JwtAuthGuard } from './jwt-auth.guard';
   ],
   providers: [
     {
-      provide: TOKENS.AuthService,
+      provide: AUTH_TOKENS.AuthService,
       useClass: AuthService,
     },
     {
-      provide: TOKENS.JwtAuthGuard,
+      provide: AUTH_TOKENS.JwtAuthGuard,
       useClass: JwtAuthGuard,
     },
     {
-      provide: TOKENS.JwtStrategy,
+      provide: AUTH_TOKENS.JwtStrategy,
       useClass: JwtStrategy,
     },
   ],
-  controllers: [AuthController],
-  exports: [TOKENS.AuthService, TOKENS.JwtAuthGuard],
+  exports: [AUTH_TOKENS.AuthService, AUTH_TOKENS.JwtAuthGuard],
 })
 export class AuthModule {}

@@ -11,13 +11,18 @@ Use this skill when implementing authentication, handling user input, or reviewi
 
 ### JWT Token Handling
 
-This project uses Passport JWT for authentication. Key patterns:
+This project uses Passport JWT for authentication with a hexagonal architecture (see ADR-005). Key patterns:
 
 ```typescript
-// ✅ Correct: Use JwtAuthGuard decorator
-@UseGuards(JwtAuthGuard)
+// ✅ Correct: Use AuthGuardAdapter from adapters layer
+import { AuthGuardAdapter } from '../../shared/adapters/auth';
+
+@UseGuards(AuthGuardAdapter)
 @Get('protected-endpoint')
 async getProtectedData() { ... }
+
+// ❌ Wrong: Direct import from shared module internals
+import { JwtAuthGuard } from '../../shared/modules/auth/jwt-auth.guard';
 
 // ❌ Wrong: Manual token parsing
 const token = request.headers.authorization?.split(' ')[1];
@@ -34,19 +39,21 @@ const token = request.headers.authorization?.split(' ')[1];
 **This Project's Pattern:**
 
 - Frontend: `AuthInterceptor` handles token injection automatically
-- Backend: `JwtAuthGuard` validates tokens
+- Backend: `AuthGuardAdapter` delegates to internal JWT guard
 - Never manually add Authorization headers in hooks
 
 ### Guard Usage
 
 ```typescript
+import { AuthGuardAdapter } from '../../shared/adapters/auth';
+
 // Single endpoint protection
-@UseGuards(JwtAuthGuard)
+@UseGuards(AuthGuardAdapter)
 @Post()
 create(@Body() dto: CreateDto) { ... }
 
 // Controller-level protection
-@UseGuards(JwtAuthGuard)
+@UseGuards(AuthGuardAdapter)
 @Controller('api/admin')
 export class AdminController { ... }
 ```
@@ -55,7 +62,7 @@ export class AdminController { ... }
 
 ```typescript
 // Verify user owns the resource before modifying
-@UseGuards(JwtAuthGuard)
+@UseGuards(AuthGuardAdapter)
 @Delete(':id')
 async delete(@Param('id') id: string, @Req() request) {
   const userId = request.user.sub;
@@ -285,7 +292,7 @@ const value = obj[key];
 Before deploying or reviewing PRs, verify:
 
 - [ ] All user input validated with DTOs
-- [ ] Protected endpoints use `@UseGuards(JwtAuthGuard)`
+- [ ] Protected endpoints use `@UseGuards(AuthGuardAdapter)` (not direct `JwtAuthGuard`)
 - [ ] No hardcoded secrets
 - [ ] No `dangerouslySetInnerHTML` without sanitization
 - [ ] No string concatenation in SQL queries

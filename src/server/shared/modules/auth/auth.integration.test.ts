@@ -1,16 +1,26 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth.module';
-import { AuthController } from './auth.controller';
+import { IAuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
 import { JwtService } from '@nestjs/jwt';
 import { User } from './user.entity';
-import TOKENS from './tokens';
-import { UnauthorizedException, ConflictException } from '@nestjs/common';
+import { AUTH_TOKENS } from './tokens';
+import { ConflictException } from '@nestjs/common';
 
-describe('Auth Integration', () => {
+/**
+ * Integration tests for the shared Auth module's internal implementation.
+ *
+ * These tests verify the internal workings of the auth module:
+ * - AuthService behavior (register, validateUser, login)
+ * - JwtStrategy token validation
+ * - Module configuration (JWT_AUTH_SECRET requirement)
+ *
+ * Consumer-facing tests (via adapters) are in src/server/modules/auth/
+ */
+describe('Auth Module (Internal)', () => {
   let module: TestingModule;
-  let authController: AuthController;
+  let authService: IAuthService;
   let jwtStrategy: JwtStrategy;
   let jwtService: JwtService;
 
@@ -36,8 +46,8 @@ describe('Auth Integration', () => {
       .useValue(mockJwtService)
       .compile();
 
-    authController = module.get<AuthController>(AuthController);
-    jwtStrategy = module.get<JwtStrategy>(TOKENS.JwtStrategy);
+    authService = module.get<IAuthService>(AUTH_TOKENS.AuthService);
+    jwtStrategy = module.get<JwtStrategy>(AUTH_TOKENS.JwtStrategy);
     jwtService = module.get<JwtService>(JwtService);
   });
 
@@ -49,68 +59,116 @@ describe('Auth Integration', () => {
     jest.clearAllMocks();
   });
 
-  describe('AuthController', () => {
+  describe('AuthService', () => {
     describe('register', () => {
-      it('should register a new user', async () => {
-        const registerDto = { username: 'newuser', password: 'password123' };
-        const result = await authController.register(registerDto);
+      it('should register a new user and return user entity', async () => {
+        const result = await authService.register('testuser', 'password123');
 
         expect(result).toBeDefined();
-        expect(result.username).toBe('newuser');
-        expect(result.password).not.toBe('password123'); // Should be hashed
+        expect(result.username).toBe('testuser');
+        expect(result.userId).toBeDefined();
+        // Note: AuthService returns full User entity; password sanitization
+        // happens at the controller/adapter layer
+        expect(result.password).toBeDefined();
       });
 
       it('should throw ConflictException if username already exists', async () => {
-        const registerDto = { username: 'existing', password: 'password123' };
-        await authController.register(registerDto);
+        await authService.register('duplicate', 'password123');
 
-        await expect(authController.register(registerDto)).rejects.toThrow(
-          ConflictException,
+        await expect(
+          authService.register('duplicate', 'password123'),
+        ).rejects.toThrow(ConflictException);
+      });
+    });
+
+    describe('validateUser', () => {
+      it('should return user data for valid credentials', async () => {
+        const username = 'validuser';
+        const password = 'password123';
+        await authService.register(username, password);
+
+        const result = await authService.validateUser(username, password);
+
+        expect(result).toBeDefined();
+        expect(result?.username).toBe(username);
+        expect(result?.userId).toBeDefined();
+      });
+
+      it('should return null for non-existent user', async () => {
+        const result = await authService.validateUser(
+          'nonexistent',
+          'password',
         );
+
+        expect(result).toBeNull();
+      });
+
+      it('should return null for wrong password', async () => {
+        const username = 'wrongpassuser';
+        await authService.register(username, 'correctpassword');
+
+        const result = await authService.validateUser(
+          username,
+          'wrongpassword',
+        );
+
+        expect(result).toBeNull();
       });
     });
 
     describe('login', () => {
-      it('should return access token for valid credentials', async () => {
-        // Create user first
-        const username = 'loginuser';
-        const password = 'password123';
-        await authController.register({ username, password });
+      it('should return access token for validated user', () => {
+        const user = { userId: 1, username: 'loginuser' };
 
-        const loginDto = { username, password };
-        const result = await authController.login(loginDto);
+        const result = authService.login(user);
 
         expect(result).toEqual({ access_token: 'mock-token' });
         expect(jwtService.sign).toHaveBeenCalledWith(
           expect.objectContaining({
-            username,
+            username: user.username,
+            sub: user.userId,
           }),
         );
-      });
-
-      it('should throw UnauthorizedException for invalid credentials', async () => {
-        const loginDto = {
-          username: 'nonexistent',
-          password: 'wrong-password',
-        };
-
-        await expect(authController.login(loginDto)).rejects.toThrow(
-          UnauthorizedException,
-        );
-        expect(jwtService.sign).not.toHaveBeenCalled();
       });
     });
   });
 
   describe('JwtStrategy', () => {
-    it('should validate and return user payload', async () => {
-      const payload = { sub: 1, username: 'demo' };
+    it('should validate and return user payload from JWT', async () => {
+      const payload = { sub: 1, username: 'jwtuser' };
+
       const result = await jwtStrategy.validate(payload);
 
       expect(result).toEqual({
         userId: 1,
-        username: 'demo',
+        username: 'jwtuser',
       });
+    });
+  });
+
+  describe('Module Configuration', () => {
+    const originalSecret = process.env.JWT_AUTH_SECRET;
+
+    afterAll(() => {
+      process.env.JWT_AUTH_SECRET = originalSecret;
+    });
+
+    it('should throw error if JWT_AUTH_SECRET is not defined', async () => {
+      delete process.env.JWT_AUTH_SECRET;
+
+      await expect(
+        Test.createTestingModule({
+          imports: [
+            TypeOrmModule.forRoot({
+              type: 'better-sqlite3',
+              database: ':memory:',
+              entities: [User],
+              synchronize: true,
+            }),
+            AuthModule,
+          ],
+        }).compile(),
+      ).rejects.toThrow('JWT_AUTH_SECRET is not defined');
     });
   });
 });

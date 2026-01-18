@@ -38,20 +38,57 @@ See [ADR-003-centralized-axios-interceptors.md](../decisions/ADR-003-centralized
 └─────────────────────────────────────────────────────────┘
 ```
 
-## Backend (`src/server/shared/modules/auth/`)
+## Backend Architecture
 
-### Module Structure
+The authentication system follows **Hexagonal Architecture** (Ports and Adapters) as defined in [ADR-005](../decisions/ADR-005-hexagonal-architecture-shared-modules.md).
 
-| File                 | Purpose                                    |
-| -------------------- | ------------------------------------------ |
-| `auth.module.ts`     | NestJS module registration                 |
-| `auth.controller.ts` | API endpoints (`/api/auth/*`)              |
-| `auth.service.ts`    | Business logic (register, login, validate) |
-| `user.entity.ts`     | TypeORM entity for users                   |
-| `jwt.strategy.ts`    | Passport JWT strategy                      |
-| `jwt-auth.guard.ts`  | Guard for protected routes                 |
-| `auth.dto.ts`        | DTOs for login/register requests           |
-| `tokens.ts`          | Injection tokens                           |
+### Structure Overview
+
+```
+src/server/
+├── shared/
+│   ├── ports/
+│   │   └── auth.port.ts           # Interface contracts
+│   ├── adapters/
+│   │   └── auth/
+│   │       ├── auth.adapter.ts    # Adapter implementations
+│   │       ├── auth.types.ts      # Business-layer types
+│   │       └── index.ts
+│   └── modules/
+│       └── auth/                  # Shared module (internal)
+│           ├── auth.module.ts
+│           ├── auth.service.ts
+│           ├── auth.dto.ts        # ACL DTOs
+│           ├── user.entity.ts
+│           ├── jwt.strategy.ts
+│           ├── jwt-auth.guard.ts
+│           ├── tokens.ts
+│           └── index.ts           # Public API
+└── modules/
+    └── auth/                      # Business module
+        ├── auth.controller.ts     # API endpoints
+        └── auth.module.ts
+```
+
+### Shared Module (`src/server/shared/modules/auth/`)
+
+| File                | Purpose                                    | Public API |
+| ------------------- | ------------------------------------------ | ---------- |
+| `auth.module.ts`    | NestJS module registration                 | ✓          |
+| `auth.service.ts`   | Business logic (register, login, validate) | ✗          |
+| `auth.dto.ts`       | ACL DTOs for input/output                  | ✓          |
+| `user.entity.ts`    | TypeORM entity for users                   | ✗          |
+| `jwt.strategy.ts`   | Passport JWT strategy                      | ✗          |
+| `jwt-auth.guard.ts` | Guard for protected routes                 | ✗          |
+| `tokens.ts`         | Injection tokens (AUTH_TOKENS)             | ✓          |
+| `index.ts`          | Public API barrel                          | ✓          |
+
+### Business Module (`src/server/modules/auth/`)
+
+| File                 | Purpose                        |
+| -------------------- | ------------------------------ |
+| `auth.controller.ts` | API endpoints (`/api/auth/*`)  |
+| `auth.module.ts`     | Imports adapter and controller |
 
 ### API Endpoints
 
@@ -60,22 +97,24 @@ See [ADR-003-centralized-axios-interceptors.md](../decisions/ADR-003-centralized
 | POST   | `/api/auth/register` | Create new user       | No            |
 | POST   | `/api/auth/login`    | Authenticate, get JWT | No            |
 
-### Protecting Routes
+### Protecting Routes (Using Adapters)
 
-Use the `JwtAuthGuard` to protect routes:
+Use the `AuthGuardAdapter` to protect routes:
 
 ```typescript
-import { JwtAuthGuard } from '../../shared/modules/auth/jwt-auth.guard';
+import { AuthGuardAdapter } from 'server/shared/adapters/auth';
 
 @Controller('api/blog')
 export class BlogController {
   @Post()
-  @UseGuards(JwtAuthGuard) // ← Requires valid JWT
+  @UseGuards(AuthGuardAdapter) // ← Requires valid JWT
   create(@Body() dto: CreateBlogPostDto) {
     return this.service.create(dto);
   }
 }
 ```
+
+**Important:** Do NOT import from `shared/modules/auth/` directly. Always use adapters.
 
 ### Configuration
 
@@ -141,8 +180,9 @@ const response = await axios.get('/api/blog'); // Token added automatically
 
 ### Backend Tests
 
-- Integration tests: `auth.integration.test.ts`, `auth-failure.integration.test.ts`
-- Test protected endpoints with and without valid tokens
+- Internal module tests: `src/server/shared/modules/auth/auth.integration.test.ts` (tests `AuthService`, `JwtStrategy`, config validation)
+- Consumer API tests: `src/server/modules/auth/auth.integration.test.ts` (tests `AuthController`, guards, adapters)
+- Tests cover both valid authentication flows and failure scenarios (invalid tokens, missing tokens)
 
 ### Frontend Tests
 
@@ -162,7 +202,20 @@ mockUseAuthStore.mockReturnValue({
 
 ## Related Files
 
-- Backend: `src/server/shared/modules/auth/`
-- Frontend Store: `src/ui/shared/hooks/useAuthStore.ts`
-- Frontend Interceptor: `src/ui/shared/components/AuthInterceptor/`
+### Backend
+
+- **Shared Module:** `src/server/shared/modules/auth/`
+- **Business Controller:** `src/server/modules/auth/`
+- **Ports:** `src/server/shared/ports/auth.port.ts`
+- **Adapters:** `src/server/shared/adapters/auth/`
+
+### Frontend
+
+- Store: `src/ui/shared/hooks/useAuthStore.ts`
+- Interceptor: `src/ui/shared/components/AuthInterceptor/`
 - SignIn Components: `src/ui/shared/components/SignIn/`
+
+### ADRs
+
+- [ADR-003: Centralized Axios Interceptors](../decisions/ADR-003-centralized-axios-interceptors.md)
+- [ADR-005: Hexagonal Architecture for Shared Modules](../decisions/ADR-005-hexagonal-architecture-shared-modules.md)

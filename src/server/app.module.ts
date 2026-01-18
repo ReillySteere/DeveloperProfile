@@ -10,10 +10,12 @@ import { Project } from './modules/projects/project.entity';
 import { ProjectModule } from './modules/projects/project.module';
 import { BlogModule } from './modules/blog/blog.module';
 import { BlogPost } from './modules/blog/blog.entity';
+import { AuthModule } from './modules/auth/auth.module';
+// Entity import allowed for TypeORM registration per ADR-005
 import { User } from 'server/shared/modules/auth/user.entity';
 import { SeedingModule } from './modules/seeding/seeding.module';
 import { HealthModule } from './modules/health/health.module';
-import { LoggerModule } from './shared/logger';
+import { LoggerModule } from './shared/modules/logger';
 
 @Module({
   imports: [
@@ -31,6 +33,7 @@ import { LoggerModule } from './shared/logger';
     AboutModule,
     ProjectModule,
     BlogModule,
+    AuthModule,
     SeedingModule,
     HealthModule,
   ],
