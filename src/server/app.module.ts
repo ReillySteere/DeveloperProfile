@@ -13,9 +13,11 @@ import { BlogPost } from './modules/blog/blog.entity';
 import { User } from 'server/shared/modules/auth/user.entity';
 import { SeedingModule } from './modules/seeding/seeding.module';
 import { HealthModule } from './modules/health/health.module';
+import { LoggerModule } from './shared/logger';
 
 @Module({
   imports: [
+    LoggerModule,
     TypeOrmModule.forRoot({
       type: 'better-sqlite3',
       database: 'data/database.sqlite',

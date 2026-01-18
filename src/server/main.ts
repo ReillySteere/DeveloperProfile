@@ -6,6 +6,7 @@ import { AppModule } from './app.module';
 import * as Sentry from '@sentry/node';
 import { ValidationPipe } from '@nestjs/common';
 import { SentryExceptionFilter } from './sentry-exception.filter';
+import { AppLoggerService } from './shared/logger';
 
 import * as fs from 'fs';
 
@@ -15,13 +16,26 @@ async function bootstrap() {
     fs.mkdirSync('data');
   }
 
+  // Initialize Sentry with enhanced configuration
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
+    environment: process.env.NODE_ENV || 'development',
+    release: process.env.npm_package_version || '0.0.0',
     integrations: [Sentry.httpIntegration()],
-    tracesSampleRate: 1.0, // Adjust the sample rate as needed (1.0 = capture 100% of transactions)
+    tracesSampleRate: 1.0,
+    // Only send errors in production, or when explicitly enabled
+    enabled: process.env.NODE_ENV === 'production' || !!process.env.SENTRY_DSN,
   });
 
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+  });
+
+  // Use custom logger
+  const logger = app.get(AppLoggerService);
+  logger.setContext('Bootstrap');
+  app.useLogger(logger);
+
   app.enableCors();
 
   app.useGlobalPipes(
@@ -42,9 +56,10 @@ async function bootstrap() {
 
   const port = process.env.PORT || 3000;
   await app.listen(port);
-  console.log(`Application is running on: ${await app.getUrl()}`);
+  logger.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap().catch((err) => {
   console.error('Fatal error during bootstrap:', err);
+  Sentry.captureException(err);
   process.exit(1);
 });

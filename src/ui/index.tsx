@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import './shared/styles/reset.css';
 import './shared/styles/tokens.css';
-import * as Sentry from '@sentry/browser';
+import * as Sentry from '@sentry/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { routeTree } from './routeTree.gen';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
@@ -10,11 +10,29 @@ import { useNavStore } from 'ui/shared/hooks/useNavStore';
 import { AuthInterceptor } from 'ui/shared/components/AuthInterceptor/AuthInterceptor';
 import { SignInModal } from 'ui/shared/components/SignIn/SignInModal';
 
-Sentry.init({
-  dsn: 'https://349f5174f58c6bcd4b3b5fb5fb738ff3@o4509070478147584.ingest.de.sentry.io/4509070482210896', // Replace with your Sentry DSN
-  integrations: [Sentry.browserTracingIntegration()],
-  tracesSampleRate: 1.0,
-});
+// Only initialize Sentry in production or when DSN is explicitly provided
+const sentryDsn =
+  process.env.SENTRY_DSN ||
+  (process.env.NODE_ENV === 'production'
+    ? 'https://349f5174f58c6bcd4b3b5fb5fb738ff3@o4509070478147584.ingest.de.sentry.io/4509070482210896'
+    : undefined);
+
+if (sentryDsn) {
+  Sentry.init({
+    dsn: sentryDsn,
+    environment: process.env.NODE_ENV || 'development',
+    integrations: [
+      Sentry.browserTracingIntegration(),
+      Sentry.replayIntegration({
+        maskAllText: false,
+        blockAllMedia: false,
+      }),
+    ],
+    tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
+    replaysSessionSampleRate: 0.1,
+    replaysOnErrorSampleRate: 1.0,
+  });
+}
 
 const queryClient = new QueryClient();
 

@@ -84,6 +84,18 @@ A full-stack developer profile application built with a modern React frontend an
      docker run -p 3000:3000 profile-app
      ```
 
+   - **Docker Compose (recommended):**
+
+     ```bash
+     # Production mode
+     docker compose up
+
+     # Development mode (with hot-reload)
+     docker compose up --build
+     ```
+
+     The app will be available at `http://localhost:3000`
+
 ## Environment Variables
 
 Copy the example file and configure your environment:

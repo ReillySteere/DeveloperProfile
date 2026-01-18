@@ -1,0 +1,19 @@
+# Development overrides (auto-loaded by docker compose)
+# Usage: docker compose up (automatically uses both files)
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # For dev, we use the full image but override the command
+    environment:
+      - NODE_ENV=development
+    volumes:
+      # Mount source for hot-reload
+      - .:/app
+      # Preserve node_modules from container
+      - /app/node_modules
+    command: npm run start
+    # Dev doesn't need restart policy
+    restart: 'no'
