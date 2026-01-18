@@ -1,4 +1,27 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, Page, APIRequestContext } from '@playwright/test';
+
+/**
+ * Helper function to create a test user
+ */
+async function createUser(
+  request: APIRequestContext,
+  username: string,
+  password: string,
+) {
+  const response = await request.post('/api/auth/register', {
+    data: {
+      username,
+      password,
+    },
+  });
+
+  // Ignore 409 (Conflict) if user already exists from previous test run
+  if (!response.ok() && response.status() !== 409) {
+    console.error(
+      `Failed to register user: ${response.status()} ${await response.text()}`,
+    );
+  }
+}
 
 /**
  * Helper function to sign in a user
@@ -66,7 +89,9 @@ test.describe('Blog Page - Unauthenticated', () => {
 
     // Wait for navigation to complete - blog post page has article with h1
     await expect(page).toHaveURL(/\/blog\/[^/]+/);
-    await expect(page.locator('article h1')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('article header h1')).toBeVisible({
+      timeout: 10000,
+    });
   });
 
   test('Create New Post button is not visible when unauthenticated', async ({
@@ -87,8 +112,10 @@ test.describe('Blog Page - Unauthenticated', () => {
 test.describe('Blog Page - Authenticated Workflow', () => {
   test('Complete authenticated blog workflow: create button, view, edit, preview, save', async ({
     page,
+    request,
   }) => {
     // Navigate to blog and sign in
+    await createUser(request, 'demo', 'password');
     await page.goto('/blog');
     await signIn(page, 'demo', 'password');
 
@@ -181,7 +208,10 @@ test.describe('Blog Page - Authenticated Workflow', () => {
 });
 
 test.describe('Authentication Flow', () => {
-  test('User can sign in and sign out', async ({ page }) => {
+  test('User can sign in and sign out', async ({ page, request }) => {
+    // Create user before testing auth flow
+    await createUser(request, 'demo', 'password');
+
     await page.goto('/blog');
 
     // Verify we start unauthenticated
