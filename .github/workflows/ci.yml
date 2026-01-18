@@ -65,6 +65,8 @@ jobs:
 
       - name: 🏗️ Build Application
         run: npm run build
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
       - name: 🕸️ Verify Architecture (Dependency Cruiser)
         run: npm run depcruise:verify
@@ -81,6 +83,7 @@ jobs:
         run: npm run test:e2e
         env:
           CI: true
+          JWT_AUTH_SECRET: test-secret
 
       - name: 📊 Upload Playwright Report
         uses: actions/upload-artifact@v4

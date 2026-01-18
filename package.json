@@ -43,6 +43,7 @@
     "@commitlint/config-conventional": "^20.3.1",
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.18.0",
+    "@hpcc-js/wasm": "^2.32.2",
     "@nestjs/cli": "^11.0.0",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.1",
