@@ -14,7 +14,7 @@ This document outlines the implementation plan for approved quality-of-life impr
 | Phase 1.5: Security Fix  | ✅ Complete | Migrated `sqlite3` → `better-sqlite3` (unplanned)           |
 | Phase 2: DX Improvements | ✅ Complete | lint-staged, snippets, extensions, eslint-plugin-security   |
 | Phase 3: AI Agent Skills | ✅ Complete | Security, State-management, Routing, Debugging              |
-| Phase 4: Testing/CI      | ⏳ Pending  | test-utils routing, Commitlint, Semantic-release            |
+| Phase 4: Testing/CI      | ✅ Complete | Commitlint, Semantic-release (test-utils routing deferred)  |
 | Phase 5: Infrastructure  | ⏳ Pending  | Logging + Sentry, docker-compose                            |
 
 ---
@@ -49,6 +49,33 @@ Migrated from `sqlite3` to `better-sqlite3`. See [ADR-004](../architecture/decis
 - Vulnerabilities reduced from 12 (6 high, 6 low) to 7 (all low severity)
 - CI pipeline now passes `npm audit --audit-level=high`
 - 3-5x performance improvement from synchronous API
+
+---
+
+## Phase 4 Completion: Testing & CI
+
+### Changes Made
+
+| File                       | Change                                             |
+| -------------------------- | -------------------------------------------------- |
+| `commitlint.config.js`     | Created with conventional commit rules             |
+| `.husky/commit-msg`        | Created hook to enforce commit message format      |
+| `.releaserc.json`          | Created semantic-release configuration             |
+| `.github/workflows/ci.yml` | Added release job triggered on push to master      |
+| `package.json`             | Added commitlint and semantic-release dependencies |
+
+### Deferred: test-utils Routing Extension
+
+The test-utils routing extension was deferred because `@tanstack/react-router` uses `TextEncoder`
+which isn't available in JSDOM by default. Importing it at module load time causes all tests to
+fail. A proper solution would require polyfilling `TextEncoder` globally or using dynamic imports.
+
+### Outcome
+
+- All commits now validated against conventional commit format
+- Semantic versioning will be automated on push to master
+- CHANGELOG.md will be auto-generated from commit messages
+- GitHub releases created automatically
 
 ---
 
@@ -379,10 +406,10 @@ release:
 
 **Acceptance Criteria:**
 
-- [ ] Pushes to master auto-generate releases
-- [ ] CHANGELOG.md auto-updated
-- [ ] Version in package.json auto-bumped
-- [ ] GitHub releases created with notes
+- [x] Pushes to master auto-generate releases
+- [x] CHANGELOG.md auto-updated
+- [x] Version in package.json auto-bumped
+- [x] GitHub releases created with notes
 
 ---
 
@@ -444,9 +471,9 @@ npx --no -- commitlint --edit ${1}
 
 **Acceptance Criteria:**
 
-- [ ] Invalid commit messages rejected
-- [ ] Conventional commit types enforced
-- [ ] Works with semantic-release
+- [x] Invalid commit messages rejected
+- [x] Conventional commit types enforced
+- [x] Works with semantic-release
 
 ---
 
@@ -1240,6 +1267,10 @@ console.log('[useQuery]', { data, isLoading, isError });
 
 ### 6.1 Extend test-utils for Routing
 
+**Status:** ⏸️ Deferred
+
+**Reason:** The `@tanstack/react-router` package uses `TextEncoder` which isn't available in JSDOM by default. Importing it in test-utils.tsx causes all tests to fail during module initialization. This requires a more complex solution (polyfilling TextEncoder globally or using dynamic imports) that is out of scope for Phase 4.
+
 **Purpose:** Add router wrapper to test-utils for testing navigation and route params.
 
 **Files to Modify:**
@@ -1489,9 +1520,9 @@ export class HealthController {
 
 ### Phase 4: Testing & CI (Medium-High Effort)
 
-13. Extend test-utils for routing
-14. Commitlint
-15. Semantic-release
+13. ~~Extend test-utils for routing~~ (Deferred - TextEncoder polyfill issue)
+14. ✅ Commitlint
+15. ✅ Semantic-release
 
 ### Phase 5: Infrastructure (Higher Effort)
 
