@@ -85,7 +85,10 @@ test.describe('Blog Page - Unauthenticated', () => {
     });
 
     // Click on the first blog post link
-    await page.locator('a[href*="/blog/"]').first().click();
+    await page
+      .locator('a[href^="/blog/"]:not([href="/blog/create"])')
+      .first()
+      .click();
 
     // Wait for navigation to complete - blog post page has article with h1
     await expect(page).toHaveURL(/\/blog\/[^/]+/);
@@ -136,7 +139,9 @@ test.describe('Blog Page - Authenticated Workflow', () => {
 
     // Wait for blog post page to fully render (article with h1)
     await expect(page).toHaveURL(/\/blog\/(?!create)[^/]+/);
-    await expect(page.locator('article h1')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('article header h1')).toBeVisible({
+      timeout: 10000,
+    });
 
     // Verify we're still authenticated after navigation
     await expect(page.getByRole('button', { name: /sign out/i })).toBeVisible();

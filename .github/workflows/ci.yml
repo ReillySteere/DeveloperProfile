@@ -12,13 +12,12 @@ jobs:
     name: Security Scan
     runs-on: ubuntu-latest
     timeout-minutes: 10
-
     steps:
       - name: ⬇️ Checkout Repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: ⎔ Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: '22.14.0'
           cache: 'npm'
@@ -29,23 +28,18 @@ jobs:
       - name: 🔒 Run npm audit
         run: npm audit --audit-level=high
 
-  validate:
-    name: Validate (Lint, Test, Build)
+  static-checks:
+    name: Static Checks
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-
-    strategy:
-      matrix:
-        node-version: [22.14.0]
-
+    timeout-minutes: 10
     steps:
       - name: ⬇️ Checkout Repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
-      - name: ⎔ Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v6
+      - name: ⎔ Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: '22.14.0'
           cache: 'npm'
 
       - name: 📥 Install Dependencies
@@ -63,18 +57,58 @@ jobs:
       - name: 🔎 Type Check
         run: npm run type-check
 
+      - name: 🕸️ Verify Architecture
+        run: npm run depcruise:verify
+
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: ⬇️ Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: ⎔ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.14.0'
+          cache: 'npm'
+
+      - name: 📥 Install Dependencies
+        run: npm ci
+
+      - name: 🛣️ Generate Routes
+        run: npm run generate-routes
+
+      - name: 🧪 Run Tests
+        run: npm run test
+        env:
+          CI: true
+
+  e2e-tests:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: ⬇️ Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: ⎔ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.14.0'
+          cache: 'npm'
+
+      - name: 📥 Install Dependencies
+        run: npm ci
+
+      - name: 🛣️ Generate Routes
+        run: npm run generate-routes
+
       - name: 🏗️ Build Application
         run: npm run build
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-
-      - name: 🕸️ Verify Architecture (Dependency Cruiser)
-        run: npm run depcruise:verify
-
-      - name: 🧪 Run Tests (Server & UI)
-        run: npm run test
-        env:
-          CI: true
 
       - name: 🎭 Install Playwright Browsers
         run: npx playwright install chromium --with-deps
@@ -92,6 +126,14 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
+
+  docker-build:
+    name: Docker Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: ⬇️ Checkout Repo
+        uses: actions/checkout@v4
 
       - name: 🐳 Docker Build
         run: docker build . --file Dockerfile --tag profile-app:latest
