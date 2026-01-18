@@ -1,6 +1,6 @@
 ---
 name: testing-workflow
-description: Guide for running and writing tests according to project standards (Server Unit/Integration, UI Integration).
+description: Guide for running and writing tests according to project standards (Server Unit/Integration, UI Integration, E2E).
 ---
 
 # Testing Workflow
@@ -9,7 +9,7 @@ Use this skill when you need to run tests, debug failures, or write new tests fo
 
 ## 1. Running Tests
 
-This project distinguishes between Server and UI tests.
+This project has three testing layers: Server (unit/integration), UI (integration), and E2E (Playwright).
 
 ### VS Code Tasks (Recommended)
 
@@ -24,7 +24,7 @@ Use VS Code tasks for reliable test execution:
 ### Terminal Commands
 
 ```bash
-# Run all tests
+# Run all unit/integration tests
 npm test
 
 # Run server tests only
@@ -32,6 +32,15 @@ npm run test:server
 
 # Run UI tests only
 npm run test:ui
+
+# Run E2E tests (requires dev server running)
+npm run test:e2e
+
+# Run E2E tests with visible browser
+npm run test:e2e:headed
+
+# Run E2E tests with interactive UI
+npm run test:e2e:ui
 ```
 
 ### Server Tests
@@ -273,15 +282,86 @@ it('should create a new post when form is submitted', async () => {
 - Provides Jest preloaded configuration for Node environment
 - Used internally by `jest.node.ts`
 
-## 5. Debugging
+## 5. E2E Testing (Playwright)
+
+E2E tests use Playwright with Chromium to test full user workflows. Tests are located in the `e2e/` directory.
+
+### Running E2E Tests
+
+```bash
+# Run all E2E tests (headless)
+npm run test:e2e
+
+# Run with visible browser for debugging
+npm run test:e2e:headed
+
+# Run with interactive UI for debugging
+npm run test:e2e:ui
+```
+
+### E2E Test Structure
+
+```
+e2e/
+├── about.spec.ts       # About page tests
+├── blog.spec.ts        # Blog functionality tests (including auth)
+├── experience.spec.ts  # Experience page tests
+├── projects.spec.ts    # Projects page tests
+└── theme.spec.ts       # Theme toggle tests
+```
+
+### Writing E2E Tests
+
+```typescript
+// e2e/example.spec.ts
+import { test, expect } from '@playwright/test';
+
+test.describe('Feature Name', () => {
+  test('should perform action', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('h1')).toContainText('Expected Title');
+  });
+});
+```
+
+**Verification:** After creating or modifying any `.spec.ts` file, you **MUST** run the E2E tests locally (`npm run test:e2e`) to verify your changes work as expected.
+
+### Authentication in E2E Tests
+
+For tests requiring authentication, use the demo credentials:
+
+```typescript
+test('authenticated workflow', async ({ page }) => {
+  await page.goto('/');
+
+  // Sign in
+  await page.getByRole('button', { name: /sign in/i }).click();
+  await page.getByLabel('Username').fill('demo');
+  await page.getByLabel('Password').fill('password');
+  await page.getByRole('button', { name: /sign in/i }).click();
+
+  // Verify authenticated state
+  await expect(page.getByRole('button', { name: /sign out/i })).toBeVisible();
+});
+```
+
+### E2E Tests in CI
+
+E2E tests run automatically in GitHub Actions after unit/integration tests pass. Failed E2E tests will block PR merges. Test artifacts (screenshots, traces) are uploaded for debugging.
+
+## 6. Debugging
 
 If a test fails, use the VS Code Test Explorer or run the specific file:
 
 ```bash
+# Jest tests
 npx jest src/ui/path/to/test.test.tsx --config jest.browser.ts
+
+# Playwright tests
+npx playwright test e2e/about.spec.ts --headed
 ```
 
-## 6. Pre-push Checks
+## 7. Pre-push Checks
 
 The project enforces quality checks via Husky hooks. Before pushing, the following commands are run:
 

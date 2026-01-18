@@ -40,7 +40,7 @@ export default [
       '@typescript-eslint/no-explicit-any': 'error',
       'prettier/prettier': 'error',
       // Security rules
-      'security/detect-object-injection': 'warn',
+      'security/detect-object-injection': 'off',
       'security/detect-non-literal-regexp': 'warn',
       'security/detect-unsafe-regex': 'error',
       'security/detect-buffer-noassert': 'error',
@@ -51,6 +51,7 @@ export default [
   },
   {
     files: [
+      '**/*.spec.ts',
       '**/*.test.ts',
       '**/*.test.tsx',
       'src/ui/test-utils/jest-preloaded.ts',

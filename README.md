@@ -24,6 +24,7 @@ A full-stack developer profile application built with a modern React frontend an
 ### Testing
 
 - **Unit/Integration:** Jest (configured for both Node and Browser environments)
+- **E2E:** Playwright (Chromium) for end-to-end testing
 - **Quality Gates:** Husky `pre-push` hooks enforce strict testing, linting, and dependency validation before code can be pushed.
 
 ## Project Setup Instructions
@@ -65,10 +66,16 @@ A full-stack developer profile application built with a modern React frontend an
      ```
 
 6. **Run tests:**
-   - **All Tests:**
+   - **All Unit/Integration Tests:**
 
      ```bash
      npm test
+     ```
+
+   - **E2E Tests (requires dev server running):**
+
+     ```bash
+     npm run test:e2e
      ```
 
 7. **Docker:**
@@ -165,14 +172,66 @@ graph TD
     Repo -.->|Imports| Domain
 ```
 
+### Shared Modules (Hexagonal Architecture)
+
+Shared modules follow a **Hexagonal Architecture** pattern with Ports and Adapters to enable clean boundaries and future extraction:
+
+```mermaid
+graph LR
+    subgraph Business ["Business Modules"]
+        BlogCtrl[Blog Controller]
+        AuthCtrl[Auth Controller]
+    end
+
+    subgraph Adapters ["Adapters Layer"]
+        AuthAdapter[AuthenticationAdapter]
+        GuardAdapter[AuthGuardAdapter]
+        LogAdapter[LoggingAdapter]
+    end
+
+    subgraph Ports ["Ports (Interfaces)"]
+        IAuth[IAuthenticationPort]
+        IGuard[IAuthGuardPort]
+        ILog[ILoggingPort]
+    end
+
+    subgraph SharedModules ["Shared Modules (Encapsulated)"]
+        AuthMod[Auth Module]
+        LogMod[Logger Module]
+        AuthSvc[AuthService]
+        JwtGuard[JwtAuthGuard]
+        LogSvc[AppLoggerService]
+    end
+
+    BlogCtrl -->|Uses| GuardAdapter
+    AuthCtrl -->|Uses| AuthAdapter
+    BlogCtrl -->|Uses| LogAdapter
+
+    AuthAdapter -.->|Implements| IAuth
+    GuardAdapter -.->|Implements| IGuard
+    LogAdapter -.->|Implements| ILog
+
+    AuthAdapter -->|Delegates to| AuthSvc
+    GuardAdapter -->|Delegates to| JwtGuard
+    LogAdapter -->|Delegates to| LogSvc
+
+    AuthSvc --> AuthMod
+    JwtGuard --> AuthMod
+    LogSvc --> LogMod
+```
+
+**Key Principle:** Business modules only import from `adapters/` and `ports/`. They cannot access internal module implementations directly.
+
 ## Feature Architecture
 
 Detailed architectural documentation for each feature can be found here:
 
 - [About Feature](architecture/components/about.md)
+- [Auth Feature](architecture/components/auth.md)
+- [Blog Feature](architecture/components/blog.md)
 - [Experience Feature](architecture/components/experience.md)
 - [Projects Feature](architecture/components/projects.md)
-- [Blog Feature](architecture/components/blog.md)
+- [Shared UI](architecture/components/shared-ui.md)
 
 ## Architectural Decisions
 
@@ -180,6 +239,7 @@ Detailed architectural documentation for each feature can be found here:
 - [ADR-002: SQLite & TypeORM](architecture/decisions/ADR-002-SQLite-TypeOrm-for-persistence.md)
 - [ADR-003: Centralized Axios Interceptors](architecture/decisions/ADR-003-centralized-axios-interceptors.md)
 - [ADR-004: Migrate to better-sqlite3](architecture/decisions/ADR-004-better-sqlite3-driver.md)
+- [ADR-005: Hexagonal Architecture for Shared Modules](architecture/decisions/ADR-005-hexagonal-architecture-shared-modules.md)
 
 ## Key Features
 

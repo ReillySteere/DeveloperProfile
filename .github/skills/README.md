@@ -97,13 +97,13 @@ Start
 
 ### ✅ Quality Assurance
 
-| Skill                    | Purpose                                  |
-| ------------------------ | ---------------------------------------- |
-| `testing-workflow`       | Write and debug Jest tests (server + UI) |
-| `code-review`            | Review code for quality and patterns     |
-| `error-handling`         | Debug TypeScript, Jest, ESLint errors    |
-| `debugging`              | Step-through debugging with VS Code      |
-| `dependency-enforcement` | Validate modular monolith boundaries     |
+| Skill                    | Purpose                                       |
+| ------------------------ | --------------------------------------------- |
+| `testing-workflow`       | Write and debug tests (Jest + Playwright E2E) |
+| `code-review`            | Review code for quality and patterns          |
+| `error-handling`         | Debug TypeScript, Jest, ESLint errors         |
+| `debugging`              | Step-through debugging with VS Code           |
+| `dependency-enforcement` | Validate modular monolith boundaries          |
 
 ### 🔐 Security
 

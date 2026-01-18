@@ -1,109 +1,111 @@
-# Auth Module
+# Auth Shared Module
 
-This module handles user authentication and registration using JWT (JSON Web Tokens) and Passport.js. It provides endpoints for creating users, logging in, and protecting routes.
+This shared module handles core authentication functionality using JWT (JSON Web Tokens) and Passport.js.
+
+> **Important**: This module follows **Hexagonal Architecture** (Ports and Adapters).
+> See [ADR-005](../../../../architecture/decisions/ADR-005-hexagonal-architecture-shared-modules.md).
 
 ## Purpose
 
-The Auth Module is responsible for:
+The Auth Shared Module provides:
 
-- User registration (creating new accounts).
-- User authentication (verifying credentials).
-- Token generation (issuing JWTs).
-- Route protection (guarding endpoints against unauthorized access).
+- User credential validation
+- Password hashing (bcrypt)
+- JWT token generation and verification
+- Authentication guards
+
+## Architecture
+
+This is a **shared module** designed for potential extraction into a standalone package.
+
+### What This Module Provides
+
+- Core authentication services (internal)
+- JWT guard (internal)
+- DTOs for input/output (public API)
+- Injection tokens (public API)
+
+### What This Module Does NOT Provide
+
+- API endpoints (moved to `src/server/modules/auth/`)
+- Direct service access (use adapters)
+
+## Public API
+
+Only import from the barrel file (`index.ts`):
+
+```typescript
+// ✅ Correct - import from barrel
+import {
+  AuthModule,
+  AUTH_TOKENS,
+  AuthCredentialsDto,
+} from 'server/shared/modules/auth';
+
+// ❌ Wrong - import internal files
+import { AuthService } from 'server/shared/modules/auth/auth.service';
+```
+
+### Exports
+
+| Export               | Purpose                              |
+| -------------------- | ------------------------------------ |
+| `AuthModule`         | NestJS module for registration       |
+| `AUTH_TOKENS`        | Injection tokens for DI              |
+| `AuthCredentialsDto` | Input DTO for login/register         |
+| `UserDto`            | Output DTO for user data             |
+| `TokenResponseDto`   | Output DTO for token response        |
+| `IAuthService`       | Service interface (for adapter only) |
 
 ## Configuration
 
-The module requires the following environment variable to be set:
+Requires environment variable:
 
-- `JWT_AUTH_SECRET`: The secret key used to sign and verify JWTs.
-
-## API Endpoints
-
-Base URL: `/api/auth`
-
-### Register
-
-Creates a new user account.
-
-- **URL**: `/register`
-- **Method**: `POST`
-- **Body**:
-  ```json
-  {
-    "username": "your_username",
-    "password": "your_password"
-  }
-  ```
-- **Response**: Returns the created user object (excluding password).
-
-### Login
-
-Authenticates a user and returns an access token.
-
-- **URL**: `/login`
-- **Method**: `POST`
-- **Body**:
-  ```json
-  {
-    "username": "your_username",
-    "password": "your_password"
-  }
-  ```
-- **Response**:
-  ```json
-  {
-    "access_token": "jwt_token_string"
-  }
-  ```
-
-### Protected Route Example
-
-An example endpoint demonstrating how to protect a route.
-
-- **URL**: `/protected`
-- **Method**: `GET`
-- **Headers**:
-  - `Authorization`: `Bearer <your_access_token>`
+```bash
+JWT_AUTH_SECRET=your-secret-key
+```
 
 ## Usage
 
-### Importing the Module
+### For Business Modules (Recommended)
 
-Import `AuthModule` into your application module (usually `AppModule`):
-
-```typescript
-import { AuthModule } from 'shared/modules/auth/auth.module';
-
-@Module({
-  imports: [
-    AuthModule,
-    // ... other modules
-  ],
-})
-export class AppModule {}
-```
-
-### Protecting Routes
-
-To protect a route in another controller, use the `JwtAuthGuard`:
+Use the adapter layer:
 
 ```typescript
-import { UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'shared/modules/auth/jwt-auth.guard';
+import { AuthGuardAdapter } from 'server/shared/adapters/auth';
 
-@Controller('some-resource')
-export class SomeController {
-  @UseGuards(JwtAuthGuard)
-  @Get()
-  findAll() {
-    // This endpoint is now protected
+@Controller('api/blog')
+export class BlogController {
+  @UseGuards(AuthGuardAdapter)
+  @Post()
+  create(@Body() dto: CreateBlogPostDto) {
+    // Protected endpoint
   }
 }
 ```
 
-## Architecture
+### For app.module.ts
 
-- **AuthController**: Handles incoming HTTP requests.
-- **AuthService**: Contains business logic for validation, registration, and login.
-- **JwtStrategy**: Passport strategy for extracting and validating JWTs from the `Authorization` header.
-- **User Entity**: TypeORM entity representing the user in the database.
+Import the shared module for DI registration:
+
+```typescript
+import { AuthModule } from 'server/shared/modules/auth';
+
+@Module({
+  imports: [AuthModule],
+})
+export class SomeModule {}
+```
+
+## Internal Architecture
+
+- **AuthService**: Core business logic (validation, registration, login)
+- **JwtStrategy**: Passport strategy for JWT extraction and validation
+- **JwtAuthGuard**: NestJS guard wrapping Passport authentication
+- **User Entity**: TypeORM entity for user persistence
+
+## Related
+
+- **Business Controller**: `src/server/modules/auth/`
+- **Adapters**: `src/server/shared/adapters/auth/`
+- **Ports**: `src/server/shared/ports/auth.port.ts`

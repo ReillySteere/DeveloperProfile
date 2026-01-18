@@ -5,7 +5,11 @@ import { BlogService } from './blog.service';
 import { BlogRepository } from './blog.repository';
 import { BlogPost } from './blog.entity';
 import TOKENS from './tokens';
-import { AuthModule } from 'server/shared/modules/auth/auth.module';
+import { AuthModule } from 'server/shared/modules/auth';
+import {
+  AuthGuardAdapter,
+  AUTH_ADAPTER_TOKENS,
+} from 'server/shared/adapters/auth';
 
 @Module({
   imports: [TypeOrmModule.forFeature([BlogPost]), AuthModule],
@@ -19,6 +23,11 @@ import { AuthModule } from 'server/shared/modules/auth/auth.module';
       provide: TOKENS.BlogRepository,
       useClass: BlogRepository,
     },
+    {
+      provide: AUTH_ADAPTER_TOKENS.AuthGuard,
+      useClass: AuthGuardAdapter,
+    },
+    AuthGuardAdapter,
   ],
   exports: [TOKENS.BlogService],
 })

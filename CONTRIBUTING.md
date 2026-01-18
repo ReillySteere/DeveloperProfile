@@ -67,11 +67,15 @@ This will generate:
 
 ## Testing Standards
 
-- **Coverage:** We require **100% test coverage** for all files.
-- **Tools:** Jest is used for both environments.
+- **Coverage:** We require **100% test coverage** for all files (unit/integration tests).
+- **Unit/Integration Tools:** Jest is used for both environments.
   - `npm run test:ui` (Browser/JSDOM)
   - `npm run test:server` (Node)
-- **Integration over Unit:**
+- **E2E Tools:** Playwright with Chromium.
+  - `npm run test:e2e` (headless)
+  - `npm run test:e2e:headed` (visible browser)
+  - `npm run test:e2e:ui` (interactive UI mode)
+- \*\*Integration over Unit:
   - **Frontend:** Focus on **Integration Tests** at the _Container_ level (`src/ui/containers/<feature>/*.container.test.tsx`). These should test the full user flow (render -> interact -> API call mocked -> update UI).
   - **Backend:** Use NestJS `Test.createTestingModule` for integration tests.
 
