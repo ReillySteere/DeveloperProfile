@@ -16,15 +16,21 @@ async function bootstrap() {
     fs.mkdirSync('data');
   }
 
+  // Determine Sentry DSN: use env var if set, otherwise use prod DSN only in production
+  const sentryDsn =
+    process.env.SENTRY_DSN ||
+    (process.env.NODE_ENV === 'production'
+      ? 'https://34ddf84a2659f61386813917cc3a3a48@o4509070478147584.ingest.de.sentry.io/4510728549236816'
+      : undefined);
+
   // Initialize Sentry with enhanced configuration
   Sentry.init({
-    dsn: process.env.SENTRY_DSN,
+    dsn: sentryDsn,
     environment: process.env.NODE_ENV || 'development',
     release: process.env.npm_package_version || '0.0.0',
     integrations: [Sentry.httpIntegration()],
-    tracesSampleRate: 1.0,
-    // Only send errors in production, or when explicitly enabled
-    enabled: process.env.NODE_ENV === 'production' || !!process.env.SENTRY_DSN,
+    tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
+    enabled: !!sentryDsn,
   });
 
   const app = await NestFactory.create(AppModule, {

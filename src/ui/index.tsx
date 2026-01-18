@@ -14,7 +14,7 @@ import { SignInModal } from 'ui/shared/components/SignIn/SignInModal';
 const sentryDsn =
   process.env.SENTRY_DSN ||
   (process.env.NODE_ENV === 'production'
-    ? 'https://349f5174f58c6bcd4b3b5fb5fb738ff3@o4509070478147584.ingest.de.sentry.io/4509070482210896'
+    ? 'https://34ddf84a2659f61386813917cc3a3a48@o4509070478147584.ingest.de.sentry.io/4510728549236816'
     : undefined);
 
 if (sentryDsn) {
