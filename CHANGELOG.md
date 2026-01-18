@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.1.0](https://github.com/ReillySteere/DeveloperProfile/compare/v1.0.0...v1.1.0) (2026-01-18)
+
+
+### Features
+
+* add Playwright E2E tests for critical user workflows ([#21](https://github.com/ReillySteere/DeveloperProfile/issues/21)) ([d679c48](https://github.com/ReillySteere/DeveloperProfile/commit/d679c487f1f4d9103c7e34032a3ac2a5acbf90cd))
+
+
+### Bug Fixes
+
+* update release workflow and commitlint configuration ([#22](https://github.com/ReillySteere/DeveloperProfile/issues/22)) ([3aa7228](https://github.com/ReillySteere/DeveloperProfile/commit/3aa72287a997b7d2bbb43a4066d48b1a02855d73))
+
+
+### Code Refactoring
+
+* Implement hexagonal architecture for shared modules (ADR-005) ([#20](https://github.com/ReillySteere/DeveloperProfile/issues/20)) ([f31dbf3](https://github.com/ReillySteere/DeveloperProfile/commit/f31dbf35dd269e501b8907957801b11065b10fe0))
+
 ## 1.0.0 (2026-01-18)
 
 
