@@ -1,7 +1,7 @@
 {
   "name": "developer-profile",
   "engines": {
-    "node": "22.x"
+    "node": ">=22.14.0"
   },
   "scripts": {
     "build": "npm run build:server && npm run build:ui",
@@ -43,8 +43,6 @@
     "@nestjs/cli": "^11.0.0",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.1",
-    "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/git": "^10.0.1",
     "@swc/cli": "^0.7.10",
     "@swc/core": "^1.15.8",
     "@swc/jest": "^0.2.39",
@@ -90,7 +88,6 @@
     "prettier": "^3.5.3",
     "sass": "^1.86.0",
     "sass-loader": "^16.0.5",
-    "semantic-release": "^24.2.9",
     "source-map-support": "^0.5.21",
     "style-loader": "^4.0.0",
     "supertest": "^7.0.0",

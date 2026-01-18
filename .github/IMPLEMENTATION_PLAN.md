@@ -14,7 +14,7 @@ This document outlines the implementation plan for approved quality-of-life impr
 | Phase 1.5: Security Fix  | ✅ Complete | Migrated `sqlite3` → `better-sqlite3` (unplanned)           |
 | Phase 2: DX Improvements | ✅ Complete | lint-staged, snippets, extensions, eslint-plugin-security   |
 | Phase 3: AI Agent Skills | ✅ Complete | Security, State-management, Routing, Debugging              |
-| Phase 4: Testing/CI      | ✅ Complete | Commitlint, Semantic-release (test-utils routing deferred)  |
+| Phase 4: Testing/CI      | ✅ Complete | Commitlint, release-please (test-utils routing deferred)    |
 | Phase 5: Infrastructure  | ✅ Complete | docker-compose, Logging + Sentry                            |
 
 ---
@@ -56,13 +56,13 @@ Migrated from `sqlite3` to `better-sqlite3`. See [ADR-004](../architecture/decis
 
 ### Changes Made
 
-| File                       | Change                                             |
-| -------------------------- | -------------------------------------------------- |
-| `commitlint.config.js`     | Created with conventional commit rules             |
-| `.husky/commit-msg`        | Created hook to enforce commit message format      |
-| `.releaserc.json`          | Created semantic-release configuration             |
-| `.github/workflows/ci.yml` | Added release job triggered on push to master      |
-| `package.json`             | Added commitlint and semantic-release dependencies |
+| File                                   | Change                                                                |
+| -------------------------------------- | --------------------------------------------------------------------- |
+| `commitlint.config.js`                 | Created with conventional commit rules                                |
+| `.husky/commit-msg`                    | Created hook to enforce commit message format                         |
+| `.github/workflows/release-please.yml` | Created release-please workflow (replaced semantic-release)           |
+| `.github/workflows/ci.yml`             | Quality gates only (release job moved to release-please.yml)          |
+| `package.json`                         | Added commitlint dependencies (release-please runs via GitHub Action) |
 
 ### Deferred: test-utils Routing Extension
 
@@ -73,9 +73,9 @@ fail. A proper solution would require polyfilling `TextEncoder` globally or usin
 ### Outcome
 
 - All commits now validated against conventional commit format
-- Semantic versioning will be automated on push to master
+- Release-please creates a "Release PR" that accumulates changes
+- When Release PR is merged, GitHub release and tag are created automatically
 - CHANGELOG.md will be auto-generated from commit messages
-- GitHub releases created automatically
 
 ---
 

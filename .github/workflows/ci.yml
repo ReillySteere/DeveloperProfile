@@ -20,7 +20,7 @@ jobs:
       - name: ⎔ Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '22.x'
+          node-version: '22.14.0'
           cache: 'npm'
 
       - name: 📥 Install Dependencies
@@ -36,7 +36,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [22.x]
+        node-version: [22.14.0]
 
     steps:
       - name: ⬇️ Checkout Repo
@@ -76,35 +76,3 @@ jobs:
 
       - name: 🐳 Docker Build
         run: docker build . --file Dockerfile --tag profile-app:latest
-
-  release:
-    name: Release
-    runs-on: ubuntu-latest
-    needs: [security, validate]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-
-    permissions:
-      contents: write
-      issues: write
-      pull-requests: write
-
-    steps:
-      - name: ⬇️ Checkout Repo
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-
-      - name: ⎔ Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '22.x'
-          cache: 'npm'
-
-      - name: 📥 Install Dependencies
-        run: npm ci
-
-      - name: 🚀 Release
-        run: npx semantic-release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
