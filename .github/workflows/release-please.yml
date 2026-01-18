@@ -1,0 +1,31 @@
+name: Release Please
+
+on:
+  push:
+    branches: [master]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    name: Release Please
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🚀 Release Please
+        uses: googleapis/release-please-action@v4
+        with:
+          release-type: node
+          changelog-types: |
+            [
+              {"type": "feat", "section": "Features", "hidden": false},
+              {"type": "fix", "section": "Bug Fixes", "hidden": false},
+              {"type": "perf", "section": "Performance Improvements", "hidden": false},
+              {"type": "refactor", "section": "Code Refactoring", "hidden": false},
+              {"type": "docs", "section": "Documentation", "hidden": false},
+              {"type": "chore", "section": "Miscellaneous", "hidden": true},
+              {"type": "test", "section": "Tests", "hidden": true},
+              {"type": "ci", "section": "CI/CD", "hidden": true}
+            ]

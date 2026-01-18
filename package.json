@@ -1,7 +1,7 @@
 {
   "name": "developer-profile",
   "engines": {
-    "node": "22.x"
+    "node": ">=22.14.0"
   },
   "scripts": {
     "build": "npm run build:server && npm run build:ui",
@@ -36,6 +36,8 @@
     "@babel/preset-env": "^7.26.9",
     "@babel/preset-react": "^7.26.3",
     "@babel/preset-typescript": "^7.27.0",
+    "@commitlint/cli": "^20.3.1",
+    "@commitlint/config-conventional": "^20.3.1",
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.18.0",
     "@nestjs/cli": "^11.0.0",

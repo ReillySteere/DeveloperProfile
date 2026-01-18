@@ -6,6 +6,7 @@ import { AppModule } from './app.module';
 import * as Sentry from '@sentry/node';
 import { ValidationPipe } from '@nestjs/common';
 import { SentryExceptionFilter } from './sentry-exception.filter';
+import { AppLoggerService } from './shared/logger';
 
 import * as fs from 'fs';
 
@@ -15,13 +16,33 @@ async function bootstrap() {
     fs.mkdirSync('data');
   }
 
+  // Determine Sentry DSN: use env var if set, otherwise use prod DSN only in production
+  const sentryDsn =
+    process.env.SENTRY_DSN ||
+    (process.env.NODE_ENV === 'production'
+      ? 'https://eb783d6134fbc05925302caf50fc87bf@o4510728628797440.ingest.us.sentry.io/4510728630042624'
+      : '');
+
+  // Initialize Sentry with enhanced configuration
   Sentry.init({
-    dsn: process.env.SENTRY_DSN,
+    dsn: sentryDsn,
+    environment: process.env.NODE_ENV || 'development',
+    release: process.env.npm_package_version || '0.0.0',
     integrations: [Sentry.httpIntegration()],
-    tracesSampleRate: 1.0, // Adjust the sample rate as needed (1.0 = capture 100% of transactions)
+    tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
+    enabled: !!sentryDsn,
+    enableLogs: true,
   });
 
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+  });
+
+  // Use custom logger
+  const logger = app.get(AppLoggerService);
+  logger.setContext('Bootstrap');
+  app.useLogger(logger);
+
   app.enableCors();
 
   app.useGlobalPipes(
@@ -42,9 +63,10 @@ async function bootstrap() {
 
   const port = process.env.PORT || 3000;
   await app.listen(port);
-  console.log(`Application is running on: ${await app.getUrl()}`);
+  logger.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap().catch((err) => {
   console.error('Fatal error during bootstrap:', err);
+  Sentry.captureException(err);
   process.exit(1);
 });

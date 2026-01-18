@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM node:22-alpine AS builder
+FROM node:22.14-alpine AS builder
 
 WORKDIR /app
 
@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Production Runtime
-FROM node:22-alpine
+FROM node:22.14-alpine
 
 WORKDIR /app
 
@@ -31,8 +31,15 @@ COPY --from=builder /app/dist ./dist
 # Create data directory for SQLite (persisted via volume in prod)
 RUN mkdir -p data
 
+# Install wget for healthcheck (alpine doesn't have curl by default)
+RUN apk add --no-cache wget
+
 # Expose the API port
 EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1
 
 # Start the server
 CMD ["npm", "run", "start:server:prod"]

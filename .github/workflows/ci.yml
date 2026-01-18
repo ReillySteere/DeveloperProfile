@@ -20,7 +20,7 @@ jobs:
       - name: ⎔ Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '22.x'
+          node-version: '22.14.0'
           cache: 'npm'
 
       - name: 📥 Install Dependencies
@@ -36,7 +36,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [22.x]
+        node-version: [22.14.0]
 
     steps:
       - name: ⬇️ Checkout Repo
