@@ -232,6 +232,7 @@ Detailed architectural documentation for each feature can be found here:
 - [Experience Feature](architecture/components/experience.md)
 - [Projects Feature](architecture/components/projects.md)
 - [Shared UI](architecture/components/shared-ui.md)
+- [Status (Mission Control)](architecture/components/status.md)
 
 ## Architectural Decisions
 
@@ -240,6 +241,8 @@ Detailed architectural documentation for each feature can be found here:
 - [ADR-003: Centralized Axios Interceptors](architecture/decisions/ADR-003-centralized-axios-interceptors.md)
 - [ADR-004: Migrate to better-sqlite3](architecture/decisions/ADR-004-better-sqlite3-driver.md)
 - [ADR-005: Hexagonal Architecture for Shared Modules](architecture/decisions/ADR-005-hexagonal-architecture-shared-modules.md)
+- [ADR-006: Recharts for Telemetry Visualization](architecture/decisions/ADR-006-recharts-for-telemetry-visualization.md)
+- [ADR-007: Simulated Chaos Mode](architecture/decisions/ADR-007-simulated-chaos-mode.md)
 
 ## Key Features
 
@@ -247,6 +250,7 @@ Detailed architectural documentation for each feature can be found here:
 - **Projects Showcase:** A detailed portfolio of technical projects with role, execution, and results.
 - **About Section:** Detailed professional summary and skills.
 - **Technical Blog:** A markdown-based blogging platform with syntax highlighting and diagram support.
+- **Mission Control:** Real-time telemetry dashboard with event loop monitoring, memory metrics, and simulated chaos mode.
 - **Responsive Design:** Optimized for various screen sizes with a custom Navigation Rail.
 - **Dark/Light Mode:** Theming support via CSS variables.
 

@@ -13,6 +13,7 @@ import {
   X,
   Sun,
   Moon,
+  Activity,
 } from 'lucide-react';
 
 const navItems = [
@@ -20,6 +21,7 @@ const navItems = [
   { name: 'Blog', path: '/blog', Icon: Book },
   { name: 'Experience', path: '/experience', Icon: Briefcase },
   { name: 'Projects', path: '/projects', Icon: Layers },
+  { name: 'Status', path: '/status', Icon: Activity },
 ];
 
 export const NavigationRail: React.FC = () => {
