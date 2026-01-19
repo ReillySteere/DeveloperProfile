@@ -11,7 +11,6 @@
 
     // Productivity
     "eamodio.gitlens",
-    "usernamehw.errorlens",
     "gruntfuggly.todo-tree",
     "christian-kohler.path-intellisense"
   ]

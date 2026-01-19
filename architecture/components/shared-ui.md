@@ -69,16 +69,25 @@ import { Button } from 'ui/shared/components/Button/Button';
 
 ### State Management
 
-| Component         | Purpose                                               | Usage                   |
-| ----------------- | ----------------------------------------------------- | ----------------------- |
-| `QueryState`      | Handles loading/error/empty states for TanStack Query | Wrap query-dependent UI |
-| `AuthInterceptor` | Global Axios interceptor for auth                     | Mount once at app root  |
+| Component    | Purpose                                               | Usage                   |
+| ------------ | ----------------------------------------------------- | ----------------------- |
+| `QueryState` | Handles loading/error/empty states for TanStack Query | Wrap query-dependent UI |
 
-### Auth UI
+### Auth Components (Not in Barrel Export)
 
-| Component | Purpose                | Usage               |
-| --------- | ---------------------- | ------------------- |
-| `SignIn`  | Login modal and button | Authentication flow |
+These components are intentionally excluded from the barrel export as they are used only once at specific points in the application:
+
+| Component         | Purpose                           | Usage                  |
+| ----------------- | --------------------------------- | ---------------------- |
+| `AuthInterceptor` | Global Axios interceptor for auth | Mount once at app root |
+| `SignIn`          | Login modal and button            | Authentication flow    |
+
+**Import directly:**
+
+```typescript
+import { AuthInterceptor } from 'ui/shared/components/AuthInterceptor/AuthInterceptor';
+import { SignIn } from 'ui/shared/components/SignIn/SignIn';
+```
 
 ## QueryState Component
 
