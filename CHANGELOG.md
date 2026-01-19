@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/ReillySteere/DeveloperProfile/compare/v1.1.0...v1.2.0) (2026-01-19)
+
+
+### Features
+
+* add Mission Control telemetry dashboard with SSE streaming ([#26](https://github.com/ReillySteere/DeveloperProfile/issues/26)) ([6dc2702](https://github.com/ReillySteere/DeveloperProfile/commit/6dc27021ad208041965b3596efdc8ca789965c68))
+
 ## [1.1.0](https://github.com/ReillySteere/DeveloperProfile/compare/v1.0.0...v1.1.0) (2026-01-18)
 
 
