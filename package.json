@@ -75,7 +75,7 @@
     "@typescript-eslint/parser": "^8.28.0",
     "babel-loader": "^10.0.0",
     "babel-plugin-react-compiler": "^19.0.0-beta-714736e-20250131",
-    "concurrently": "^7.0.0",
+    "concurrently": "^9.2.1",
     "cross-env": "^10.1.0",
     "css-loader": "^7.1.2",
     "dependency-cruiser": "^17.3.6",
