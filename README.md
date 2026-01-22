@@ -227,6 +227,7 @@ graph LR
 Detailed architectural documentation for each feature can be found here:
 
 - [About Feature](architecture/components/about.md)
+- [Architecture Feature](architecture/components/architecture.md)
 - [Auth Feature](architecture/components/auth.md)
 - [Blog Feature](architecture/components/blog.md)
 - [Experience Feature](architecture/components/experience.md)
@@ -243,6 +244,8 @@ Detailed architectural documentation for each feature can be found here:
 - [ADR-005: Hexagonal Architecture for Shared Modules](architecture/decisions/ADR-005-hexagonal-architecture-shared-modules.md)
 - [ADR-006: Recharts for Telemetry Visualization](architecture/decisions/ADR-006-recharts-for-telemetry-visualization.md)
 - [ADR-007: Simulated Chaos Mode](architecture/decisions/ADR-007-simulated-chaos-mode.md)
+- [ADR-008: Build-Time Search Index](architecture/decisions/ADR-008-build-time-search-index.md) _(Superseded by ADR-009)_
+- [ADR-009: Client-Side Search Architecture](architecture/decisions/ADR-009-client-side-search-architecture.md)
 
 ## Key Features
 
@@ -250,6 +253,7 @@ Detailed architectural documentation for each feature can be found here:
 - **Projects Showcase:** A detailed portfolio of technical projects with role, execution, and results.
 - **About Section:** Detailed professional summary and skills.
 - **Technical Blog:** A markdown-based blogging platform with syntax highlighting and diagram support.
+- **Architecture Explorer:** ADR browser, component documentation, and interactive dependency graph visualization.
 - **Mission Control:** Real-time telemetry dashboard with event loop monitoring, memory metrics, and simulated chaos mode.
 - **Responsive Design:** Optimized for various screen sizes with a custom Navigation Rail.
 - **Dark/Light Mode:** Theming support via CSS variables.

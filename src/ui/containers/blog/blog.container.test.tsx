@@ -99,6 +99,76 @@ jest.mock('react-markdown', () => (props: any) => {
         }),
       );
     }
+
+    // Simulate anchor links for ADR link transformation testing
+    if (props.components && props.components.a) {
+      // ADR relative links
+      const adrLinkMatch = props.children.match(
+        /\[([^\]]+)\]\((\.\/[^)]+\.md)\)/,
+      );
+      if (adrLinkMatch) {
+        elements.push(
+          props.components.a({
+            key: 'adr-link',
+            href: adrLinkMatch[2],
+            children: adrLinkMatch[1],
+          }),
+        );
+      }
+
+      // Component doc links (e.g., [about](./about.md) or [auth](../components/auth.md))
+      const componentLinkMatch = props.children.match(
+        /\[([^\]]+)\]\((\.\.\/components\/[^)]+\.md)\)/,
+      );
+      if (componentLinkMatch) {
+        elements.push(
+          props.components.a({
+            key: 'component-link',
+            href: componentLinkMatch[2],
+            children: componentLinkMatch[1],
+          }),
+        );
+      }
+
+      // External http links
+      const httpLinkMatch = props.children.match(
+        /\[([^\]]+)\]\((https?:\/\/[^)]+)\)/,
+      );
+      if (httpLinkMatch) {
+        elements.push(
+          props.components.a({
+            key: 'http-link',
+            href: httpLinkMatch[2],
+            children: httpLinkMatch[1],
+          }),
+        );
+      }
+
+      // Links without href (edge case)
+      if (props.children.includes('[no-href]')) {
+        elements.push(
+          props.components.a({
+            key: 'no-href-link',
+            href: undefined,
+            children: 'No Href Link',
+          }),
+        );
+      }
+
+      // Regular relative links (not .md)
+      const regularLinkMatch = props.children.match(
+        /\[([^\]]+)\]\((\/[^)]+)\)/,
+      );
+      if (regularLinkMatch && !regularLinkMatch[2].endsWith('.md')) {
+        elements.push(
+          props.components.a({
+            key: 'regular-link',
+            href: regularLinkMatch[2],
+            children: regularLinkMatch[1],
+          }),
+        );
+      }
+    }
   }
 
   return React.createElement('div', null, elements);
@@ -431,6 +501,61 @@ describe('Blog Integration', () => {
         expect(window.alert).toHaveBeenCalledWith('Failed to update post');
         expect(console.error).toHaveBeenCalled();
       });
+    });
+  });
+
+  describe('BlogContent External Links', () => {
+    it('opens external links in new tab', async () => {
+      const postWithExternalLink = {
+        ...mockPost,
+        content: 'Visit [GitHub](https://github.com)',
+      };
+
+      mockedAxios.get.mockResolvedValueOnce({ data: postWithExternalLink });
+
+      render(<BlogPostContainer />);
+
+      await waitFor(() => {
+        expect(screen.getByText('GitHub')).toBeInTheDocument();
+      });
+
+      const externalLink = screen.getByText('GitHub');
+      expect(externalLink).toHaveAttribute('href', 'https://github.com');
+      expect(externalLink).toHaveAttribute('target', '_blank');
+      expect(externalLink).toHaveAttribute('rel', 'noopener noreferrer');
+    });
+
+    it('handles links without href', async () => {
+      const postWithNoHrefLink = {
+        ...mockPost,
+        content: 'Link [no-href]',
+      };
+
+      mockedAxios.get.mockResolvedValueOnce({ data: postWithNoHrefLink });
+
+      render(<BlogPostContainer />);
+
+      await waitFor(() => {
+        expect(screen.getByText('No Href Link')).toBeInTheDocument();
+      });
+    });
+
+    it('renders regular links without transformation', async () => {
+      const postWithRegularLink = {
+        ...mockPost,
+        content: 'See [blog](/blog)',
+      };
+
+      mockedAxios.get.mockResolvedValueOnce({ data: postWithRegularLink });
+
+      render(<BlogPostContainer />);
+
+      await waitFor(() => {
+        expect(screen.getByText('blog')).toBeInTheDocument();
+      });
+
+      const regularLink = screen.getByText('blog');
+      expect(regularLink).toHaveAttribute('href', '/blog');
     });
   });
 });

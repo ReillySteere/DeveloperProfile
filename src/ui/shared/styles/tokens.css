@@ -33,6 +33,7 @@
 
   /* Semantic Colors - Light Mode (Default) */
   --bg-app: var(--color-slate-50);
+  --bg-base: var(--color-slate-50);
   --bg-surface: #ffffff;
   --bg-surface-hover: var(--color-slate-50);
   --bg-surface-active: var(--color-slate-100);
@@ -83,6 +84,7 @@
 /* Dark Mode Overrides */
 [data-theme='dark'] {
   --bg-app: var(--color-slate-950);
+  --bg-base: var(--color-slate-950);
   --bg-surface: var(--color-slate-900);
   --bg-surface-hover: var(--color-slate-800);
   --bg-surface-active: var(--color-slate-700);

@@ -1,0 +1,62 @@
+import React from 'react';
+import { useParams, Link } from '@tanstack/react-router';
+import { Frame, Button } from 'ui/shared/components';
+import { QueryState } from 'ui/shared/components/QueryState/QueryState';
+import { useAdr } from './hooks/useArchitecture';
+import { ArchitectureContent } from './components';
+import styles from './architecture.module.scss';
+
+/**
+ * ADR Detail Container
+ * Displays full content of a single ADR or component document.
+ *
+ * @see architecture/components/architecture.md
+ */
+export default function AdrDetailContainer() {
+  const { slug } = useParams({ from: '/architecture/$slug' });
+  const { data, isLoading, isError, error, refetch } = useAdr(slug);
+
+  return (
+    <Frame id="adr-detail">
+      <div className={styles.detailContainer}>
+        <Link to="/architecture" className={styles.backLink}>
+          <Button variant="secondary">← Back to Architecture</Button>
+        </Link>
+
+        <QueryState
+          isLoading={isLoading}
+          isError={isError}
+          error={error}
+          data={data}
+          refetch={refetch}
+          isEmpty={() => false}
+        >
+          {(adr) => (
+            <article className={styles.article}>
+              <header className={styles.detailHeader}>
+                <h1>{adr.title}</h1>
+                <div className={styles.detailMeta}>
+                  <span
+                    className={`${styles.status} ${styles[adr.status.toLowerCase()]}`}
+                  >
+                    {adr.status}
+                  </span>
+                  <time dateTime={adr.date}>
+                    {new Date(adr.date).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </time>
+                </div>
+              </header>
+              <div className={styles.content}>
+                <ArchitectureContent content={adr.content} />
+              </div>
+            </article>
+          )}
+        </QueryState>
+      </div>
+    </Frame>
+  );
+}

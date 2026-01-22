@@ -16,6 +16,7 @@ import { User } from 'server/shared/modules/auth/user.entity';
 import { SeedingModule } from './modules/seeding/seeding.module';
 import { HealthModule } from './modules/health/health.module';
 import { LoggerModule } from './shared/modules/logger';
+import { ArchitectureModule } from './modules/architecture/architecture.module';
 
 @Module({
   imports: [
@@ -28,6 +29,8 @@ import { LoggerModule } from './shared/modules/logger';
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', '..', 'client'),
+      // Exclude API routes from static file serving
+      exclude: ['/api/(.*)'],
     }),
     ExperienceModule,
     AboutModule,
@@ -36,6 +39,7 @@ import { LoggerModule } from './shared/modules/logger';
     AuthModule,
     SeedingModule,
     HealthModule,
+    ArchitectureModule,
   ],
 })
 export class AppModule {}

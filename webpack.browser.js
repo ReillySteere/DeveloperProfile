@@ -65,6 +65,7 @@ module.exports = {
   devServer: {
     static: {
       directory: path.join(__dirname, 'public'),
+      publicPath: '/',
     },
     port: 8081,
     open: {
@@ -72,7 +73,9 @@ module.exports = {
         name: 'chrome',
       },
     },
-    historyApiFallback: true,
+    historyApiFallback: {
+      rewrites: [{ from: /./, to: '/index.html' }],
+    },
     proxy: [
       {
         context: ['/api'],
@@ -91,11 +94,16 @@ module.exports = {
       ),
       'process.env.SENTRY_DSN': JSON.stringify(process.env.SENTRY_DSN || ''),
     }),
-    sentryWebpackPlugin({
-      authToken: process.env.SENTRY_AUTH_TOKEN,
-      org: 'freeland-f7',
-      project: 'developerprofile',
-    }),
+    // Only include Sentry plugin in production builds with auth token
+    ...(process.env.NODE_ENV === 'production' && process.env.SENTRY_AUTH_TOKEN
+      ? [
+          sentryWebpackPlugin({
+            authToken: process.env.SENTRY_AUTH_TOKEN,
+            org: 'freeland-f7',
+            project: 'developerprofile',
+          }),
+        ]
+      : []),
     tanstackRouter({
       target: 'react',
       autoCodeSplitting: true,

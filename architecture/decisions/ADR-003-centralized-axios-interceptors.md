@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted
+Accepted - Jan 07, 2026
 
 ## Context
 
