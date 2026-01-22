@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/ReillySteere/DeveloperProfile/compare/v1.2.0...v1.3.0) (2026-01-22)
+
+
+### Features
+
+* add Architecture Explorer feature ([#34](https://github.com/ReillySteere/DeveloperProfile/issues/34)) ([42575dc](https://github.com/ReillySteere/DeveloperProfile/commit/42575dc3552ecf206352930a4e21a03e273ed4d0))
+
 ## [1.2.0](https://github.com/ReillySteere/DeveloperProfile/compare/v1.1.0...v1.2.0) (2026-01-19)
 
 
