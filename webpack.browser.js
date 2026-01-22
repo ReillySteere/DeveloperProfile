@@ -6,8 +6,8 @@ require('dotenv').config();
 
 const path = require('path');
 
-module.exports = {
-  mode: 'development',
+module.exports = (env, argv) => ({
+  mode: argv.mode || 'development',
   entry: './src/ui/index.tsx',
 
   output: {
@@ -89,13 +89,10 @@ module.exports = {
 
   plugins: [
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(
-        process.env.NODE_ENV || 'development',
-      ),
       'process.env.SENTRY_DSN': JSON.stringify(process.env.SENTRY_DSN || ''),
     }),
     // Only include Sentry plugin in production builds with auth token
-    ...(process.env.NODE_ENV === 'production' && process.env.SENTRY_AUTH_TOKEN
+    ...(argv.mode === 'production' && process.env.SENTRY_AUTH_TOKEN
       ? [
           sentryWebpackPlugin({
             authToken: process.env.SENTRY_AUTH_TOKEN,
@@ -115,4 +112,4 @@ module.exports = {
       template: './public/index.html',
     }),
   ],
-};
+});

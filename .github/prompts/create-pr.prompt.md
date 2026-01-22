@@ -93,10 +93,10 @@ Generate a PR body following this structure (as a single markdown string for the
 
 ### Automated Checks
 
-- [x] `npm test` passes
-- [x] `npm run lint` passes
-- [x] `npm run type-check` passes
-- [x] `npm run depcruise:verify` passes
+- [x] npm test passes
+- [x] npm run lint passes
+- [x] npm run type-check passes
+- [x] npm run depcruise:verify passes
 ```
 
 ## Final Output Format
