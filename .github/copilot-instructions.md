@@ -51,6 +51,9 @@
   - **Adapters:** `src/server/shared/adapters/` - Use these to consume shared modules.
   - **Ports:** `src/server/shared/ports/` - Interface contracts for adapters.
   - **Business Auth Controller:** `src/server/modules/auth/` - Application endpoints.
+- **Architecture:** File-based module at `src/server/modules/architecture/` (no database).
+  - Reads ADRs from `architecture/decisions/` and component docs from `architecture/components/`.
+  - Serves pre-generated dependency graphs from `public/data/dependency-graphs.json`.
 
 ## Frontend Patterns (`src/ui`)
 

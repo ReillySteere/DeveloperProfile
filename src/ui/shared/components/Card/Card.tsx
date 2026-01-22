@@ -40,3 +40,13 @@ export const CardContent = ({
     {children}
   </div>
 );
+
+export const CardFooter = ({
+  className,
+  children,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div className={`${styles.footer} ${className || ''}`} {...props}>
+    {children}
+  </div>
+);

@@ -27,6 +27,7 @@
     "depcruise:ui": "depcruise src/ui --config .dependency-cruiser.ui.js",
     "depcruise:graph:server": "depcruise src/server --config .dependency-cruiser.server.js --output-type dot | node scripts/dot-to-svg.js > dependency-graph-server.svg",
     "depcruise:graph:ui": "depcruise src/ui --config .dependency-cruiser.ui.js --output-type dot | node scripts/dot-to-svg.js > dependency-graph-ui.svg",
+    "generate:deps": "node scripts/generate-dependency-graph.mjs",
     "lint": "eslint \"src/**/*.{ts,tsx}\" --fix",
     "format": "npm run format:server && npm run format:ui && npm run format:root",
     "check-format": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,md}\" \"*.{js,mjs,ts,json,md}\" \".github/**/*.{md,yml,yaml}\" \".vscode/*.json\" \"architecture/**/*.md\" \"scripts/**/*.{js,ts}\"",

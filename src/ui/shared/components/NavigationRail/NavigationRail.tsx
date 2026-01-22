@@ -14,6 +14,7 @@ import {
   Sun,
   Moon,
   Activity,
+  GitBranch,
 } from 'lucide-react';
 
 const navItems = [
@@ -22,6 +23,7 @@ const navItems = [
   { name: 'Experience', path: '/experience', Icon: Briefcase },
   { name: 'Projects', path: '/projects', Icon: Layers },
   { name: 'Status', path: '/status', Icon: Activity },
+  { name: 'Architecture', path: '/architecture', Icon: GitBranch },
 ];
 
 export const NavigationRail: React.FC = () => {

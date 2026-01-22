@@ -1,0 +1,56 @@
+@use 'ui/shared/styles/tokens.css' as *;
+
+.card {
+  padding: 1.25rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  &:hover {
+    border-color: var(--border-hover);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  min-height: 30px;
+}
+
+.number {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-family: var(--font-mono, monospace);
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.statusChangeWrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.status {
+  display: inline-block;
+}
+
+.date {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--text-tertiary);
+}

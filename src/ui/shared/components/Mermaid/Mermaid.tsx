@@ -11,6 +11,10 @@ mermaid.initialize({
   securityLevel: 'loose',
 });
 
+/**
+ * Renders a Mermaid diagram from chart definition string.
+ * Used by MarkdownContent to render ```mermaid code blocks.
+ */
 export const Mermaid: React.FC<MermaidProps> = ({ chart }) => {
   const [svg, setSvg] = useState<string>('');
 
