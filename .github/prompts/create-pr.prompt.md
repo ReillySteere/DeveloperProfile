@@ -1,10 +1,10 @@
 ---
-description: Create a feature branch, push to GitHub, and generate a PR description for manual creation.
+description: Create a feature branch, push to GitHub, and create a Pull Request using GitHub CLI.
 ---
 
 # Create Pull Request
 
-You are a release engineer helping prepare code for review. Create a feature branch, push it to GitHub, and generate a structured PR description that can be used when creating the PR via the GitHub web interface.
+You are a release engineer helping prepare code for review. Create a feature branch, push it to GitHub, and create a Pull Request directly using the GitHub CLI (`gh`).
 
 ## Instructions
 
@@ -12,8 +12,8 @@ You are a release engineer helping prepare code for review. Create a feature bra
 2. **Create branch**: Generate a descriptive branch name from the changes
 3. **Commit if needed**: If there are uncommitted changes, commit them with a meaningful message
 4. **Push to GitHub**: Push the branch to origin
-5. **Generate PR description**: Create a structured PR body following the template below
-6. **Provide PR link**: Output the GitHub URL where the user can create the PR
+5. **Create PR**: Use `gh pr create` to create the PR with title and body
+6. **Confirm**: Output the PR URL to the user
 
 ## Branch Naming Convention
 
@@ -47,17 +47,16 @@ git commit -m "<commit-message>"
 
 # 3. Push to origin
 git push -u origin <branch-name>
+
+# 4. Create PR using GitHub CLI
+gh pr create --title "<pr-title>" --body "<pr-body-markdown>"
 ```
 
-After pushing, provide the user with:
+The `gh pr create` command will output the PR URL upon success.
 
-1. **PR Creation URL**: `https://github.com/<owner>/<repo>/compare/master...<branch-name>?expand=1`
-2. **Suggested PR Title**: Based on the changes
-3. **PR Description**: Ready to copy-paste (see template below)
+## PR Body Template
 
-## PR Description Template
-
-Generate a PR description following this structure:
+Generate a PR body following this structure (as a single markdown string for the `--body` parameter):
 
 ```markdown
 ## Summary
@@ -75,52 +74,40 @@ Generate a PR description following this structure:
 - [ ] Configuration (package.json, tsconfig, etc.)
 - [ ] Database (entities, migrations)
 
-### Files Changed
+### Key Files Changed
 
-[List the key files/modules affected, grouped by area]
+[List the key files/modules affected, grouped by area - be concise]
 
-## Manual Testing Checklist
+## Testing
+
+### Manual Testing Checklist
 
 [If manual testing is needed, list specific scenarios. If not, explain why.]
-
-### Scenarios to Test
 
 - [ ] [Scenario 1: Description]
 - [ ] [Scenario 2: Description]
 
 **OR**
 
-> ✅ No manual testing required - [Reason, e.g., "Documentation-only changes" or "Covered by automated tests"]
+> ✅ No manual testing required - [Reason]
 
-## Automated Checks
+### Automated Checks
 
-Before merging, ensure:
-
-- [ ] `npm test` passes
-- [ ] `npm run lint` passes
-- [ ] `npm run type-check` passes
-- [ ] `npm run depcruise:verify` passes
+- [x] `npm test` passes
+- [x] `npm run lint` passes
+- [x] `npm run type-check` passes
+- [x] `npm run depcruise:verify` passes
 ```
 
 ## Final Output Format
 
-After executing the git commands, provide:
+After executing all commands including `gh pr create`, provide:
 
 ```
-✅ Branch created and pushed!
+✅ Pull Request created!
 
 **Branch:** `<branch-name>`
-
-**Create PR here:** https://github.com/<owner>/<repo>/compare/master...<branch-name>?expand=1
-
----
-
-**Suggested PR Title:**
-<title>
-
-**PR Description (copy this):**
-
-<full PR description markdown>
+**PR:** <pr-url-from-gh-output>
 ```
 
 ## Decision Logic for Manual Testing
