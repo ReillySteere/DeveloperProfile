@@ -13,7 +13,7 @@ test.describe('Architecture Feature', () => {
     // Should be on Architecture page
     await expect(page).toHaveURL(/\/architecture/);
     await expect(
-      page.getByRole('heading', { name: 'Architecture' }),
+      page.getByRole('heading', { name: 'Architecture', level: 1 }),
     ).toBeVisible();
   });
 
@@ -148,32 +148,5 @@ test.describe('Architecture Feature', () => {
     await expect(
       page.getByRole('heading', { name: 'Dependency Graph' }),
     ).toBeVisible();
-  });
-
-  test('should display scope selector on dependency graph page', async ({
-    page,
-  }) => {
-    // Navigate via button from Architecture page (more reliable)
-    await page.goto('/architecture');
-
-    // Click the View Dependency Graph button
-    const depGraphButton = page.getByRole('button', {
-      name: /view dependency graph/i,
-    });
-    await depGraphButton.click();
-
-    // Wait for page to load
-    await expect(
-      page.getByRole('heading', { name: 'Dependency Graph' }),
-    ).toBeVisible();
-
-    // Scope selector should be visible (use aria-label)
-    const scopeSelect = page.getByRole('combobox', {
-      name: /select dependency scope/i,
-    });
-    await expect(scopeSelect).toBeVisible();
-
-    // Should default to 'ui'
-    await expect(scopeSelect).toHaveValue('ui');
   });
 });

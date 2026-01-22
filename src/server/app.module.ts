@@ -30,7 +30,7 @@ import { ArchitectureModule } from './modules/architecture/architecture.module';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', '..', 'client'),
       // Exclude API routes from static file serving
-      exclude: ['/api/(.*)'],
+      exclude: ['/api{/*path}'],
     }),
     ExperienceModule,
     AboutModule,
