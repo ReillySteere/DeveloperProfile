@@ -167,11 +167,12 @@ test.describe('Architecture Feature', () => {
       page.getByRole('heading', { name: 'Dependency Graph' }),
     ).toBeVisible();
 
-    // Scope selector should be visible (use aria-label)
+    // Scope selector should be visible after data loads (use aria-label)
+    // Note: Selector is inside QueryState, so we need to wait for API data
     const scopeSelect = page.getByRole('combobox', {
       name: /select dependency scope/i,
     });
-    await expect(scopeSelect).toBeVisible();
+    await expect(scopeSelect).toBeVisible({ timeout: 15000 });
 
     // Should default to 'ui'
     await expect(scopeSelect).toHaveValue('ui');
