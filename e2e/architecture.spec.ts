@@ -13,7 +13,7 @@ test.describe('Architecture Feature', () => {
     // Should be on Architecture page
     await expect(page).toHaveURL(/\/architecture/);
     await expect(
-      page.getByRole('heading', { name: 'Architecture' }),
+      page.getByRole('heading', { name: 'Architecture', level: 1 }),
     ).toBeVisible();
   });
 
