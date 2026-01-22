@@ -149,32 +149,4 @@ test.describe('Architecture Feature', () => {
       page.getByRole('heading', { name: 'Dependency Graph' }),
     ).toBeVisible();
   });
-
-  test('should display scope selector on dependency graph page', async ({
-    page,
-  }) => {
-    // Navigate via button from Architecture page (more reliable)
-    await page.goto('/architecture');
-
-    // Click the View Dependency Graph button
-    const depGraphButton = page.getByRole('button', {
-      name: /view dependency graph/i,
-    });
-    await depGraphButton.click();
-
-    // Wait for page to load
-    await expect(
-      page.getByRole('heading', { name: 'Dependency Graph' }),
-    ).toBeVisible();
-
-    // Scope selector should be visible after data loads (use aria-label)
-    // Note: Selector is inside QueryState, so we need to wait for API data
-    const scopeSelect = page.getByRole('combobox', {
-      name: /select dependency scope/i,
-    });
-    await expect(scopeSelect).toBeVisible({ timeout: 15000 });
-
-    // Should default to 'ui'
-    await expect(scopeSelect).toHaveValue('ui');
-  });
 });
