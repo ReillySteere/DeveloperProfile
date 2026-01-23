@@ -23,19 +23,36 @@ export interface IArchitectureService {
   ): Promise<FocusedDependencyGraph>;
 }
 
+/**
+ * Resolves the base path for architecture assets.
+ * In production (NODE_ENV=production), assets are copied to dist/ via nest-cli.json.
+ * In development, assets are read from the project root.
+ */
+function resolveBasePath(): string {
+  const isProduction = process.env.NODE_ENV === 'production';
+  if (isProduction) {
+    // In production, assets are in dist/ (copied by nest build)
+    // __dirname is dist/src/server/modules/architecture
+    return path.join(__dirname, '..', '..', '..', '..');
+  }
+  // In development, read from project root
+  return process.cwd();
+}
+
 @Injectable()
 export class ArchitectureService implements IArchitectureService {
+  private readonly basePath = resolveBasePath();
   private readonly adrPath = path.join(
-    process.cwd(),
+    this.basePath,
     'architecture',
     'decisions',
   );
   private readonly componentsPath = path.join(
-    process.cwd(),
+    this.basePath,
     'architecture',
     'components',
   );
-  private readonly graphsPath = path.join(process.cwd(), 'public', 'data');
+  private readonly graphsPath = path.join(this.basePath, 'public', 'data');
 
   /**
    * Returns all ADRs with searchText for client-side filtering.

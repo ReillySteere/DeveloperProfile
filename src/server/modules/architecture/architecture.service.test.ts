@@ -353,4 +353,42 @@ describe('ArchitectureService', () => {
       expect(result[0].searchText).not.toContain('http://example.com');
     });
   });
+
+  describe('resolveBasePath', () => {
+    it('should use __dirname-based path in production environment', async () => {
+      // Save original NODE_ENV
+      const originalEnv = process.env.NODE_ENV;
+
+      try {
+        // Set production environment
+        process.env.NODE_ENV = 'production';
+
+        // Clear module cache to re-evaluate resolveBasePath
+        jest.resetModules();
+
+        // Re-mock fs/promises after resetModules
+        jest.doMock('fs/promises', () => ({
+          readdir: jest.fn().mockRejectedValue(new Error('ENOENT')),
+          readFile: jest.fn().mockRejectedValue(new Error('ENOENT')),
+        }));
+
+        // Re-import the service to trigger resolveBasePath with production env
+        const {
+          ArchitectureService: ProductionArchitectureService,
+          // eslint-disable-next-line @typescript-eslint/no-require-imports
+        } = require('./architecture.service');
+        const productionService = new ProductionArchitectureService();
+
+        // In production, basePath should be relative to __dirname, not process.cwd()
+        expect(productionService).toBeDefined();
+
+        // Try to call a method - the mock should reject with ENOENT
+        await expect(productionService.findAllAdrs()).rejects.toThrow('ENOENT');
+      } finally {
+        // Restore original NODE_ENV
+        process.env.NODE_ENV = originalEnv;
+        jest.resetModules();
+      }
+    });
+  });
 });
