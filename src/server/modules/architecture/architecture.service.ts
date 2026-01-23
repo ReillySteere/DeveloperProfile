@@ -25,12 +25,19 @@ export interface IArchitectureService {
 
 /**
  * Resolves the base path for architecture assets.
- * In production (NODE_ENV=production), assets are copied to dist/ via nest-cli.json.
- * In development, assets are read from the project root.
+ * Uses __dirname detection as primary method (most reliable),
+ * with NODE_ENV as fallback. Assets are copied to dist/ via nest-cli.json.
  */
 function resolveBasePath(): string {
+  // Primary detection: check if running from compiled dist/ directory
+  const isCompiled =
+    __dirname.includes(path.sep + 'dist' + path.sep) ||
+    __dirname.endsWith(path.sep + 'dist');
+
+  // Fallback: check NODE_ENV
   const isProduction = process.env.NODE_ENV === 'production';
-  if (isProduction) {
+
+  if (isCompiled || isProduction) {
     // In production, assets are in dist/ (copied by nest build)
     // __dirname is dist/src/server/modules/architecture
     return path.join(__dirname, '..', '..', '..', '..');
