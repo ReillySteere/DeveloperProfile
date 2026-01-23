@@ -151,4 +151,46 @@ describe('Architecture Integration', () => {
       }
     });
   });
+
+  describe('GET /api/architecture/dependencies', () => {
+    it('should return all dependency graphs data or 404', async () => {
+      const response = await request(app.getHttpServer()).get(
+        '/api/architecture/dependencies',
+      );
+
+      // Either 200 (if graphs exist) or 404 (if not generated)
+      expect([200, 404]).toContain(response.status);
+
+      if (response.status === 200) {
+        expect(response.body).toHaveProperty('ui');
+        expect(response.body).toHaveProperty('server');
+        expect(response.body).toHaveProperty('generatedAt');
+      }
+    });
+  });
+
+  describe('GET /api/architecture/dependencies/:scope/:target', () => {
+    it('should return focused dependency graph for valid target or 404', async () => {
+      const response = await request(app.getHttpServer()).get(
+        '/api/architecture/dependencies/ui/blog',
+      );
+
+      // Either 200 (if graphs exist and target found) or 404
+      expect([200, 404]).toContain(response.status);
+
+      if (response.status === 200) {
+        expect(response.body).toHaveProperty('name', 'blog');
+        expect(response.body).toHaveProperty('nodes');
+        expect(response.body).toHaveProperty('edges');
+      }
+    });
+
+    it('should return 404 for non-existent target', async () => {
+      const response = await request(app.getHttpServer()).get(
+        '/api/architecture/dependencies/ui/nonexistent-target',
+      );
+
+      expect(response.status).toBe(404);
+    });
+  });
 });
