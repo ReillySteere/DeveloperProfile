@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.1](https://github.com/ReillySteere/DeveloperProfile/compare/v1.3.0...v1.3.1) (2026-01-23)
+
+
+### Bug Fixes
+
+* add defense-in-depth for production path resolution ([#39](https://github.com/ReillySteere/DeveloperProfile/issues/39)) ([4d62cab](https://github.com/ReillySteere/DeveloperProfile/commit/4d62cab576189f349feabb591f3c68b96655b0b6))
+* include architecture assets in production build ([#37](https://github.com/ReillySteere/DeveloperProfile/issues/37)) ([efbd4ba](https://github.com/ReillySteere/DeveloperProfile/commit/efbd4bab6fa9f4f8cd93a1e6579287f67196125c))
+
 ## [1.3.0](https://github.com/ReillySteere/DeveloperProfile/compare/v1.2.0...v1.3.0) (2026-01-22)
 
 
