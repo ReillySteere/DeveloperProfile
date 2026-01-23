@@ -21,6 +21,9 @@ FROM node:22.14-alpine
 
 WORKDIR /app
 
+# Set production environment
+ENV NODE_ENV=production
+
 # Install only production dependencies
 COPY package*.json ./
 RUN npm ci --omit=dev
