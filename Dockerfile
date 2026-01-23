@@ -10,6 +10,9 @@ RUN npm ci
 # Copy source code
 COPY . .
 
+# Generate dependency graphs (required for architecture module)
+RUN npm run generate:deps
+
 # Build the application (Server + UI)
 # This generates:
 # - dist/src/server (Backend)
