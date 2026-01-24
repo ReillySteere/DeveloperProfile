@@ -120,7 +120,7 @@ jobs:
           JWT_AUTH_SECRET: test-secret
 
       - name: 📊 Upload Playwright Report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: ${{ !cancelled() }}
         with:
           name: playwright-report
