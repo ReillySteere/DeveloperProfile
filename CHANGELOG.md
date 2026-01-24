@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.4.0](https://github.com/ReillySteere/DeveloperProfile/compare/v1.3.1...v1.4.0) (2026-01-24)
+
+
+### Features
+
+* **database:** add production-safe migrations infrastructure ([#42](https://github.com/ReillySteere/DeveloperProfile/issues/42)) ([80fa8f0](https://github.com/ReillySteere/DeveloperProfile/commit/80fa8f0580c02580a73f2eafbc56a55da19b4fbc))
+
+
+### Bug Fixes
+
+* correct projects table name mismatch in migrations ([#46](https://github.com/ReillySteere/DeveloperProfile/issues/46)) ([0ec6ac7](https://github.com/ReillySteere/DeveloperProfile/commit/0ec6ac7636b98a3ada97458d1e43cf737ec4a342))
+* generate dependency graphs during Docker build ([#40](https://github.com/ReillySteere/DeveloperProfile/issues/40)) ([f13dc03](https://github.com/ReillySteere/DeveloperProfile/commit/f13dc03081d6ee4bbb9e99abac850d972a35bda9))
+
 ## [1.3.1](https://github.com/ReillySteere/DeveloperProfile/compare/v1.3.0...v1.3.1) (2026-01-23)
 
 
