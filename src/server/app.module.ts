@@ -18,6 +18,8 @@ import { HealthModule } from './modules/health/health.module';
 import { LoggerModule } from './shared/modules/logger';
 import { ArchitectureModule } from './modules/architecture/architecture.module';
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 @Module({
   imports: [
     LoggerModule,
@@ -25,7 +27,9 @@ import { ArchitectureModule } from './modules/architecture/architecture.module';
       type: 'better-sqlite3',
       database: 'data/database.sqlite',
       entities: [Experience, Project, BlogPost, User],
-      synchronize: true,
+      migrations: ['dist/src/server/migrations/*.js'],
+      migrationsRun: isProduction, // Auto-run migrations in production
+      synchronize: !isProduction, // Only auto-sync in development
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', '..', 'client'),

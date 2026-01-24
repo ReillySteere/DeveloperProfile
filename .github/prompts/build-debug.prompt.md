@@ -75,14 +75,18 @@ The project uses SQLite with file-based storage:
 
 - **Location:** `data/database.sqlite`
 - **Config:** `src/server/app.module.ts`
-- **Mode:** `synchronize: true` (auto-sync schema in dev)
+- **Data Source:** `src/server/data-source.ts` (for CLI)
+- **Migrations:** `src/server/migrations/`
+- **Mode:**
+  - Development: `synchronize: true` (auto-sync schema)
+  - Production: `synchronize: false`, `migrationsRun: true` (uses migrations)
 
 ### Common Database Errors
 
 | Error                         | Cause                           | Fix                                                        |
 | ----------------------------- | ------------------------------- | ---------------------------------------------------------- |
 | `SQLITE_CANTOPEN`             | Database file/directory missing | Create `data/` directory                                   |
-| `no such table`               | Schema not synchronized         | Restart server or delete DB file                           |
+| `no such table`               | Schema not synchronized         | Restart server or run `npm run migration:run`              |
 | `SQLITE_BUSY`                 | Database locked                 | Close other connections                                    |
 | `EntityMetadataNotFoundError` | Entity not registered           | Add entity to `TypeOrmModule.forRoot({ entities: [...] })` |
 

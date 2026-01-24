@@ -6,11 +6,31 @@ This document outlines the database schema used in the application. It is visual
 
 - **Database:** SQLite (via `better-sqlite3` driver)
 - **ORM:** TypeORM
+- **Location:** `data/database.sqlite`
+- **Migrations:** `src/server/migrations/`
 - **Entities:**
   - `User`: Authentication credentials.
   - `BlogPost`: Blog content and metadata.
   - `Project`: Portfolio project details.
   - `Experience`: Professional work history.
+
+## Schema Management
+
+| Environment     | `synchronize` | `migrationsRun` | Behavior                                 |
+| --------------- | ------------- | --------------- | ---------------------------------------- |
+| **Development** | `true`        | `false`         | Auto-syncs entity changes to database    |
+| **Production**  | `false`       | `true`          | Runs migrations automatically on startup |
+
+### Migration Commands
+
+```bash
+npm run migration:generate -- MigrationName  # Generate from entity changes
+npm run migration:run                         # Apply pending migrations
+npm run migration:revert                      # Revert last migration
+npm run migration:show                        # Show migration status
+```
+
+See the [database-migration skill](../.github/skills/database-migration/SKILL.md) for detailed instructions.
 
 ## Entity Relationship Diagram
 

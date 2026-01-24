@@ -11,14 +11,16 @@ Use this skill when you need to modify the database schema or troubleshoot migra
 
 ### Overview
 
-| Setting         | Value                      |
-| --------------- | -------------------------- |
-| **Database**    | SQLite                     |
-| **ORM**         | TypeORM                    |
-| **Location**    | `data/database.sqlite`     |
-| **Config**      | `src/server/app.module.ts` |
-| **Migrations**  | `src/server/migrations/`   |
-| **Synchronize** | `true` (auto-sync in dev)  |
+| Setting         | Value                                 |
+| --------------- | ------------------------------------- |
+| **Database**    | SQLite                                |
+| **ORM**         | TypeORM                               |
+| **Location**    | `data/database.sqlite`                |
+| **Config**      | `src/server/app.module.ts`            |
+| **Data Source** | `src/server/data-source.ts` (for CLI) |
+| **Migrations**  | `src/server/migrations/`              |
+| **Synchronize** | `true` in dev, `false` in production  |
+| **Auto-Run**    | `migrationsRun: true` in production   |
 
 ### Current Entities
 
@@ -33,15 +35,19 @@ See [database-schema.md](../../architecture/database-schema.md) for the full ERD
 
 ## 2. Development Mode (Auto-Sync)
 
-In development, the project uses `synchronize: true`, which automatically syncs entity changes to the database schema.
+In development (`NODE_ENV !== 'production'`), the project uses `synchronize: true`, which automatically syncs entity changes to the database schema.
 
 ```typescript
 // src/server/app.module.ts
+const isProduction = process.env.NODE_ENV === 'production';
+
 TypeOrmModule.forRoot({
   type: 'better-sqlite3',
   database: 'data/database.sqlite',
   entities: [Experience, Project, BlogPost, User],
-  synchronize: true, // ← Auto-sync enabled
+  migrations: ['dist/src/server/migrations/*.js'],
+  migrationsRun: isProduction, // Auto-run migrations in production
+  synchronize: !isProduction, // Only auto-sync in development
 });
 ```
 
@@ -60,31 +66,27 @@ TypeOrmModule.forRoot({
 
 ## 3. Creating Migrations
 
-### Step 1: Disable Synchronize
+### NPM Scripts
 
-For migration-based workflows, first disable auto-sync:
+The following scripts are available for migration management:
 
-```typescript
-TypeOrmModule.forRoot({
-  synchronize: false, // ← Disable for migrations
-  migrations: ['dist/src/server/migrations/*.js'],
-  migrationsRun: true, // ← Auto-run on startup
-});
+```bash
+npm run migration:generate -- MigrationName  # Generate from entity changes
+npm run migration:run                         # Apply pending migrations
+npm run migration:revert                      # Revert last migration
+npm run migration:show                        # Show migration status
 ```
 
-### Step 2: Generate Migration from Entity Changes
+### Step 1: Generate Migration from Entity Changes
 
 After modifying an entity, generate a migration:
 
 ```bash
-# Build first to compile entities
-npm run build:server
-
-# Generate migration (TypeORM CLI)
-npx typeorm migration:generate src/server/migrations/MigrationName -d dist/src/server/data-source.js
+# This builds first, then generates
+npm run migration:generate -- AddViewsColumn
 ```
 
-### Step 3: Create Empty Migration (Manual)
+### Step 2: Create Empty Migration (Manual)
 
 For custom SQL or complex transformations:
 
@@ -114,19 +116,19 @@ export class MigrationName1234567890 implements MigrationInterface {
 
 ### Automatic (on Server Start)
 
-With `migrationsRun: true`, migrations run automatically when the server starts.
+In production (`NODE_ENV=production`), migrations run automatically when the server starts due to `migrationsRun: isProduction`.
 
 ### Manual Execution
 
 ```bash
 # Run pending migrations
-npx typeorm migration:run -d dist/src/server/data-source.js
+npm run migration:run
 
 # Revert last migration
-npx typeorm migration:revert -d dist/src/server/data-source.js
+npm run migration:revert
 
 # Show migration status
-npx typeorm migration:show -d dist/src/server/data-source.js
+npm run migration:show
 ```
 
 ## 5. Common Migration Patterns

@@ -34,7 +34,11 @@
     "format:root": "prettier --write \"*.{js,mjs,ts,json,md}\" \".github/**/*.{md,yml,yaml}\" \".vscode/*.json\" \"architecture/**/*.md\" \"scripts/**/*.{js,ts}\"",
     "format:server": "prettier --write \"src/{server,shared}/**/*.{ts,json,md}\"",
     "format:ui": "prettier --write \"src/ui/**/*.{ts,tsx,js,jsx,json,css,md}\"",
-    "prepare": "husky || true"
+    "prepare": "husky || true",
+    "migration:generate": "npm run build:server && npx typeorm migration:generate -d dist/src/server/data-source.js",
+    "migration:run": "npx typeorm migration:run -d dist/src/server/data-source.js",
+    "migration:revert": "npx typeorm migration:revert -d dist/src/server/data-source.js",
+    "migration:show": "npx typeorm migration:show -d dist/src/server/data-source.js"
   },
   "devDependencies": {
     "@babel/core": "^7.26.10",
