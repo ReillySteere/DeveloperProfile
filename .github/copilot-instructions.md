@@ -102,3 +102,12 @@
 - `src/ui/containers/experience/hooks/useExperience.ts`: Example data fetching hook.
 - `src/server/modules/experience/experience.controller.ts`: Example controller.
 - `src/ui/containers/blog/blog.container.tsx`: Example of nested routing and list/detail views.
+
+## Pull Request Workflow
+
+When using the `create-pr` prompt (`.github/prompts/create-pr.prompt.md`):
+
+- **Newlines:** Use actual line breaks in the `--body` string, NOT `\n` escape sequences.
+- **File Paths:** Use relative paths without leading slashes (e.g., `src/server/` not `/src/server/`).
+- **Backticks (PowerShell):** Double the backticks: ` `` ` renders as `` ` `` (backtick is PowerShell's escape char).
+- **Backticks (Bash):** Escape with backslash: `` \` `` renders as `` ` ``.

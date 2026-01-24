@@ -19,6 +19,7 @@ module.exports = {
     '!src/shared/types/*',
     '!src/server/migrations/**',
     '!src/server/main.ts',
+    '!src/server/data-source.ts',
     '!src/server/test-utils/**',
     '!src/server/app.module.ts',
     '!src/server/**/*.types.ts',

@@ -54,6 +54,52 @@ gh pr create --title "<pr-title>" --body "<pr-body-markdown>"
 
 The `gh pr create` command will output the PR URL upon success.
 
+## Shell Escaping Rules
+
+When passing the PR body to `gh pr create --body`, follow these rules:
+
+### Newlines
+
+- **DO NOT** use `\n` for newlines - this renders as literal `\n` in GitHub
+- Use actual line breaks within the quoted string
+- PowerShell and bash both support multi-line strings in double quotes
+
+### File Paths
+
+- **DO NOT** use leading slashes (e.g., `/src/server/`)
+- **DO** use relative paths without leading slash (e.g., `src/server/`)
+- Paths should match the repository structure exactly
+
+### Backticks
+
+- **PowerShell:** Double the backticks: ` `` ` becomes `` ` `` (backtick is PowerShell's escape char)
+- **Bash:** Use backslash: `` \` `` becomes `` ` ``
+- This applies to inline code references like `` `src/server/app.module.ts` ``
+
+### Example (Correct - PowerShell)
+
+```powershell
+gh pr create --title "feat: add feature" --body "## Summary
+
+This PR adds a new feature.
+
+## Changes
+
+- ``src/server/app.module.ts`` - Updated config"
+```
+
+### Example (Correct - Bash)
+
+```bash
+gh pr create --title "feat: add feature" --body "## Summary
+
+This PR adds a new feature.
+
+## Changes
+
+- \`src/server/app.module.ts\` - Updated config"
+```
+
 ## PR Body Template
 
 Generate a PR body following this structure (as a single markdown string for the `--body` parameter):
