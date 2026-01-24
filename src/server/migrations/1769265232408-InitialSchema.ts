@@ -40,9 +40,9 @@ export class InitialSchema1769265232408 implements MigrationInterface {
       )
     `);
 
-    // Project table
+    // Projects table (note: entity uses @Entity({ name: 'projects' }))
     await queryRunner.query(`
-      CREATE TABLE IF NOT EXISTS "project" (
+      CREATE TABLE IF NOT EXISTS "projects" (
         "id" varchar PRIMARY KEY NOT NULL,
         "title" varchar NOT NULL,
         "shortDescription" text NOT NULL,
@@ -73,7 +73,7 @@ export class InitialSchema1769265232408 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`DROP TABLE IF EXISTS "experience"`);
-    await queryRunner.query(`DROP TABLE IF EXISTS "project"`);
+    await queryRunner.query(`DROP TABLE IF EXISTS "projects"`);
     await queryRunner.query(`DROP TABLE IF EXISTS "blog_post"`);
     await queryRunner.query(`DROP TABLE IF EXISTS "user"`);
   }
