@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from '@tanstack/react-router';
 import { Frame } from 'ui/shared/components';
 import {
   TelemetryCharts,
@@ -85,6 +86,17 @@ export default function Status() {
         <section className={styles.chaosSection}>
           <h2>Chaos Controls</h2>
           <ChaosControls chaosFlags={chaosFlags} onToggle={handleChaosToggle} />
+        </section>
+
+        <section className={styles.tracesSection}>
+          <h2>Request Tracing</h2>
+          <p className={styles.tracesDescription}>
+            View detailed request traces, timing breakdowns, and real-time API
+            monitoring.
+          </p>
+          <Link to="/status/traces" className={styles.tracesLink}>
+            Open Request Traces →
+          </Link>
         </section>
 
         <section className={styles.systemInfo}>

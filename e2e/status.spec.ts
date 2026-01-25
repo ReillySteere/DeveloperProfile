@@ -129,3 +129,166 @@ test.describe('Status Page (Mission Control)', () => {
     await expect(page.locator('h1')).toContainText('Mission Control');
   });
 });
+
+test.describe('Request Traces', () => {
+  test('navigates to traces page from status', async ({ page }) => {
+    await page.goto('/status');
+
+    // Verify the Request Tracing section exists
+    await expect(
+      page.getByRole('heading', { name: 'Request Tracing' }),
+    ).toBeVisible();
+    await expect(page.getByText(/View detailed request traces/i)).toBeVisible();
+
+    // Click the link to open traces
+    const tracesLink = page.getByRole('link', {
+      name: /Open Request Traces/i,
+    });
+    await expect(tracesLink).toBeVisible();
+    await tracesLink.click();
+
+    // Should navigate to traces page
+    await expect(page).toHaveURL(/\/status\/traces/);
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Request Traces' }),
+    ).toBeVisible();
+  });
+
+  test('displays traces list page', async ({ page }) => {
+    await page.goto('/status/traces');
+
+    // Page should have the traces heading
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Request Traces' }),
+    ).toBeVisible();
+
+    // Should show stats cards
+    await expect(page.getByText('Total Traces (24h)')).toBeVisible();
+    await expect(page.getByText('Error Rate')).toBeVisible();
+
+    // Should have filter controls (using specific IDs)
+    await expect(page.locator('#trace-method')).toBeVisible();
+    await expect(page.locator('#trace-path')).toBeVisible();
+    await expect(page.locator('#trace-limit')).toBeVisible();
+  });
+
+  test('can toggle between static and live mode', async ({ page }) => {
+    await page.goto('/status/traces');
+
+    // Wait for page to load
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Request Traces' }),
+    ).toBeVisible();
+
+    // Initially in static mode
+    const liveToggle = page.getByRole('button', { name: 'Static' });
+    await expect(liveToggle).toBeVisible();
+
+    // Click the toggle button
+    await liveToggle.click();
+
+    // Should switch to live mode
+    await expect(page.getByRole('button', { name: 'Live' })).toBeVisible();
+
+    // Filters should be hidden in live mode
+    await expect(page.locator('#trace-method')).not.toBeVisible();
+  });
+
+  test('can apply filters', async ({ page }) => {
+    await page.goto('/status/traces');
+
+    // Wait for page to load
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Request Traces' }),
+    ).toBeVisible();
+
+    // Change method filter
+    const methodSelect = page.locator('#trace-method');
+    await methodSelect.selectOption('GET');
+
+    // Click Apply Filters button
+    const applyButton = page.getByRole('button', { name: /Apply Filters/i });
+    await applyButton.click();
+
+    // Verify the filter is still selected after apply
+    await expect(methodSelect).toHaveValue('GET');
+  });
+
+  test('can reset filters', async ({ page }) => {
+    await page.goto('/status/traces');
+
+    // Wait for page to load
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Request Traces' }),
+    ).toBeVisible();
+
+    // Change filters
+    const methodSelect = page.locator('#trace-method');
+    await methodSelect.selectOption('POST');
+
+    const pathInput = page.locator('#trace-path');
+    await pathInput.fill('/api/test');
+
+    // Click Reset button
+    const resetButton = page.getByRole('button', { name: /Reset/i });
+    await resetButton.click();
+
+    // Filters should be cleared
+    await expect(methodSelect).toHaveValue('');
+    await expect(pathInput).toHaveValue('');
+  });
+
+  test('can navigate to trace detail and back', async ({ page }) => {
+    await page.goto('/status/traces');
+
+    // Wait for traces to load (or empty state)
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Request Traces' }),
+    ).toBeVisible();
+
+    // If there are traces, click on one
+    const traceRows = page.locator('[role="button"]').filter({
+      has: page.locator('text=/\\/api\\//'),
+    });
+
+    const traceCount = await traceRows.count();
+
+    if (traceCount > 0) {
+      // Click the first trace row
+      await traceRows.first().click();
+
+      // Should navigate to detail page
+      await expect(page).toHaveURL(/\/status\/traces\/.+/);
+      await expect(page.getByText('Trace Details')).toBeVisible();
+
+      // Click back button
+      const backButton = page.getByText('← Back');
+      await backButton.click();
+
+      // Should return to traces list
+      await expect(page).toHaveURL(/\/status\/traces$/);
+      await expect(
+        page.getByRole('heading', { level: 1, name: 'Request Traces' }),
+      ).toBeVisible();
+    }
+  });
+
+  test('refresh button reloads traces', async ({ page }) => {
+    await page.goto('/status/traces');
+
+    // Wait for page to load
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Request Traces' }),
+    ).toBeVisible();
+
+    // Click refresh button
+    const refreshButton = page.getByRole('button', { name: /Refresh/i });
+    await expect(refreshButton).toBeVisible();
+    await refreshButton.click();
+
+    // Page should still show traces (just refreshed)
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Request Traces' }),
+    ).toBeVisible();
+  });
+});

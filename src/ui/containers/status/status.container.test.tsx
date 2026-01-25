@@ -3,6 +3,16 @@ import { render, screen, fireEvent, waitFor, act } from 'ui/test-utils';
 import Status from './status.container';
 import type { TelemetrySnapshot } from 'shared/types';
 
+// Mock TanStack Router Link
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  Link: ({ children, to, ...props }: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const React = require('react');
+    return React.createElement('a', { href: to, ...props }, children);
+  },
+}));
+
 // Mock recharts to avoid ResizeObserver issues in tests
 jest.mock('recharts', () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -489,5 +499,24 @@ describe('Status Container', () => {
     );
 
     jest.useRealTimers();
+  });
+
+  it('renders link to Request Traces page', async () => {
+    render(<Status />);
+
+    const tracesLink = screen.getByRole('link', {
+      name: /Open Request Traces/i,
+    });
+    expect(tracesLink).toBeInTheDocument();
+    expect(tracesLink).toHaveAttribute('href', '/status/traces');
+  });
+
+  it('displays Request Tracing section with description', async () => {
+    render(<Status />);
+
+    expect(screen.getByText('Request Tracing')).toBeInTheDocument();
+    expect(
+      screen.getByText(/View detailed request traces/i),
+    ).toBeInTheDocument();
   });
 });

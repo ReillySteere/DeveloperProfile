@@ -75,9 +75,11 @@ jest.mock('react-markdown', () => (props: any) => {
 });
 
 // Mock TanStack Router
+const mockNavigate = jest.fn();
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useParams: jest.fn(() => ({ slug: 'ADR-001-test' })),
+  useNavigate: () => mockNavigate,
   Link: ({ children, to, ...props }: any) => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const React = require('react');

@@ -1,0 +1,149 @@
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0;
+  }
+}
+
+.backBtn {
+  flex-shrink: 0;
+}
+
+.loading {
+  padding: 48px;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.error {
+  padding: 48px;
+  text-align: center;
+  color: #ef4444;
+
+  p {
+    margin-bottom: 16px;
+  }
+}
+
+.summary {
+  margin-bottom: 24px;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin: 0;
+}
+
+.infoItem {
+  dt {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+  }
+
+  dd {
+    font-size: 0.9375rem;
+    color: var(--color-text);
+    margin: 0;
+  }
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+}
+
+.method {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.methodGET {
+  background-color: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+}
+
+.methodPOST {
+  background-color: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+}
+
+.methodPUT {
+  background-color: rgba(249, 115, 22, 0.15);
+  color: #f97316;
+}
+
+.methodPATCH {
+  background-color: rgba(168, 85, 247, 0.15);
+  color: #a855f7;
+}
+
+.methodDELETE {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.status {
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.status2xx {
+  color: #22c55e;
+}
+
+.status3xx {
+  color: #3b82f6;
+}
+
+.status4xx {
+  color: #f97316;
+}
+
+.status5xx {
+  color: #ef4444;
+}
+
+.timing {
+  margin-bottom: 24px;
+
+  h2 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0 0 12px;
+  }
+}
+
+.metadata {
+  margin-bottom: 24px;
+}
+
+.userAgent {
+  word-break: break-word;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}

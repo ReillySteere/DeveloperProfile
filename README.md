@@ -234,6 +234,7 @@ Detailed architectural documentation for each feature can be found here:
 - [Projects Feature](architecture/components/projects.md)
 - [Shared UI](architecture/components/shared-ui.md)
 - [Status (Mission Control)](architecture/components/status.md)
+- [Traces (Request Observability)](architecture/components/traces.md)
 
 ## Architectural Decisions
 
@@ -246,6 +247,9 @@ Detailed architectural documentation for each feature can be found here:
 - [ADR-007: Simulated Chaos Mode](architecture/decisions/ADR-007-simulated-chaos-mode.md)
 - [ADR-008: Build-Time Search Index](architecture/decisions/ADR-008-build-time-search-index.md) _(Superseded by ADR-009)_
 - [ADR-009: Client-Side Search Architecture](architecture/decisions/ADR-009-client-side-search-architecture.md)
+- [ADR-010: Request Tracing & Observability](architecture/decisions/ADR-010-request-tracing-observability.md)
+- [ADR-011: Event-Driven Architecture](architecture/decisions/ADR-011-event-driven-architecture.md)
+- [ADR-012: Scheduled Tasks and Maintenance](architecture/decisions/ADR-012-scheduled-tasks-and-maintenance.md)
 
 ## Key Features
 
@@ -255,6 +259,7 @@ Detailed architectural documentation for each feature can be found here:
 - **Technical Blog:** A markdown-based blogging platform with syntax highlighting and diagram support.
 - **Architecture Explorer:** ADR browser, component documentation, and interactive dependency graph visualization.
 - **Mission Control:** Real-time telemetry dashboard with event loop monitoring, memory metrics, and simulated chaos mode.
+- **Request Tracing:** Request-level observability with timing breakdown, real-time streaming, and historical queries.
 - **Responsive Design:** Optimized for various screen sizes with a custom Navigation Rail.
 - **Dark/Light Mode:** Theming support via CSS variables.
 

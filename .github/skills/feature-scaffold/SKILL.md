@@ -249,3 +249,175 @@ export class CreateCommentDto {
   content: string;
 }
 ```
+
+### Adding Event-Driven Features
+
+When a feature needs to emit or consume events:
+
+1. **Create an events file** with event name constants:
+
+```typescript
+// src/server/modules/comments/events.ts
+export const CommentEvents = {
+  CREATED: 'comment.created',
+  DELETED: 'comment.deleted',
+} as const;
+```
+
+2. **Emit events from the service** (even if no listeners exist yet):
+
+```typescript
+// src/server/modules/comments/comments.service.ts
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { CommentEvents } from './events';
+
+@Injectable()
+export class CommentsService {
+  constructor(private readonly eventEmitter: EventEmitter2) {}
+
+  async create(dto: CreateCommentDto): Promise<Comment> {
+    const comment = await this.repository.save(dto);
+    this.eventEmitter.emit(CommentEvents.CREATED, comment);
+    return comment;
+  }
+}
+```
+
+3. **Consume events via SSE** (for real-time updates):
+
+```typescript
+// src/server/modules/comments/comments.controller.ts
+import { fromEvent } from 'rxjs';
+import { CommentEvents } from './events';
+
+@Sse('stream')
+streamComments(): Observable<MessageEvent> {
+  return fromEvent<Comment>(this.eventEmitter, CommentEvents.CREATED).pipe(
+    map((comment) => ({ data: comment })),
+  );
+}
+```
+
+### Using the Logger Service
+
+**NEVER use `console.log/warn/error`** in server code. Instead, inject `LoggerService`:
+
+```typescript
+// src/server/modules/comments/comments.service.ts
+import { LoggerService } from '../../shared/adapters/logger';
+
+@Injectable()
+export class CommentsService {
+  readonly #logger: LoggerService;
+
+  constructor(logger: LoggerService) {
+    this.#logger = logger;
+    this.#logger.setContext(CommentsService.name);
+  }
+
+  async create(dto: CreateCommentDto): Promise<Comment> {
+    this.#logger.log(`Creating comment for post ${dto.postId}`);
+    // ...
+  }
+}
+```
+
+### Styling with CSS Tokens
+
+**ALWAYS use CSS variables from `src/ui/shared/styles/tokens.css`** when writing styles. Never use hardcoded color values, spacing, or other design tokens.
+
+#### Available Token Categories
+
+| Category            | Examples                                                     | Usage                      |
+| ------------------- | ------------------------------------------------------------ | -------------------------- |
+| **Colors (Slate)**  | `--color-slate-50` to `--color-slate-950`                    | Raw palette values         |
+| **Colors (Indigo)** | `--color-indigo-50` to `--color-indigo-950`                  | Primary accent palette     |
+| **Semantic BG**     | `--bg-app`, `--bg-surface`, `--bg-surface-hover`             | Use these for backgrounds  |
+| **Semantic Text**   | `--text-primary`, `--text-secondary`, `--text-tertiary`      | Use these for text colors  |
+| **Borders**         | `--border-default`, `--border-hover`                         | Use for all borders        |
+| **Primary**         | `--primary-default`, `--primary-hover`, `--primary-active`   | Buttons, links, accents    |
+| **Spacing**         | `--space-1` (0.25rem) to `--space-16` (4rem)                 | Margins, padding, gaps     |
+| **Radius**          | `--radius-sm`, `--radius-md`, `--radius-lg`, `--radius-full` | Border radius              |
+| **Shadows**         | `--shadow-sm`, `--shadow-md`, `--shadow-lg`                  | Box shadows                |
+| **Transitions**     | `--transition-base`                                          | Standard transition timing |
+| **Layout**          | `--content-width`                                            | Max content width          |
+
+#### Example SCSS Module
+
+```scss
+// src/ui/containers/comments/comments.module.scss
+.container {
+  max-width: var(--content-width);
+  padding: var(--space-4);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+}
+
+.title {
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.subtitle {
+  color: var(--text-secondary);
+}
+
+.button {
+  background: var(--primary-default);
+  color: var(--text-inverse);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  transition: var(--transition-base);
+
+  &:hover {
+    background: var(--primary-hover);
+  }
+
+  &:active {
+    background: var(--primary-active);
+  }
+}
+
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+
+  &:hover {
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-md);
+  }
+}
+```
+
+#### ❌ Don't Do This
+
+```scss
+// BAD - hardcoded values
+.container {
+  background: #ffffff; // ❌ Use var(--bg-surface)
+  color: #1e293b; // ❌ Use var(--text-primary)
+  padding: 16px; // ❌ Use var(--space-4)
+  border-radius: 8px; // ❌ Use var(--radius-lg)
+  border: 1px solid #e2e8f0; // ❌ Use var(--border-default)
+}
+```
+
+#### ✅ Do This
+
+```scss
+// GOOD - using tokens
+.container {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-default);
+}
+```
+
+#### Dark Mode Support
+
+Tokens automatically switch values for dark mode via `[data-theme='dark']`. Using semantic tokens (like `--bg-surface` instead of `--color-slate-50`) ensures your component works in both modes without additional CSS.

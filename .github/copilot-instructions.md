@@ -41,9 +41,11 @@
 
 - **Structure:** Modules, Controllers, Services.
 - **Data Access:** TypeORM with SQLite (`data/database.sqlite`).
+- **Logging:** Use `LoggerService` from `server/shared/adapters/logger/`. **NEVER use `console.log/warn/error`** in server code. The only exception is `main.ts` for fatal bootstrap errors.
 - **Testing:**
   - **Unit:** Manual dependency injection (e.g., `new Filter()`). See `src/server/sentry-exception.filter.test.ts`.
   - **Integration:** Use `Test.createTestingModule` with `:memory:` database. See `src/server/modules/experience/experience.integration.test.ts`.
+  - **Hybrid Approach:** When discrete functions in a service are too difficult to test at the integration layer (e.g., scheduled tasks, event handlers, database maintenance), create unit tests with mocked dependencies alongside integration tests.
 - **API:** Controllers mapped to `/api/*`. Global ValidationPipe enabled.
 - **Error Handling:** Global `SentryExceptionFilter`.
 - **Auth:** Shared module at `src/server/shared/modules/auth/` (Passport JWT).
@@ -54,6 +56,12 @@
 - **Architecture:** File-based module at `src/server/modules/architecture/` (no database).
   - Reads ADRs from `architecture/decisions/` and component docs from `architecture/components/`.
   - Serves pre-generated dependency graphs from `public/data/dependency-graphs.json`.
+- **Event-Driven Architecture (EDA):**
+  - Use `EventEmitter2` from `@nestjs/event-emitter` for internal events.
+  - **Event Names:** Define as constants in a dedicated `events.ts` file within the module (e.g., `src/server/modules/traces/events.ts`).
+  - **Emitting Events:** Services should emit events even if no listeners exist yet (loose coupling).
+  - **Consuming Events:** Use `fromEvent()` from `rxjs` for SSE endpoints or `@OnEvent()` decorator for handlers.
+  - **Pattern:** `<domain>.<action>` (e.g., `trace.created`, `blog.published`).
 
 ## Frontend Patterns (`src/ui`)
 
@@ -75,6 +83,12 @@
   - **Global State:** Zustand (e.g., `navStore`).
   - **Authentication:** Handled globally via `AuthInterceptor` (Request & Response). **DO NOT** manually add Authorization headers in hooks.
 - **Components:** Functional components. Use `Frame` component for page layout.
+- **Styling:** SCSS Modules (`*.module.scss`).
+  - **ALWAYS use CSS variables** from `src/ui/shared/styles/tokens.css`. Never hardcode colors, spacing, or other design tokens.
+  - **Semantic tokens:** `--bg-surface`, `--text-primary`, `--border-default`, `--primary-default`, etc.
+  - **Spacing:** `--space-1` (0.25rem) through `--space-16` (4rem).
+  - **Radius:** `--radius-sm`, `--radius-md`, `--radius-lg`, `--radius-full`.
+  - **Dark mode:** Tokens auto-switch via `[data-theme='dark']`.
 - **Testing:**
   - Use `render` from `ui/test-utils` (wraps `QueryClientProvider`).
   - Test files: `src/ui/**/*.test.ts*`.
