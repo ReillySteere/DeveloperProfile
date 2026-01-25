@@ -36,9 +36,12 @@ const isProduction = process.env.NODE_ENV === 'production';
       synchronize: !isProduction, // Only auto-sync in development
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', '..', 'client'),
+      rootPath: join(__dirname, '..', 'client'),
       // Exclude API routes from static file serving
       exclude: ['/api{/*path}'],
+      serveStaticOptions: {
+        fallthrough: true,
+      },
     }),
     TraceModule, // Must be before other modules so interceptor is available
     ExperienceModule,

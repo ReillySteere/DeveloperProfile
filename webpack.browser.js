@@ -12,7 +12,8 @@ module.exports = (env, argv) => ({
 
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist/client'),
+    path: path.resolve(__dirname, 'dist/src/client'),
+    publicPath: '/',
   },
 
   resolve: {
@@ -63,6 +64,7 @@ module.exports = (env, argv) => ({
   },
 
   devServer: {
+    devMiddleware: { publicPath: '/' },
     static: {
       directory: path.join(__dirname, 'public'),
       publicPath: '/',
@@ -74,7 +76,7 @@ module.exports = (env, argv) => ({
       },
     },
     historyApiFallback: {
-      rewrites: [{ from: /./, to: '/index.html' }],
+      disableDotRule: true,
     },
     proxy: [
       {
@@ -96,7 +98,7 @@ module.exports = (env, argv) => ({
       ? [
           sentryWebpackPlugin({
             authToken: process.env.SENTRY_AUTH_TOKEN,
-            org: 'freeland-f7',
+            org: 'reilly-freelance',
             project: 'developerprofile',
           }),
         ]
