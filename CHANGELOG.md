@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/ReillySteere/DeveloperProfile/compare/v1.4.0...v1.5.0) (2026-01-25)
+
+
+### Features
+
+* Add Request Tracing & Observability Dashboard ([#47](https://github.com/ReillySteere/DeveloperProfile/issues/47)) ([f0dd8a7](https://github.com/ReillySteere/DeveloperProfile/commit/f0dd8a7e1afaafe8089bd3c5be632edc503b3454))
+
 ## [1.4.0](https://github.com/ReillySteere/DeveloperProfile/compare/v1.3.1...v1.4.0) (2026-01-24)
 
 
