@@ -70,7 +70,6 @@ async function bootstrap() {
   const clientRoot = join(__dirname, '..', 'client');
   const indexHtml = join(clientRoot, 'index.html');
 
-  console.error(indexHtml);
   app.use((req: Request, res: Response, next: NextFunction) => {
     if (req.method !== 'GET') return next();
     if (req.path.startsWith('/api')) return next();
