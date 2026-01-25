@@ -1,6 +1,14 @@
-import { createFileRoute } from '@tanstack/react-router';
-import Status from 'ui/containers/status/status.container';
+import { createFileRoute, Outlet } from '@tanstack/react-router';
+import React from 'react';
 
+/**
+ * Status layout route - renders child routes via Outlet
+ * Child routes: /status (index), /status/traces, /status/traces/$traceId
+ */
 export const Route = createFileRoute('/status')({
-  component: Status,
+  component: StatusLayout,
 });
+
+function StatusLayout() {
+  return <Outlet />;
+}

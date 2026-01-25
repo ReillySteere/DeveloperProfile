@@ -17,3 +17,11 @@ export {
 } from './auth.port';
 
 export { ILoggingPort, LogContext } from './logger.port';
+
+export {
+  ITraceServicePort,
+  CreateTraceInput,
+  PhaseTiming,
+  IRequestTrace,
+  TRACE_SERVICE_TOKEN,
+} from './trace.port';

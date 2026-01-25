@@ -57,6 +57,17 @@ npm run test:e2e:ui
 
 ## 2. Writing Server Tests (`src/server`)
 
+### Testing Strategy
+
+The backend uses a **hybrid testing approach**:
+
+1. **Integration Tests (Primary):** Test full request flows through controllers with in-memory database.
+2. **Unit Tests (When Needed):** Test discrete functions that are difficult to reach via integration tests:
+   - Scheduled tasks (`@Cron` handlers)
+   - Event handlers (`@OnEvent` decorators)
+   - Database maintenance functions
+   - Complex business logic with many edge cases
+
 ### Unit Tests
 
 - **Pattern**: Manual Dependency Injection.

@@ -3,6 +3,7 @@ import { Experience } from './modules/experience/experience.entity';
 import { Project } from './modules/projects/project.entity';
 import { BlogPost } from './modules/blog/blog.entity';
 import { User } from './shared/modules/auth/user.entity';
+import { RequestTrace } from './modules/traces/trace.entity';
 
 /**
  * TypeORM CLI Data Source Configuration
@@ -19,7 +20,7 @@ import { User } from './shared/modules/auth/user.entity';
 export const AppDataSource = new DataSource({
   type: 'better-sqlite3',
   database: 'data/database.sqlite',
-  entities: [Experience, Project, BlogPost, User],
+  entities: [Experience, Project, BlogPost, User, RequestTrace],
   migrations: ['dist/src/server/migrations/*.js'],
   synchronize: false,
   logging: false,

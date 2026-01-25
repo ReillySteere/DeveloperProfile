@@ -195,3 +195,4 @@ GET /api/health/stream
 
 - [ADR-006: Recharts for Telemetry Visualization](../decisions/ADR-006-recharts-for-telemetry-visualization.md)
 - [ADR-007: Simulated Chaos Mode](../decisions/ADR-007-simulated-chaos-mode.md)
+- [Component: Traces (Request Observability)](traces.md) - Sub-feature for request-level tracing

@@ -1,14 +1,19 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
+
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
+
 import { AppModule } from './app.module';
 import * as Sentry from '@sentry/node';
-import { ValidationPipe } from '@nestjs/common';
 import { SentryExceptionFilter } from './sentry-exception.filter';
 import { AppLoggerService } from './shared/modules/logger';
 
 import * as fs from 'fs';
+import { NextFunction, Request, Response } from 'express';
 
 async function bootstrap() {
   // Ensure data directory exists for SQLite
@@ -16,14 +21,12 @@ async function bootstrap() {
     fs.mkdirSync('data');
   }
 
-  // Determine Sentry DSN: use env var if set, otherwise use prod DSN only in production
   const sentryDsn =
     process.env.SENTRY_DSN ||
     (process.env.NODE_ENV === 'production'
       ? 'https://eb783d6134fbc05925302caf50fc87bf@o4510728628797440.ingest.us.sentry.io/4510728630042624'
       : '');
 
-  // Initialize Sentry with enhanced configuration
   Sentry.init({
     dsn: sentryDsn,
     environment: process.env.NODE_ENV || 'development',
@@ -34,11 +37,10 @@ async function bootstrap() {
     enableLogs: true,
   });
 
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: true,
   });
 
-  // Use custom logger
   const logger = app.get(AppLoggerService);
   logger.setContext('Bootstrap');
   app.useLogger(logger);
@@ -55,16 +57,34 @@ async function bootstrap() {
     .setTitle('Developer Profile API')
     .setDescription('API documentation for the Developer Profile backend')
     .setVersion('1.0')
-    .addBearerAuth() // JWT Authenication
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
 
+  /**
+   * SPA history fallback for TanStack Router
+   * Must run AFTER controllers and ServeStaticModule
+   */
+  const clientRoot = join(__dirname, '..', 'client');
+  const indexHtml = join(clientRoot, 'index.html');
+
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    if (req.method !== 'GET') return next();
+    if (req.path.startsWith('/api')) return next();
+
+    const accept = req.headers.accept ?? '';
+    if (!accept.includes('text/html')) return next();
+
+    return res.sendFile(indexHtml);
+  });
+
   const port = process.env.PORT || 3000;
   await app.listen(port);
   logger.log(`Application is running on: ${await app.getUrl()}`);
 }
+
 bootstrap().catch((err) => {
   console.error('Fatal error during bootstrap:', err);
   Sentry.captureException(err);
