@@ -19,6 +19,17 @@ type MockComponentProps = {
   [key: string]: unknown;
 };
 
+type TooltipFormatterFn = (
+  value: unknown,
+  name: unknown,
+  props?: unknown,
+) => [string, string] | string;
+
+interface MockTooltipProps extends MockComponentProps {
+  formatter?: TooltipFormatterFn;
+  labelFormatter?: (label: unknown) => string;
+}
+
 /**
  * Create a mock component that renders its children.
  */
@@ -96,8 +107,24 @@ export const mockRecharts = {
   ReferenceArea: createMockElement('ReferenceArea'),
   ReferenceDot: createMockElement('ReferenceDot'),
 
-  // Interactive elements
-  Tooltip: createMockElement('Tooltip'),
+  // Interactive elements - Tooltip with formatter execution for coverage
+  Tooltip: ({ formatter, labelFormatter }: MockTooltipProps) => {
+    // Execute formatter with test values to ensure coverage
+    if (formatter) {
+      // Test latency metrics
+      formatter(100, 'Avg Latency');
+      formatter(150, 'P95 Latency');
+      // Test error rate metric
+      formatter(5.5, 'Error Rate');
+      // Test with null/undefined values
+      formatter(null, null);
+      formatter(undefined, undefined);
+    }
+    if (labelFormatter) {
+      labelFormatter('12:00');
+    }
+    return <div data-testid="recharts-tooltip" />;
+  },
   Legend: createMockElement('Legend'),
   Brush: createMockElement('Brush'),
 

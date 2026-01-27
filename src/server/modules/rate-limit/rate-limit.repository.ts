@@ -78,7 +78,6 @@ export class RateLimitRepository implements IRateLimitRepository {
     const result = await this.repo.delete({
       expiresAt: LessThan(now),
     });
-    /* istanbul ignore next -- affected is always defined with SQLite but null-safe for other DBs */
     return result.affected ?? 0;
   }
 

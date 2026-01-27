@@ -152,12 +152,10 @@ export class TraceService implements ITraceService {
     return this.#repository.getStats();
   }
 
-  /* istanbul ignore next -- default parameter branch */
   async getHourlyStats(hours: number = 24): Promise<HourlyStatsResult[]> {
     return this.#repository.getHourlyStats(hours);
   }
 
-  /* istanbul ignore next -- default parameter branch */
   async getEndpointStats(limit: number = 20): Promise<EndpointStatsResult[]> {
     return this.#repository.getEndpointStats(limit);
   }

@@ -1,4 +1,3 @@
-/* istanbul ignore file -- barrel file with type re-exports */
 /**
  * Auth Adapter - Public API
  *

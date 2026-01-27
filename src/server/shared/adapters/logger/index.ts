@@ -1,4 +1,3 @@
-/* istanbul ignore file -- barrel file with type re-exports */
 /**
  * Logger Adapter - Public API
  *

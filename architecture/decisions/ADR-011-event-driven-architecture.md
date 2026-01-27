@@ -101,19 +101,19 @@ We use a **hybrid testing strategy**:
    });
    ```
 
-2. **Integration tests** for SSE verify the endpoint format works, but the event
-   callback inside `fromEvent().pipe(map())` is marked with istanbul ignore.
+2. **Integration tests** for SSE verify the endpoint format works with proper
+   test utilities like `mockEventEmitter` from `server/test-utils/mockEventEmitter.ts`.
 
-3. **Coverage exceptions** are configured in `jest.node.ts` for:
-   - SSE map callbacks that are difficult to trigger in tests
-   - Event subscription callbacks that require complex setup
+3. **Mock utilities** are available in `src/server/test-utils/` for:
+   - `mockEventEmitter.ts` - Mock EventEmitter2 with observer support
+   - `mockSentry.ts` - Mock @sentry/node for error tracking tests
+   - `mockNodemailer.ts` - Mock nodemailer for email alert tests
+   - `cronTestUtils.ts` - Utilities for testing scheduled tasks
 
 ### Future Improvements
 
 1. **Typed events**: Consider `typed-emitter` or custom generic wrapper
-2. **Test helpers**: Create reusable EventEmitter test utilities
-3. **Synthetic events**: Add test endpoints that emit events on demand
-4. **Observable testing**: Use RxJS `TestScheduler` for more control
+2. **Observable testing**: Use RxJS `TestScheduler` for more control
 
 ## Related Documentation
 

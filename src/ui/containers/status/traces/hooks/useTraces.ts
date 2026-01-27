@@ -24,15 +24,12 @@ export function useTraces(filters: TraceFilters = {}) {
       if (filters.path) params.append('path', filters.path);
       if (filters.statusCode !== undefined)
         params.append('statusCode', String(filters.statusCode));
-      /* istanbul ignore next -- filter params for future UI expansion */
       if (filters.minDuration !== undefined)
         params.append('minDuration', String(filters.minDuration));
-      /* istanbul ignore next -- filter params for future UI expansion */
       if (filters.maxDuration !== undefined)
         params.append('maxDuration', String(filters.maxDuration));
       if (filters.limit !== undefined)
         params.append('limit', String(filters.limit));
-      /* istanbul ignore next -- filter params for future UI expansion */
       if (filters.offset !== undefined)
         params.append('offset', String(filters.offset));
 
@@ -113,10 +110,6 @@ interface UseTraceStreamResult {
   traces: RequestTrace[];
   /** Current connection state */
   connectionState: ConnectionState;
-  /** Clear the traces buffer */
-  clearTraces: () => void;
-  /** Reconnect to the stream */
-  reconnect: () => void;
 }
 
 /**
@@ -177,16 +170,6 @@ export function useTraceStream(
     };
   }, [enabled, maxTraces]);
 
-  /* istanbul ignore next -- utility exposed for manual trigger, not used in current UI */
-  const reconnect = useCallback(() => {
-    connect();
-  }, [connect]);
-
-  /* istanbul ignore next -- utility exposed for clearing buffer, not used in current UI */
-  const clearTraces = useCallback(() => {
-    setTraces([]);
-  }, []);
-
   useEffect(() => {
     if (enabled) {
       connect();
@@ -203,8 +186,6 @@ export function useTraceStream(
   return {
     traces,
     connectionState,
-    clearTraces,
-    reconnect,
   };
 }
 

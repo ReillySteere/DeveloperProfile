@@ -6,8 +6,6 @@
  * the concrete implementations.
  */
 
-/* istanbul ignore file -- type-only exports for TypeScript, no runtime code */
-
 export {
   IAuthenticationPort,
   IAuthGuardPort,

@@ -19,12 +19,12 @@ export default function BlogPostContainer() {
   const { isAuthenticated } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
 
-  const handleSave = (updatedPost: Partial<BlogPostType>) => {
-    // This is covered by types logic but not easily reachable in UI tests as data is required for rendering
-    /* istanbul ignore next */
-    if (!data) return;
+  const handleSave = (
+    post: BlogPostType,
+    updatedPost: Partial<BlogPostType>,
+  ) => {
     updatePost(
-      { id: data.id, data: updatedPost },
+      { id: post.id, data: updatedPost },
       {
         onSuccess: (newPost) => {
           setIsEditing(false);
@@ -54,7 +54,7 @@ export default function BlogPostContainer() {
           isEditing ? (
             <BlogPostEditor
               post={post}
-              onSave={handleSave}
+              onSave={(updates) => handleSave(post, updates)}
               onCancel={() => setIsEditing(false)}
             />
           ) : (

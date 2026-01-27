@@ -55,6 +55,17 @@ npm run test:e2e:ui
 - **Environment**: jsdom (`jest.browser.ts`)
 - **Transformer**: `@swc/jest`
 
+### Coverage Thresholds
+
+Coverage is enforced per test suite with strict thresholds. Tests will fail if coverage drops below these levels.
+
+| Suite  | Statements | Branches | Functions | Lines |
+| ------ | ---------- | -------- | --------- | ----- |
+| Server | 100%       | 100%     | 100%      | 100%  |
+| UI     | 98%        | 92%      | 98%       | 98%   |
+
+**Note:** UI branch coverage is slightly lower (92%) because some defensive branches in library callbacks (e.g., Recharts, SSE handlers) are difficult to exercise without excessive mocking.
+
 ## 2. Writing Server Tests (`src/server`)
 
 ### Testing Strategy
@@ -332,8 +343,69 @@ it('should render chart with data', async () => {
 
 ### Server Test Utils (`src/server/test-utils`)
 
-- Provides Jest preloaded configuration for Node environment
-- Used internally by `jest.node.ts`
+Centralized test utilities for mocking external dependencies and creating test data.
+
+#### mockSentry
+
+For testing error reporting without calling Sentry APIs:
+
+```typescript
+import 'server/test-utils/mockSentry';
+
+// Mock is auto-applied via import
+// Tests can verify Sentry.captureException was called
+import * as Sentry from '@sentry/node';
+expect(Sentry.captureException).toHaveBeenCalledWith(error);
+```
+
+#### mockNodemailer
+
+For testing email functionality without sending real emails:
+
+```typescript
+import {
+  mockNodemailer,
+  mockSendMail,
+  resetNodemailerMock,
+} from 'server/test-utils/mockNodemailer';
+
+jest.mock('nodemailer', () => mockNodemailer);
+
+beforeEach(() => resetNodemailerMock());
+
+it('should send alert email', async () => {
+  await alertService.sendEmail('test@example.com', 'Alert!');
+  expect(mockSendMail).toHaveBeenCalledWith(
+    expect.objectContaining({ to: 'test@example.com' }),
+  );
+});
+```
+
+#### builders
+
+Fluent builders for creating test data with sensible defaults:
+
+```typescript
+import {
+  TraceBuilder,
+  RateLimitRecordBuilder,
+} from 'server/test-utils/builders';
+
+it('should filter slow traces', () => {
+  const slowTrace = new TraceBuilder().withDuration(5000).build();
+  const fastTrace = new TraceBuilder().withDuration(50).build();
+
+  const result = filterSlowTraces([slowTrace, fastTrace]);
+  expect(result).toEqual([slowTrace]);
+});
+
+it('should cleanup expired records', () => {
+  const expiredRecord = new RateLimitRecordBuilder()
+    .withExpiresAt(new Date(Date.now() - 1000))
+    .build();
+  // ...
+});
+```
 
 #### cronTestUtils
 
