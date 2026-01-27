@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.6.0](https://github.com/ReillySteere/DeveloperProfile/compare/v1.5.0...v1.6.0) (2026-01-27)
+
+
+### Features
+
+* Rate Limiting and Alerting (Phase 2 Observability) ([#52](https://github.com/ReillySteere/DeveloperProfile/issues/52)) ([c72fc71](https://github.com/ReillySteere/DeveloperProfile/commit/c72fc71523603e921f6b7707d2e3dd13e34cb0b3))
+
+
+### Bug Fixes
+
+* add missing AlertHistory columns and MSW testing infrastructure ([#56](https://github.com/ReillySteere/DeveloperProfile/issues/56)) ([056ddf8](https://github.com/ReillySteere/DeveloperProfile/commit/056ddf85697d7090218bbf1d23ee81e6c6dcef08))
+* add missing database migrations for rate_limit_entries and alert_history ([#55](https://github.com/ReillySteere/DeveloperProfile/issues/55)) ([388e7aa](https://github.com/ReillySteere/DeveloperProfile/commit/388e7aa1a5e257112f4d0a544b44ab5caa1280b1))
+
 ## [1.5.0](https://github.com/ReillySteere/DeveloperProfile/compare/v1.4.0...v1.5.0) (2026-01-25)
 
 
