@@ -7,6 +7,10 @@ module.exports = {
       // Load config from .swcrc
     ],
   },
+  // Transform ESM packages used by MSW
+  transformIgnorePatterns: [
+    '/node_modules/(?!(until-async|@mswjs/interceptors)/)',
+  ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   moduleNameMapper: {
     '^ui/(.*)$': '<rootDir>/src/ui/$1',
@@ -15,6 +19,9 @@ module.exports = {
   },
   modulePaths: ['<rootDir>/node_modules'],
   moduleDirectories: [__dirname, 'node_modules', 'test-utils'],
+  // setupFiles runs BEFORE the test environment is set up (for polyfills)
+  setupFiles: ['<rootDir>/src/ui/test-utils/jest-polyfills.ts'],
+  // setupFilesAfterEnv runs AFTER the environment is ready (for test utilities)
   setupFilesAfterEnv: ['<rootDir>/src/ui/test-utils/jest-preloaded.ts'],
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],
   clearMocks: true,

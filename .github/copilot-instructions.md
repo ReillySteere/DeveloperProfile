@@ -108,7 +108,14 @@
   - **Strategy:** UI tests must be **integration tests** at the container level.
     - Do not create unit tests for child components unless absolutely necessary (e.g. complex shared components).
     - Cover all edge cases and branch logic via the container integration suite.
-    - **Do not mock internal hooks** used within the container; rely on `msw` or `axios` mocks for the network layer.
+    - **Do not mock internal hooks** used within the container.
+  - **API Mocking (MSW - Required for new tests):** Use MSW handlers from `ui/test-utils/msw`.
+    - Default handlers are set up globally in `jest-preloaded.ts`.
+    - Use `server.use()` to override handlers for specific test scenarios.
+    - Handler factories: `createTraceHandlers()`, `createBlogHandlers()`, `createAuthHandlers()`, etc.
+  - **User Interactions (userEvent - Required):** Use `userEvent` from `ui/test-utils`, NOT `fireEvent`.
+    - `const user = userEvent.setup();` at the start of each test.
+    - `await user.click()`, `await user.type()`, `await user.keyboard()`.
 
 ## Testing Specifics
 
@@ -116,6 +123,9 @@
 - **Framework:** Jest 30+.
 - **Configs:** `jest.browser.ts` (UI) and `jest.node.ts` (Server).
 - **UI Utils:** Located in `src/ui/test-utils/` (aliased as `test-utils` in Jest).
+- **API Mocking:**
+  - **MSW (Preferred):** Network-level mocking via `ui/test-utils/msw`. Handlers defined in `src/ui/test-utils/msw/handlers.ts`.
+  - **axios mocks (Legacy):** Still supported but MSW is preferred for new tests.
 - **Mocks:**
   - Use `jest.mock` with `__esModule: true`.
   - Prefix mock variables with `mock` (e.g., `mockUpdate`).
@@ -125,6 +135,7 @@
   - **SSE Streams:** Use `MockEventSource` from `ui/test-utils/mockEventSource` to test Server-Sent Events.
   - **Recharts:** Use `mockRecharts` from `ui/test-utils/mockRecharts` to mock chart components.
   - **Cron Jobs:** Use `cronTestUtils` from `server/test-utils/cronTestUtils` to test scheduled tasks.
+  - **MSW Handlers:** Use handler factories from `ui/test-utils/msw` for API mocking.
   - See `architecture/features/phase-2-observability/visualization.md` for testing patterns.
 
 ## Key Files

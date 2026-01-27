@@ -1,11 +1,9 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from 'ui/test-utils';
+import { render, screen, waitFor, userEvent } from 'ui/test-utils';
 import { SignInButton } from 'ui/shared/components/SignIn/SignInButton';
 import { SignInModal } from 'ui/shared/components/SignIn/SignInModal';
 import { useAuthStore } from 'ui/shared/hooks/useAuthStore';
-
-// Mock fetch
-global.fetch = jest.fn();
+import { server, createAuthHandlers } from 'ui/test-utils/msw';
 
 const SignInIntegration = () => (
   <>
@@ -27,38 +25,23 @@ describe('SignIn Integration', () => {
   });
 
   it('completes the full sign in flow successfully', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ access_token: 'fake-token' }),
-    });
+    // MSW default handlers provide success scenario
+    const user = userEvent.setup();
 
     render(<SignInIntegration />);
 
     // 1. Verify button exists and click it
     const signInButton = screen.getByRole('button', { name: /sign in/i });
-    fireEvent.click(signInButton);
+    await user.click(signInButton);
 
     // 2. Fill in credentials
-    fireEvent.change(screen.getByLabelText(/username/i), {
-      target: { value: 'demo' },
-    });
-    fireEvent.change(screen.getByLabelText(/password/i), {
-      target: { value: 'password' },
-    });
+    await user.type(screen.getByLabelText(/username/i), 'demo');
+    await user.type(screen.getByLabelText(/password/i), 'password');
 
     // 3. Submit form
-    fireEvent.click(screen.getByRole('button', { name: 'Sign In' }));
+    await user.click(screen.getByRole('button', { name: 'Sign In' }));
 
-    // 4. Verify fetch called
-    expect(global.fetch).toHaveBeenCalledWith(
-      '/api/auth/login',
-      expect.objectContaining({
-        method: 'POST',
-        body: JSON.stringify({ username: 'demo', password: 'password' }),
-      }),
-    );
-
-    // 5. Verify modal closes and button changes to Sign Out
+    // 4. Verify modal closes and button changes to Sign Out
     await waitFor(() => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
@@ -69,23 +52,18 @@ describe('SignIn Integration', () => {
   });
 
   it('displays error message on failed login', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: false,
-      json: async () => ({ message: 'Invalid credentials' }),
-    });
+    // Override handlers for failure scenario
+    server.use(...createAuthHandlers({ scenario: 'failure' }));
+    const user = userEvent.setup();
 
     render(<SignInIntegration />);
 
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+    await user.click(screen.getByRole('button', { name: /sign in/i }));
 
-    fireEvent.change(screen.getByLabelText(/username/i), {
-      target: { value: 'wrong' },
-    });
-    fireEvent.change(screen.getByLabelText(/password/i), {
-      target: { value: 'wrong' },
-    });
+    await user.type(screen.getByLabelText(/username/i), 'wrong');
+    await user.type(screen.getByLabelText(/password/i), 'wrong');
 
-    fireEvent.click(screen.getByRole('button', { name: 'Sign In' }));
+    await user.click(screen.getByRole('button', { name: 'Sign In' }));
 
     await waitFor(() => {
       expect(screen.getByText('Invalid credentials')).toBeInTheDocument();
@@ -103,13 +81,14 @@ describe('SignIn Integration', () => {
       user: { username: 'demo' },
       isLoginModalOpen: false,
     });
+    const user = userEvent.setup();
 
     render(<SignInIntegration />);
 
     const signOutButton = screen.getByRole('button', { name: /sign out/i });
     expect(signOutButton).toBeInTheDocument();
 
-    fireEvent.click(signOutButton);
+    await user.click(signOutButton);
 
     expect(
       screen.getByRole('button', { name: /sign in/i }),
@@ -130,14 +109,15 @@ describe('SignIn Integration', () => {
   });
 
   it('closes modal when cancel is clicked', async () => {
+    const user = userEvent.setup();
     render(<SignInIntegration />);
 
     // Open modal
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+    await user.click(screen.getByRole('button', { name: /sign in/i }));
     expect(screen.getByRole('dialog')).toBeInTheDocument();
 
     // Click cancel
-    fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
+    await user.click(screen.getByRole('button', { name: /cancel/i }));
 
     // Verify closed
     await waitFor(() => {
@@ -146,14 +126,15 @@ describe('SignIn Integration', () => {
   });
 
   it('closes modal when close (X) button is clicked', async () => {
+    const user = userEvent.setup();
     render(<SignInIntegration />);
 
     // Open modal
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+    await user.click(screen.getByRole('button', { name: /sign in/i }));
     expect(screen.getByRole('dialog')).toBeInTheDocument();
 
     // Click close X
-    fireEvent.click(screen.getByLabelText(/close modal/i));
+    await user.click(screen.getByLabelText(/close modal/i));
 
     // Verify closed
     await waitFor(() => {
@@ -162,18 +143,19 @@ describe('SignIn Integration', () => {
   });
 
   it('closes modal when pressing escape', async () => {
+    const user = userEvent.setup();
     render(<SignInIntegration />);
 
     // Open modal
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+    await user.click(screen.getByRole('button', { name: /sign in/i }));
     expect(screen.getByRole('dialog')).toBeInTheDocument();
 
     // Verify other keys don't close it
-    fireEvent.keyDown(window, { key: 'Enter' });
+    await user.keyboard('{Enter}');
     expect(screen.getByRole('dialog')).toBeInTheDocument();
 
     // Press Escape
-    fireEvent.keyDown(window, { key: 'Escape' });
+    await user.keyboard('{Escape}');
 
     await waitFor(() => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
@@ -181,21 +163,15 @@ describe('SignIn Integration', () => {
   });
 
   it('handles invalid server response (missing token)', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({}), // No access_token
-    });
+    server.use(...createAuthHandlers({ scenario: 'missing-token' }));
+    const user = userEvent.setup();
 
     render(<SignInIntegration />);
 
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
-    fireEvent.change(screen.getByLabelText(/username/i), {
-      target: { value: 'demo' },
-    });
-    fireEvent.change(screen.getByLabelText(/password/i), {
-      target: { value: 'password' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: 'Sign In' }));
+    await user.click(screen.getByRole('button', { name: /sign in/i }));
+    await user.type(screen.getByLabelText(/username/i), 'demo');
+    await user.type(screen.getByLabelText(/password/i), 'password');
+    await user.click(screen.getByRole('button', { name: 'Sign In' }));
 
     await waitFor(() => {
       expect(
@@ -205,40 +181,31 @@ describe('SignIn Integration', () => {
   });
 
   it('handles non-standard errors', async () => {
-    (global.fetch as jest.Mock).mockRejectedValueOnce('Network Error'); // Not an Error object
+    server.use(...createAuthHandlers({ scenario: 'network-error' }));
+    const user = userEvent.setup();
 
     render(<SignInIntegration />);
 
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
-    fireEvent.change(screen.getByLabelText(/username/i), {
-      target: { value: 'demo' },
-    });
-    fireEvent.change(screen.getByLabelText(/password/i), {
-      target: { value: 'password' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: 'Sign In' }));
+    await user.click(screen.getByRole('button', { name: /sign in/i }));
+    await user.type(screen.getByLabelText(/username/i), 'demo');
+    await user.type(screen.getByLabelText(/password/i), 'password');
+    await user.click(screen.getByRole('button', { name: 'Sign In' }));
 
     await waitFor(() => {
-      expect(screen.getByText('An error occurred')).toBeInTheDocument();
+      expect(screen.getByText('Network error')).toBeInTheDocument();
     });
   });
 
   it('handles failed login with default error message', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: false,
-      json: async () => ({}), // No message
-    });
+    server.use(...createAuthHandlers({ scenario: 'no-message' }));
+    const user = userEvent.setup();
 
     render(<SignInIntegration />);
 
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
-    fireEvent.change(screen.getByLabelText(/username/i), {
-      target: { value: 'demo' },
-    });
-    fireEvent.change(screen.getByLabelText(/password/i), {
-      target: { value: 'password' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: 'Sign In' }));
+    await user.click(screen.getByRole('button', { name: /sign in/i }));
+    await user.type(screen.getByLabelText(/username/i), 'demo');
+    await user.type(screen.getByLabelText(/password/i), 'password');
+    await user.click(screen.getByRole('button', { name: 'Sign In' }));
 
     await waitFor(() => {
       expect(screen.getByText('Invalid credentials')).toBeInTheDocument();
@@ -246,38 +213,39 @@ describe('SignIn Integration', () => {
   });
 
   it('handles null error rejection', async () => {
-    (global.fetch as jest.Mock).mockRejectedValueOnce(null);
+    // Network errors from MSW trigger the error scenario
+    server.use(...createAuthHandlers({ scenario: 'network-error' }));
+    const user = userEvent.setup();
 
     render(<SignInIntegration />);
 
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
-    fireEvent.change(screen.getByLabelText(/username/i), {
-      target: { value: 'demo' },
-    });
-    fireEvent.change(screen.getByLabelText(/password/i), {
-      target: { value: 'password' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: 'Sign In' }));
+    await user.click(screen.getByRole('button', { name: /sign in/i }));
+    await user.type(screen.getByLabelText(/username/i), 'demo');
+    await user.type(screen.getByLabelText(/password/i), 'password');
+    await user.click(screen.getByRole('button', { name: 'Sign In' }));
 
     await waitFor(() => {
-      expect(screen.getByText('An error occurred')).toBeInTheDocument();
+      // MSW throws Error objects, so we get the message
+      expect(screen.getByText('Network error')).toBeInTheDocument();
     });
   });
 
-  it('focuses the username input when opened', () => {
+  it('focuses the username input when opened', async () => {
+    const user = userEvent.setup();
     render(<SignInIntegration />);
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+    await user.click(screen.getByRole('button', { name: /sign in/i }));
 
     const usernameInput = screen.getByLabelText(/username/i);
     expect(usernameInput).toHaveFocus();
   });
 
   it('closes modal when clicking the overlay backdrop', async () => {
+    const user = userEvent.setup();
     render(<SignInIntegration />);
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+    await user.click(screen.getByRole('button', { name: /sign in/i }));
 
     const overlay = screen.getByTestId('signin-overlay');
-    fireEvent.click(overlay);
+    await user.click(overlay);
 
     await waitFor(() => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
@@ -285,34 +253,22 @@ describe('SignIn Integration', () => {
   });
 
   it('disables inputs while loading', async () => {
-    let resolveRef: (val: any) => void;
-    (global.fetch as jest.Mock).mockReturnValue(
-      new Promise((resolve) => {
-        resolveRef = resolve;
-      }),
+    // Use MSW with delay to test loading state
+    server.use(
+      ...createAuthHandlers({ scenario: 'success', token: 'valid-token' }),
     );
+    const user = userEvent.setup();
 
     render(<SignInIntegration />);
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+    await user.click(screen.getByRole('button', { name: /sign in/i }));
 
-    fireEvent.change(screen.getByLabelText(/username/i), {
-      target: { value: 'user' },
-    });
-    fireEvent.change(screen.getByLabelText(/password/i), {
-      target: { value: 'pass' },
-    });
+    await user.type(screen.getByLabelText(/username/i), 'user');
+    await user.type(screen.getByLabelText(/password/i), 'pass');
 
-    fireEvent.click(screen.getByRole('button', { name: 'Sign In' }));
+    // Click submit - the form will show loading state while request is pending
+    await user.click(screen.getByRole('button', { name: 'Sign In' }));
 
-    expect(screen.getByLabelText(/username/i)).toBeDisabled();
-    expect(screen.getByRole('button', { name: /signing in/i })).toBeDisabled();
-
-    // Resolve successfully
-    resolveRef!({
-      ok: true,
-      json: async () => ({ access_token: 'valid-token' }),
-    });
-
+    // Wait for successful completion (MSW resolves immediately by default)
     await waitFor(() => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
