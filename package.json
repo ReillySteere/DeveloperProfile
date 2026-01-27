@@ -38,7 +38,8 @@
     "migration:generate": "npm run build:server && npx typeorm migration:generate -d dist/src/server/data-source.js",
     "migration:run": "npx typeorm migration:run -d dist/src/server/data-source.js",
     "migration:revert": "npx typeorm migration:revert -d dist/src/server/data-source.js",
-    "migration:show": "npx typeorm migration:show -d dist/src/server/data-source.js"
+    "migration:show": "npx typeorm migration:show -d dist/src/server/data-source.js",
+    "verify:entities": "node scripts/verify-entity-sync.mjs"
   },
   "devDependencies": {
     "@babel/core": "^7.26.10",

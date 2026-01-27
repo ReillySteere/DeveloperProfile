@@ -5,6 +5,7 @@ import { BlogPost } from './modules/blog/blog.entity';
 import { User } from './shared/modules/auth/user.entity';
 import { RequestTrace } from './modules/traces/trace.entity';
 import { AlertHistory } from './modules/traces/alert-history.entity';
+import { RateLimitEntry } from './modules/rate-limit/rate-limit.entity';
 
 /**
  * TypeORM CLI Data Source Configuration
@@ -17,11 +18,22 @@ import { AlertHistory } from './modules/traces/alert-history.entity';
  *
  * Note: The application uses the configuration in app.module.ts at runtime.
  * This file mirrors that configuration for CLI compatibility.
+ *
+ * IMPORTANT: All entities in app.module.ts must also be listed here,
+ * otherwise migrations will not be generated for them.
  */
 export const AppDataSource = new DataSource({
   type: 'better-sqlite3',
   database: 'data/database.sqlite',
-  entities: [Experience, Project, BlogPost, User, RequestTrace, AlertHistory],
+  entities: [
+    Experience,
+    Project,
+    BlogPost,
+    User,
+    RequestTrace,
+    AlertHistory,
+    RateLimitEntry,
+  ],
   migrations: ['dist/src/server/migrations/*.js'],
   synchronize: false,
   logging: false,
