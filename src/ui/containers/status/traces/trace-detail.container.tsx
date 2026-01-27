@@ -135,6 +135,7 @@ export default function TraceDetailContainer() {
           <TimingWaterfall
             timing={trace.timing}
             totalDuration={trace.durationMs}
+            expanded
           />
         </div>
 

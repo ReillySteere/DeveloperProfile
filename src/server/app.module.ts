@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_INTERCEPTOR, APP_GUARD } from '@nestjs/core';
 import { join } from 'path';
 
 import { ExperienceModule } from './modules/experience/experience.module';
@@ -20,7 +20,13 @@ import { LoggerModule } from './shared/modules/logger';
 import { ArchitectureModule } from './modules/architecture/architecture.module';
 import { TraceModule } from './modules/traces/trace.module';
 import { RequestTrace } from './modules/traces/trace.entity';
+import { AlertHistory } from './modules/traces/alert-history.entity';
 import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
+import {
+  RateLimitModule,
+  RateLimiterGuard,
+  RateLimitEntry,
+} from './modules/rate-limit';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -30,7 +36,15 @@ const isProduction = process.env.NODE_ENV === 'production';
     TypeOrmModule.forRoot({
       type: 'better-sqlite3',
       database: 'data/database.sqlite',
-      entities: [Experience, Project, BlogPost, User, RequestTrace],
+      entities: [
+        Experience,
+        Project,
+        BlogPost,
+        User,
+        RequestTrace,
+        AlertHistory,
+        RateLimitEntry,
+      ],
       migrations: ['dist/src/server/migrations/*.js'],
       migrationsRun: isProduction, // Auto-run migrations in production
       synchronize: !isProduction, // Only auto-sync in development
@@ -43,6 +57,7 @@ const isProduction = process.env.NODE_ENV === 'production';
         fallthrough: true,
       },
     }),
+    RateLimitModule, // Must be before TraceModule so guard is available
     TraceModule, // Must be before other modules so interceptor is available
     ExperienceModule,
     AboutModule,
@@ -54,6 +69,10 @@ const isProduction = process.env.NODE_ENV === 'production';
     ArchitectureModule,
   ],
   providers: [
+    {
+      provide: APP_GUARD,
+      useClass: RateLimiterGuard,
+    },
     {
       provide: APP_INTERCEPTOR,
       useClass: TracingInterceptor,

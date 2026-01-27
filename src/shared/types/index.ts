@@ -5,3 +5,4 @@ export * from './experience.types';
 export * from './projects.types';
 export * from './telemetry.types';
 export * from './trace.types';
+export * from './rate-limit.types';

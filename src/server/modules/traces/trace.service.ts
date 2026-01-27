@@ -8,6 +8,8 @@ import type {
   ITraceRepository,
   TraceFilters,
   TraceStatsResult,
+  HourlyStatsResult,
+  EndpointStatsResult,
   IRequestTrace,
   CreateTraceInput,
   ITraceService,
@@ -148,5 +150,15 @@ export class TraceService implements ITraceService {
 
   async getStats(): Promise<TraceStatsResult> {
     return this.#repository.getStats();
+  }
+
+  /* istanbul ignore next -- default parameter branch */
+  async getHourlyStats(hours: number = 24): Promise<HourlyStatsResult[]> {
+    return this.#repository.getHourlyStats(hours);
+  }
+
+  /* istanbul ignore next -- default parameter branch */
+  async getEndpointStats(limit: number = 20): Promise<EndpointStatsResult[]> {
+    return this.#repository.getEndpointStats(limit);
   }
 }

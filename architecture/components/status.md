@@ -195,4 +195,54 @@ GET /api/health/stream
 
 - [ADR-006: Recharts for Telemetry Visualization](../decisions/ADR-006-recharts-for-telemetry-visualization.md)
 - [ADR-007: Simulated Chaos Mode](../decisions/ADR-007-simulated-chaos-mode.md)
+- [ADR-013: Rate Limiting and Advanced Visualization](../decisions/ADR-013-rate-limiting-visualization.md)
 - [Component: Traces (Request Observability)](traces.md) - Sub-feature for request-level tracing
+
+---
+
+## Phase 2 Integration (Implemented)
+
+Phase 2 added request tracing, visualization, rate limiting, and alerting capabilities. The Status/Mission Control dashboard now includes:
+
+### Request Traces Sub-Route
+
+**Route:** `/status/traces`
+
+A comprehensive request observability interface showing:
+
+- **Real-time trace streaming** via SSE
+- **Historical trace list** with filtering and pagination
+- **Trend charts** for latency and error rate over time
+- **Per-endpoint breakdown** with performance metrics
+- **Alerts panel** showing active alerts with resolution capability
+
+See [Component: Traces](traces.md) for detailed architecture.
+
+### Rate Limiting Integration
+
+Rate-limited requests (429 responses) are captured as traces and visible in:
+
+- The traces list with 429 status filter
+- Error rate trends showing rate limit impact
+
+### Alert Status Panel
+
+The AlertsPanel component shows active alerts:
+
+| Alert Type        | Threshold | Cooldown |
+| ----------------- | --------- | -------- |
+| High Latency      | 500ms avg | 30 min   |
+| High Error Rate   | 5%        | 30 min   |
+| P95 Latency Spike | 1000ms    | 60 min   |
+
+### Implementation Status
+
+| Feature                  | Status      |
+| ------------------------ | ----------- |
+| Rate Limiting Module     | ✅ Complete |
+| Trend Charts             | ✅ Complete |
+| Enhanced TimingWaterfall | ✅ Complete |
+| Alerting Service         | ✅ Complete |
+| E2E Tests                | ✅ Complete |
+
+See [Phase 2: Observability Suite](../features/phase-2-observability/README.md) for comprehensive documentation.

@@ -1,7 +1,15 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import axios from 'axios';
-import type { RequestTrace, TraceFilters, TraceStats } from 'shared/types';
+import type {
+  RequestTrace,
+  TraceFilters,
+  TraceStats,
+  TraceHourlyStats,
+  TraceEndpointStats,
+  AlertRule,
+  AlertHistoryRecord,
+} from 'shared/types';
 
 /**
  * Fetches the list of recent traces with optional filtering.
@@ -63,6 +71,38 @@ export function useTraceStats() {
       return response.data;
     },
     staleTime: 10000, // 10 seconds
+  });
+}
+
+/**
+ * Fetches hourly trace statistics for trend charts.
+ */
+export function useTraceHourlyStats(hours: number = 24) {
+  return useQuery({
+    queryKey: ['traceHourlyStats', hours],
+    queryFn: async () => {
+      const response = await axios.get<TraceHourlyStats[]>(
+        `/api/traces/stats/hourly?hours=${hours}`,
+      );
+      return response.data;
+    },
+    staleTime: 60000, // 1 minute
+  });
+}
+
+/**
+ * Fetches per-endpoint statistics.
+ */
+export function useTraceEndpointStats(limit: number = 20) {
+  return useQuery({
+    queryKey: ['traceEndpointStats', limit],
+    queryFn: async () => {
+      const response = await axios.get<TraceEndpointStats[]>(
+        `/api/traces/stats/endpoints?limit=${limit}`,
+      );
+      return response.data;
+    },
+    staleTime: 60000, // 1 minute
   });
 }
 
@@ -166,4 +206,73 @@ export function useTraceStream(
     clearTraces,
     reconnect,
   };
+}
+
+/**
+ * Fetches configured alert rules.
+ */
+export function useAlertRules() {
+  return useQuery({
+    queryKey: ['alertRules'],
+    queryFn: async () => {
+      const response = await axios.get<AlertRule[]>('/api/traces/alerts/rules');
+      return response.data;
+    },
+    staleTime: 60000, // 1 minute
+  });
+}
+
+/**
+ * Fetches alert history.
+ */
+export function useAlertHistory(limit: number = 20) {
+  return useQuery({
+    queryKey: ['alertHistory', limit],
+    queryFn: async () => {
+      const response = await axios.get<AlertHistoryRecord[]>(
+        `/api/traces/alerts/history?limit=${limit}`,
+      );
+      return response.data;
+    },
+    staleTime: 30000, // 30 seconds
+  });
+}
+
+/**
+ * Fetches unresolved alerts.
+ */
+export function useUnresolvedAlerts() {
+  return useQuery({
+    queryKey: ['unresolvedAlerts'],
+    queryFn: async () => {
+      const response = await axios.get<AlertHistoryRecord[]>(
+        '/api/traces/alerts/unresolved',
+      );
+      return response.data;
+    },
+    staleTime: 10000, // 10 seconds - check frequently
+    refetchInterval: 30000, // Auto-refetch every 30 seconds
+  });
+}
+
+/**
+ * Mutation to resolve an alert.
+ */
+export function useResolveAlert() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, notes }: { id: number; notes?: string }) => {
+      const response = await axios.patch<AlertHistoryRecord>(
+        `/api/traces/alerts/${id}/resolve`,
+        { notes },
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      // Invalidate alert queries to refresh the data
+      queryClient.invalidateQueries({ queryKey: ['alertHistory'] });
+      queryClient.invalidateQueries({ queryKey: ['unresolvedAlerts'] });
+    },
+  });
 }

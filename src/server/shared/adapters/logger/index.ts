@@ -21,3 +21,6 @@ export { LogContext, LogLevel, LogEntry } from './logger.types';
 
 // Re-export module tokens for DI convenience
 export { LOGGER_TOKENS } from '../../modules/logger';
+
+// Re-export LoggerService type for type annotations
+export type { LoggerService } from '@nestjs/common';

@@ -1,0 +1,97 @@
+@use 'ui/shared/styles/tokens.css';
+
+.container {
+  min-width: 300px;
+}
+
+.loading,
+.error {
+  padding: var(--space-4);
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.error {
+  color: var(--status-error);
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-6);
+  color: var(--text-secondary);
+}
+
+.checkmark {
+  font-size: 2rem;
+  color: var(--status-success);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding: 0 var(--space-2);
+  margin-left: var(--space-2);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+  background-color: var(--status-error);
+  border-radius: var(--radius-full);
+}
+
+.alertList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.alertItem {
+  padding: var(--space-3);
+  border: 1px solid var(--border-default);
+  border-left: 3px solid var(--status-error);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-surface);
+}
+
+.alertHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2);
+}
+
+.alertName {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.alertTime {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.alertDetails {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+  font-size: 0.875rem;
+}
+
+.metric {
+  color: var(--status-error);
+  font-weight: 500;
+}
+
+.threshold {
+  color: var(--text-secondary);
+}
+
+.alertActions {
+  display: flex;
+  justify-content: flex-end;
+}

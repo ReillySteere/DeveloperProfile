@@ -155,6 +155,85 @@ describe('Trace Integration', () => {
       expect(typeof stats.avgDuration).toBe('number');
       expect(typeof stats.errorRate).toBe('number');
     });
+
+    it('should return hourly stats', async () => {
+      const hourlyStats = await service.getHourlyStats(24);
+
+      expect(Array.isArray(hourlyStats)).toBe(true);
+      // Should have at least one hour bucket since we've recorded traces
+      if (hourlyStats.length > 0) {
+        const first = hourlyStats[0];
+        expect(first).toHaveProperty('hour');
+        expect(first).toHaveProperty('count');
+        expect(first).toHaveProperty('avgDuration');
+        expect(first).toHaveProperty('errorRate');
+        expect(first).toHaveProperty('p95Duration');
+      }
+    });
+
+    it('should return hourly stats with custom hours param', async () => {
+      const hourlyStats = await service.getHourlyStats(1);
+      expect(Array.isArray(hourlyStats)).toBe(true);
+    });
+
+    it('should return endpoint stats', async () => {
+      const endpointStats = await service.getEndpointStats(10);
+
+      expect(Array.isArray(endpointStats)).toBe(true);
+      if (endpointStats.length > 0) {
+        const first = endpointStats[0];
+        expect(first).toHaveProperty('path');
+        expect(first).toHaveProperty('method');
+        expect(first).toHaveProperty('count');
+        expect(first).toHaveProperty('avgDuration');
+        expect(first).toHaveProperty('errorRate');
+      }
+    });
+
+    it('should group endpoint stats by method and path', async () => {
+      // Create traces with same path, different methods
+      await service.recordTrace(
+        createTraceInput({ method: 'GET', path: '/api/endpoint-test' }),
+      );
+      await service.recordTrace(
+        createTraceInput({ method: 'POST', path: '/api/endpoint-test' }),
+      );
+      await service.recordTrace(
+        createTraceInput({ method: 'GET', path: '/api/endpoint-test' }),
+      );
+
+      const endpointStats = await service.getEndpointStats(50);
+
+      // Should have separate entries for GET and POST
+      const getEntry = endpointStats.find(
+        (e) => e.path === '/api/endpoint-test' && e.method === 'GET',
+      );
+      const postEntry = endpointStats.find(
+        (e) => e.path === '/api/endpoint-test' && e.method === 'POST',
+      );
+
+      expect(getEntry).toBeDefined();
+      expect(postEntry).toBeDefined();
+      expect(getEntry!.count).toBe(2);
+      expect(postEntry!.count).toBe(1);
+    });
+
+    it('should calculate error rate in hourly stats', async () => {
+      // Create one success and one error trace
+      await service.recordTrace(
+        createTraceInput({ statusCode: 200, path: '/api/error-test' }),
+      );
+      await service.recordTrace(
+        createTraceInput({ statusCode: 500, path: '/api/error-test' }),
+      );
+
+      const hourlyStats = await service.getHourlyStats(24);
+
+      expect(hourlyStats.length).toBeGreaterThan(0);
+      // At least one bucket should have non-zero error rate
+      const hasErrors = hourlyStats.some((h) => h.errorRate > 0);
+      expect(hasErrors).toBe(true);
+    });
   });
 
   describe('TraceController', () => {
@@ -192,6 +271,30 @@ describe('Trace Integration', () => {
       expect(stats).toHaveProperty('totalCount');
       expect(stats).toHaveProperty('avgDuration');
       expect(stats).toHaveProperty('errorRate');
+    });
+
+    it('should return hourly stats', async () => {
+      const hourlyStats = await controller.getHourlyStats();
+
+      expect(Array.isArray(hourlyStats)).toBe(true);
+    });
+
+    it('should return hourly stats with custom hours', async () => {
+      const hourlyStats = await controller.getHourlyStats('12');
+
+      expect(Array.isArray(hourlyStats)).toBe(true);
+    });
+
+    it('should return endpoint stats', async () => {
+      const endpointStats = await controller.getEndpointStats();
+
+      expect(Array.isArray(endpointStats)).toBe(true);
+    });
+
+    it('should return endpoint stats with custom limit', async () => {
+      const endpointStats = await controller.getEndpointStats('5');
+
+      expect(Array.isArray(endpointStats)).toBe(true);
     });
 
     it('should filter traces with all parameters', async () => {

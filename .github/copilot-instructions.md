@@ -62,6 +62,19 @@
   - **Emitting Events:** Services should emit events even if no listeners exist yet (loose coupling).
   - **Consuming Events:** Use `fromEvent()` from `rxjs` for SSE endpoints or `@OnEvent()` decorator for handlers.
   - **Pattern:** `<domain>.<action>` (e.g., `trace.created`, `blog.published`).
+- **Rate Limiting:**
+  - Use `@nestjs/throttler` with custom `RateLimitGuard` for per-endpoint limits.
+  - Configure rules in `rate-limit.config.ts` with pattern, limit, and TTL.
+  - See ADR and docs in `architecture/features/phase-2-observability/rate-limiting.md`.
+- **Scheduled Tasks:**
+  - Use `@nestjs/schedule` with `@Cron()` decorator for recurring tasks.
+  - Define cron expressions as constants in a dedicated config file.
+  - Test cron handlers with unit tests using `src/server/test-utils/cronTestUtils.ts`.
+  - See ADR-012 for patterns.
+- **Alerting:**
+  - Alert channels implement `IAlertChannel` interface in traces module.
+  - Add new channels in `src/server/modules/traces/channels/`.
+  - See `architecture/features/phase-2-observability/alerting.md` for extension guide.
 
 ## Frontend Patterns (`src/ui`)
 
@@ -108,6 +121,11 @@
   - Prefix mock variables with `mock` (e.g., `mockUpdate`).
   - Remember Jest hoists `jest.mock()` calls.
   - **ESM Modules:** Libraries like `react-markdown` and `mermaid` require specific mocking strategies (see `src/ui/containers/blog/blog.container.test.tsx`).
+- **Test Helpers:**
+  - **SSE Streams:** Use `MockEventSource` from `ui/test-utils/mockEventSource` to test Server-Sent Events.
+  - **Recharts:** Use `mockRecharts` from `ui/test-utils/mockRecharts` to mock chart components.
+  - **Cron Jobs:** Use `cronTestUtils` from `server/test-utils/cronTestUtils` to test scheduled tasks.
+  - See `architecture/features/phase-2-observability/visualization.md` for testing patterns.
 
 ## Key Files
 

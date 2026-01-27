@@ -285,4 +285,144 @@ Authorization: Bearer <jwt>
 - [ADR-010: Request Tracing & Observability](../decisions/ADR-010-request-tracing-observability.md)
 - [ADR-011: Event-Driven Architecture](../decisions/ADR-011-event-driven-architecture.md)
 - [ADR-012: Scheduled Tasks](../decisions/ADR-012-scheduled-tasks-and-maintenance.md)
+- [ADR-013: Rate Limiting and Advanced Visualization](../decisions/ADR-013-rate-limiting-visualization.md)
 - [Component: Status](status.md) - Parent feature
+- [Phase 2: Observability Suite](../features/phase-2-observability/README.md) - Detailed Phase 2 documentation
+
+---
+
+## Phase 2 Features (Implemented)
+
+Phase 2 added rate limiting, advanced visualization, and alerting capabilities. For detailed architecture, see [Phase 2: Observability Suite](../features/phase-2-observability/README.md).
+
+### Architecture Diagram (Extended)
+
+```mermaid
+flowchart TB
+    subgraph Client
+        Browser[Browser]
+    end
+
+    subgraph NestJS
+        Guard[RateLimiterGuard]
+        Interceptor[TracingInterceptor]
+        Controller[TraceController]
+        Service[TraceService]
+        AlertService[TraceAlertService]
+        Repository[TraceRepository]
+        Scheduler[Cron Scheduler]
+
+        subgraph Alert Channels
+            Sentry[SentryChannel]
+            Email[EmailChannel]
+            Log[LogChannel]
+        end
+    end
+
+    subgraph Storage
+        SQLite[(SQLite Database)]
+    end
+
+    Browser -->|API Request| Guard
+    Guard -->|Allowed| Interceptor
+    Guard -->|Blocked| Browser
+    Interceptor -->|Records trace| Service
+    Service -->|Emits event| EventBus{EventEmitter2}
+    Service -->|Persists| Repository
+    Repository -->|Writes| SQLite
+
+    Scheduler -->|Every minute| AlertService
+    AlertService -->|Check thresholds| Repository
+    AlertService -->|Alert triggered| Sentry
+    AlertService -->|Alert triggered| Email
+    AlertService -->|Alert triggered| Log
+
+    EventBus -->|trace.created| Controller
+    Controller -->|SSE Stream| Browser
+```
+
+### New API Endpoints
+
+| Endpoint                         | Method | Description                  |
+| -------------------------------- | ------ | ---------------------------- |
+| `/api/traces/stats/hourly`       | GET    | Hourly aggregated statistics |
+| `/api/traces/stats/endpoints`    | GET    | Per-endpoint statistics      |
+| `/api/traces/alerts/unresolved`  | GET    | Active alerts                |
+| `/api/traces/alerts/:id/resolve` | POST   | Resolve an alert             |
+
+### File Structure (Extended)
+
+```
+src/server/modules/traces/
+├── ... (existing files)
+├── alert.config.ts              # Alert rule definitions
+├── trace-alert.service.ts       # Alert checking logic
+├── trace-alert.types.ts         # Alert type definitions
+├── alert-history.entity.ts      # Alert persistence
+└── channels/
+    ├── index.ts                 # Barrel export
+    ├── alert-channel.interface.ts
+    ├── sentry-alert.channel.ts
+    ├── email-alert.channel.ts
+    └── log-alert.channel.ts
+
+src/ui/containers/status/traces/
+├── ... (existing files)
+└── components/
+    ├── ... (existing files)
+    ├── TraceTrends.tsx          # Line charts for metrics
+    ├── TraceTrends.module.scss
+    ├── EndpointBreakdown.tsx    # Per-endpoint table
+    ├── EndpointBreakdown.module.scss
+    ├── AlertsPanel.tsx          # Active alerts display
+    └── AlertsPanel.module.scss
+```
+
+### New Hooks
+
+```typescript
+// src/ui/containers/status/traces/hooks/useTraces.ts
+
+// Fetches hourly trace statistics for trend charts
+export function useTraceHourlyStats(
+  hours?: number,
+): UseQueryResult<TraceHourlyStats[]>;
+
+// Fetches per-endpoint statistics
+export function useTraceEndpointStats(
+  limit?: number,
+): UseQueryResult<TraceEndpointStats[]>;
+
+// Fetches unresolved alerts
+export function useUnresolvedAlerts(): UseQueryResult<AlertHistoryRecord[]>;
+
+// Mutation to resolve an alert
+export function useResolveAlert(): UseMutationResult;
+```
+
+### Component Enhancements
+
+| Component         | Enhancement                                                                 |
+| ----------------- | --------------------------------------------------------------------------- |
+| `TimingWaterfall` | `expanded` prop for detailed view with tooltips and slow-phase highlighting |
+| `TraceFilters`    | Duration range inputs (minDuration, maxDuration), quick presets             |
+
+### New Components
+
+| Component           | Description                                                              |
+| ------------------- | ------------------------------------------------------------------------ |
+| `TraceTrends`       | Recharts LineChart showing avgDuration, p95Duration, errorRate over time |
+| `EndpointBreakdown` | Table with method, path, request count, avg latency, error rate          |
+| `AlertsPanel`       | Card showing unresolved alerts with resolve capability                   |
+
+### Alert Rules
+
+| Rule              | Metric      | Threshold | Cooldown |
+| ----------------- | ----------- | --------- | -------- |
+| High Latency      | avgDuration | 500ms     | 30 min   |
+| High Error Rate   | errorRate   | 5%        | 30 min   |
+| P95 Latency Spike | p95Duration | 1000ms    | 60 min   |
+
+### Rate Limit Integration
+
+Rate-limited requests are captured as traces with 429 status code and special metadata for filtering in the dashboard.

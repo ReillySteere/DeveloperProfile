@@ -15,6 +15,8 @@ src/ui/shared/
 │   ├── Card/
 │   ├── Frame/
 │   ├── LinkButton/
+│   ├── MarkdownContent/
+│   ├── Mermaid/
 │   ├── NavigationRail/
 │   ├── QueryState/
 │   ├── SignIn/
@@ -88,6 +90,24 @@ These components are intentionally excluded from the barrel export as they are u
 import { AuthInterceptor } from 'ui/shared/components/AuthInterceptor/AuthInterceptor';
 import { SignIn } from 'ui/shared/components/SignIn/SignIn';
 ```
+
+### ESM-Only Components (Not in Barrel Export)
+
+These components use ESM-only dependencies (`react-markdown`, `mermaid`) that require special Jest mocking. They are excluded from the barrel export to prevent test configuration issues:
+
+| Component         | Purpose                                   | Usage                     |
+| ----------------- | ----------------------------------------- | ------------------------- |
+| `MarkdownContent` | Renders Markdown with syntax highlighting | Blog posts, documentation |
+| `Mermaid`         | Renders Mermaid diagrams                  | Architecture diagrams     |
+
+**Import directly:**
+
+```typescript
+import { MarkdownContent } from 'ui/shared/components/MarkdownContent/MarkdownContent';
+import { Mermaid } from 'ui/shared/components/Mermaid/Mermaid';
+```
+
+**Testing Note:** When testing components that use `MarkdownContent` or `Mermaid`, you must mock them. See `src/ui/containers/blog/blog.container.test.tsx` for examples.
 
 ## QueryState Component
 
