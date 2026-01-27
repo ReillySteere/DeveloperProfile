@@ -1,0 +1,23 @@
+.container {
+  margin-bottom: var(--space-4);
+}
+
+.chart {
+  width: 100%;
+  min-height: 250px;
+}
+
+.loading,
+.error,
+.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.error {
+  color: var(--error-text);
+}

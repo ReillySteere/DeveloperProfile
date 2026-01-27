@@ -40,6 +40,28 @@ export interface TraceStatsResult {
 }
 
 /**
+ * Hourly statistics for trend visualization.
+ */
+export interface HourlyStatsResult {
+  hour: string;
+  count: number;
+  avgDuration: number;
+  errorRate: number;
+  p95Duration: number;
+}
+
+/**
+ * Per-endpoint statistics for breakdown visualization.
+ */
+export interface EndpointStatsResult {
+  path: string;
+  method: string;
+  count: number;
+  avgDuration: number;
+  errorRate: number;
+}
+
+/**
  * Repository interface for trace storage.
  */
 export interface ITraceRepository {
@@ -49,6 +71,8 @@ export interface ITraceRepository {
   deleteOlderThan(date: Date): Promise<number>;
   count(): Promise<number>;
   getStats(): Promise<TraceStatsResult>;
+  getHourlyStats(hours?: number): Promise<HourlyStatsResult[]>;
+  getEndpointStats(limit?: number): Promise<EndpointStatsResult[]>;
 }
 
 /**
@@ -62,4 +86,6 @@ export interface ITraceService extends ITraceServicePort {
   checkDatabaseSize(): Promise<void>;
   getTraceCount(): Promise<number>;
   getStats(): Promise<TraceStatsResult>;
+  getHourlyStats(hours?: number): Promise<HourlyStatsResult[]>;
+  getEndpointStats(limit?: number): Promise<EndpointStatsResult[]>;
 }

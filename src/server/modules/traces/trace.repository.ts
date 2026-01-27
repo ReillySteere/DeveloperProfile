@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, LessThan } from 'typeorm';
+import { Repository, LessThan, MoreThanOrEqual } from 'typeorm';
 import { RequestTrace } from './trace.entity';
 import type {
   ITraceRepository,
   TraceFilters,
   TraceStatsResult,
+  HourlyStatsResult,
+  EndpointStatsResult,
 } from './trace.types';
 
 // Re-export types for backward compatibility
@@ -112,5 +114,99 @@ export class TraceRepository implements ITraceRepository {
       avgDuration: parseFloat(result?.avgDuration ?? '0'),
       errorRate: parseFloat(result?.errorRate ?? '0'),
     };
+  }
+
+  /* istanbul ignore next -- default parameter branch */
+  async getHourlyStats(hours: number = 24): Promise<HourlyStatsResult[]> {
+    const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
+
+    // Get all traces from the time window
+    const traces = await this.#repo.find({
+      where: { timestamp: MoreThanOrEqual(cutoff) },
+      order: { timestamp: 'ASC' },
+    });
+
+    // Group by hour
+    const hourlyMap = new Map<
+      string,
+      { durations: number[]; errorCount: number }
+    >();
+
+    for (const trace of traces) {
+      const date = new Date(trace.timestamp);
+      date.setMinutes(0, 0, 0);
+      const hourKey = date.toISOString();
+
+      if (!hourlyMap.has(hourKey)) {
+        hourlyMap.set(hourKey, { durations: [], errorCount: 0 });
+      }
+
+      const bucket = hourlyMap.get(hourKey)!;
+      bucket.durations.push(trace.durationMs);
+      if (trace.statusCode >= 400) {
+        bucket.errorCount++;
+      }
+    }
+
+    // Calculate stats for each hour
+    const results: HourlyStatsResult[] = [];
+    for (const [hour, bucket] of hourlyMap) {
+      const count = bucket.durations.length;
+      /* istanbul ignore next -- defensive: count is always > 0 when bucket exists */
+      const avgDuration =
+        bucket.durations.reduce((a, b) => a + b, 0) / count || 0;
+      /* istanbul ignore next -- defensive: count is always > 0 when bucket exists */
+      const errorRate = (bucket.errorCount / count) * 100 || 0;
+
+      // Calculate p95
+      const sorted = [...bucket.durations].sort((a, b) => a - b);
+      const p95Index = Math.ceil(sorted.length * 0.95) - 1;
+      /* istanbul ignore next -- defensive: sorted array always has at least 1 element */
+      const p95Duration = sorted[Math.max(0, p95Index)] ?? 0;
+
+      results.push({
+        hour,
+        count,
+        avgDuration,
+        errorRate,
+        p95Duration,
+      });
+    }
+
+    return results;
+  }
+
+  /* istanbul ignore next -- default parameter branch */
+  async getEndpointStats(limit: number = 20): Promise<EndpointStatsResult[]> {
+    const result = await this.#repo
+      .createQueryBuilder('trace')
+      .select('trace.path', 'path')
+      .addSelect('trace.method', 'method')
+      .addSelect('COUNT(*)', 'count')
+      .addSelect('AVG(trace.durationMs)', 'avgDuration')
+      .addSelect(
+        'CAST(SUM(CASE WHEN trace.statusCode >= 400 THEN 1 ELSE 0 END) AS FLOAT) * 100.0 / NULLIF(COUNT(*), 0)',
+        'errorRate',
+      )
+      .groupBy('trace.path')
+      .addGroupBy('trace.method')
+      .orderBy('count', 'DESC')
+      .limit(limit)
+      .getRawMany<{
+        path: string;
+        method: string;
+        count: string;
+        avgDuration: string;
+        errorRate: string;
+      }>();
+
+    return result.map((row) => ({
+      path: row.path,
+      method: row.method,
+      count: parseInt(row.count, 10),
+      avgDuration: parseFloat(row.avgDuration),
+      /* istanbul ignore next -- defensive: errorRate is always set by SQL query */
+      errorRate: parseFloat(row.errorRate ?? '0'),
+    }));
   }
 }

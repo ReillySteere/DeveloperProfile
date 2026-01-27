@@ -35,13 +35,6 @@ module.exports = {
       functions: 100,
       lines: 100,
     },
-    // SSE stream callback is hard to unit test with EventEmitter2
-    './src/server/modules/traces/trace.controller.ts': {
-      statements: 95,
-      branches: 100,
-      functions: 85,
-      lines: 95,
-    },
     // Ternary branch for future middleware instrumentation (phases.handlerStart)
     './src/server/shared/interceptors/tracing.interceptor.ts': {
       statements: 100,

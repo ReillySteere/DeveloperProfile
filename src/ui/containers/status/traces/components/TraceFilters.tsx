@@ -17,6 +17,12 @@ export function TraceFilters({
   const [statusCode, setStatusCode] = useState(
     initialFilters.statusCode ? String(initialFilters.statusCode) : '',
   );
+  const [minDuration, setMinDuration] = useState(
+    initialFilters.minDuration ? String(initialFilters.minDuration) : '',
+  );
+  const [maxDuration, setMaxDuration] = useState(
+    initialFilters.maxDuration ? String(initialFilters.maxDuration) : '',
+  );
   const [limit, setLimit] = useState(String(initialFilters.limit ?? 50));
 
   const handleApply = useCallback(() => {
@@ -24,15 +30,27 @@ export function TraceFilters({
       method: method || undefined,
       path: path || undefined,
       statusCode: statusCode ? parseInt(statusCode, 10) : undefined,
+      minDuration: minDuration ? parseFloat(minDuration) : undefined,
+      maxDuration: maxDuration ? parseFloat(maxDuration) : undefined,
       limit: parseInt(limit, 10),
     };
     onFiltersChange(filters);
-  }, [method, path, statusCode, limit, onFiltersChange]);
+  }, [
+    method,
+    path,
+    statusCode,
+    minDuration,
+    maxDuration,
+    limit,
+    onFiltersChange,
+  ]);
 
   const handleReset = useCallback(() => {
     setMethod('');
     setPath('');
     setStatusCode('');
+    setMinDuration('');
+    setMaxDuration('');
     setLimit('50');
     onFiltersChange({ limit: 50 });
   }, [onFiltersChange]);
@@ -106,6 +124,63 @@ export function TraceFilters({
           </select>
         </div>
       </div>
+
+      <div className={styles.filterRow}>
+        <div className={styles.field}>
+          <label htmlFor="trace-min-duration" className={styles.label}>
+            Min Duration (ms)
+          </label>
+          <input
+            id="trace-min-duration"
+            type="number"
+            value={minDuration}
+            onChange={(e) => setMinDuration(e.target.value)}
+            placeholder="e.g., 100"
+            className={styles.input}
+            min="0"
+          />
+        </div>
+
+        <div className={styles.field}>
+          <label htmlFor="trace-max-duration" className={styles.label}>
+            Max Duration (ms)
+          </label>
+          <input
+            id="trace-max-duration"
+            type="number"
+            value={maxDuration}
+            onChange={(e) => setMaxDuration(e.target.value)}
+            placeholder="e.g., 5000"
+            className={styles.input}
+            min="0"
+          />
+        </div>
+
+        <div className={styles.durationPresets}>
+          <span className={styles.presetsLabel}>Quick:</span>
+          <button
+            type="button"
+            className={styles.presetBtn}
+            onClick={() => {
+              setMinDuration('100');
+              setMaxDuration('');
+            }}
+          >
+            Slow (&gt;100ms)
+          </button>
+          <button
+            type="button"
+            className={styles.presetBtn}
+            onClick={() => {
+              setMinDuration('');
+              setMaxDuration('50');
+            }}
+          >
+            Fast (&lt;50ms)
+          </button>
+        </div>
+      </div>
+
       <div className={styles.actions}>
         <Button variant="secondary" onClick={handleReset}>
           Reset

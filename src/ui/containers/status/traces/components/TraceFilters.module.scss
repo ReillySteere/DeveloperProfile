@@ -71,6 +71,53 @@
   padding-right: 32px;
 }
 
+.durationPresets {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  grid-column: span 2;
+
+  @media (max-width: 768px) {
+    grid-column: span 2;
+  }
+
+  @media (max-width: 480px) {
+    grid-column: 1;
+    flex-wrap: wrap;
+  }
+}
+
+.presetsLabel {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.presetBtn {
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  font-family: inherit;
+  color: var(--color-text-muted);
+  background-color: transparent;
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+
+  &:hover {
+    background-color: var(--bg-surface-hover);
+    border-color: var(--border-hover);
+    color: var(--color-text);
+  }
+
+  &:active {
+    background-color: var(--bg-surface-active);
+  }
+}
+
 .actions {
   display: flex;
   gap: 8px;

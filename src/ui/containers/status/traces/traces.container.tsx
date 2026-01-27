@@ -7,7 +7,13 @@ import {
   CardTitle,
   CardContent,
 } from 'ui/shared/components';
-import { TraceRow, TraceFilters } from './components';
+import {
+  TraceRow,
+  TraceFilters,
+  TraceTrends,
+  EndpointBreakdown,
+  AlertsPanel,
+} from './components';
 import { useTraces, useTraceStats, useTraceStream } from './hooks/useTraces';
 import { TraceFilters as TraceFiltersType } from 'shared/types';
 import styles from './traces.module.scss';
@@ -115,6 +121,13 @@ export default function TracesContainer() {
             </div>
           )}
         </header>
+
+        {/* Visualization Section */}
+        <section className={styles.visualizations}>
+          <TraceTrends hours={24} />
+          <EndpointBreakdown limit={10} />
+          <AlertsPanel />
+        </section>
 
         {!isLiveMode && (
           <TraceFilters

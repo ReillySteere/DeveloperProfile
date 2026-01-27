@@ -164,7 +164,9 @@ test.describe('Request Traces', () => {
 
     // Should show stats cards
     await expect(page.getByText('Total Traces (24h)')).toBeVisible();
-    await expect(page.getByText('Error Rate')).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Error Rate', level: 3 }),
+    ).toBeVisible();
 
     // Should have filter controls (using specific IDs)
     await expect(page.locator('#trace-method')).toBeVisible();

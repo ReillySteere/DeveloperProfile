@@ -288,10 +288,70 @@ it('should create a new post when form is submitted', async () => {
 - Provides wrapped `render` function with `QueryClientProvider`
 - Import as: `import { render, screen } from 'ui/test-utils';`
 
+#### MockEventSource
+
+For testing Server-Sent Events (SSE) streams:
+
+```typescript
+import { MockEventSource } from 'ui/test-utils/mockEventSource';
+
+beforeEach(() => {
+  MockEventSource.install();
+});
+
+afterEach(() => {
+  MockEventSource.uninstall();
+});
+
+it('should display streamed data', async () => {
+  render(<TracesContainer />);
+
+  // Simulate SSE message
+  MockEventSource.simulateMessage(JSON.stringify({ traceId: '123' }));
+
+  await waitFor(() => {
+    expect(screen.getByText('123')).toBeInTheDocument();
+  });
+});
+```
+
+#### mockRecharts
+
+For testing components that use Recharts:
+
+```typescript
+import { mockRecharts } from 'ui/test-utils/mockRecharts';
+
+jest.mock('recharts', () => mockRecharts);
+
+it('should render chart with data', async () => {
+  render(<TraceTrends />);
+  expect(screen.getByTestId('mock-line-chart')).toBeInTheDocument();
+});
+```
+
 ### Server Test Utils (`src/server/test-utils`)
 
 - Provides Jest preloaded configuration for Node environment
 - Used internally by `jest.node.ts`
+
+#### cronTestUtils
+
+For testing scheduled tasks:
+
+```typescript
+import { createCronTestScheduler } from 'server/test-utils/cronTestUtils';
+
+it('should cleanup old traces', async () => {
+  const scheduler = createCronTestScheduler();
+  const handler = jest.fn();
+
+  scheduler.registerHandler('0 * * * *', handler);
+  scheduler.advanceTo('01:00:00');
+
+  expect(handler).toHaveBeenCalled();
+});
+```
 
 ## 5. E2E Testing (Playwright)
 

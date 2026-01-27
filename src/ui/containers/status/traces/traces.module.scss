@@ -117,6 +117,17 @@
   }
 }
 
+.visualizations {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
 .traceList {
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);

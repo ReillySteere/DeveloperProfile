@@ -74,6 +74,8 @@ describe('TraceService', () => {
         avgDuration: 25.5,
         errorRate: 2.5,
       } as TraceStatsResult),
+      getHourlyStats: jest.fn().mockResolvedValue([]),
+      getEndpointStats: jest.fn().mockResolvedValue([]),
     };
 
     mockEventEmitter = {
