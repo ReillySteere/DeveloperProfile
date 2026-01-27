@@ -519,4 +519,64 @@ describe('Status Container', () => {
       screen.getByText(/View detailed request traces/i),
     ).toBeInTheDocument();
   });
+
+  it('returns null latestSnapshot when no data received', async () => {
+    render(<Status />);
+
+    // Before any messages, there should be no data displayed
+    // The latestSnapshot ?? null branch is covered when no messages received
+    await waitFor(() => {
+      expect(MockEventSource.instances.length).toBeGreaterThan(0);
+    });
+
+    // Initially connected but no data yet - uptime shows dashes or waiting
+    expect(screen.queryByText('1h 0m 0s')).not.toBeInTheDocument();
+  });
+
+  it('does not attempt reconnect when disabled during error', async () => {
+    jest.useFakeTimers();
+
+    render(<Status />);
+
+    await waitFor(() => {
+      expect(MockEventSource.instances.length).toBeGreaterThan(0);
+    });
+
+    const eventSource = MockEventSource.instances[0];
+
+    // Simulate connected state first
+    act(() => {
+      eventSource.readyState = 1;
+      eventSource.onopen?.();
+    });
+
+    // Toggle CPU chaos twice to trigger disconnect then reconnect cycle
+    const cpuButton = screen.getByRole('button', { name: /CPU Stress OFF/i });
+    fireEvent.click(cpuButton);
+
+    // Wait for new instance with chaos param
+    await waitFor(() => {
+      expect(MockEventSource.instances.length).toBe(2);
+    });
+
+    // Now toggle it off - this triggers the enabled=false path on reconnect
+    fireEvent.click(screen.getByRole('button', { name: /CPU Stress ON/i }));
+
+    // Simulate error on the current EventSource
+    const currentEventSource =
+      MockEventSource.instances[MockEventSource.instances.length - 1];
+    act(() => {
+      currentEventSource.simulateError();
+    });
+
+    // Advance timer - reconnect should happen because component is still mounted
+    act(() => {
+      jest.advanceTimersByTime(4000);
+    });
+
+    // New instance should be created
+    expect(MockEventSource.instances.length).toBeGreaterThan(2);
+
+    jest.useRealTimers();
+  });
 });

@@ -1,4 +1,3 @@
-/* istanbul ignore file -- barrel file for module public API */
 /**
  * Logger Module - Public API
  *

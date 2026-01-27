@@ -108,7 +108,6 @@ export class TracingInterceptor implements NestInterceptor {
     const context = request.traceContext;
 
     // Calculate phase timings (simplified - full breakdown requires middleware instrumentation)
-    // istanbul ignore next -- handlerStart is only set when future middleware instrumentation is added
     const handlerDuration = context?.phases.handlerStart
       ? endTime - context.phases.handlerStart
       : durationMs;
@@ -125,7 +124,6 @@ export class TracingInterceptor implements NestInterceptor {
       timing: {
         middleware: 0, // Would require middleware instrumentation
         guard: 0, // Would require guard instrumentation
-        /* istanbul ignore next -- defensive code for undefined context */
         interceptorPre: context?.phases.handlerStart
           ? context.phases.handlerStart - startTime
           : 0,

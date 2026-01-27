@@ -176,6 +176,12 @@ describe('Trace Integration', () => {
       }
     });
 
+    it('should return hourly stats with default parameter', async () => {
+      // Covers the default hours = 24 branch
+      const hourlyStats = await service.getHourlyStats();
+      expect(Array.isArray(hourlyStats)).toBe(true);
+    });
+
     it('should return hourly stats with custom hours param', async () => {
       const hourlyStats = await service.getHourlyStats(1);
       expect(Array.isArray(hourlyStats)).toBe(true);
@@ -193,6 +199,12 @@ describe('Trace Integration', () => {
         expect(first).toHaveProperty('avgDuration');
         expect(first).toHaveProperty('errorRate');
       }
+    });
+
+    it('should return endpoint stats with default parameter', async () => {
+      // Covers the default limit = 20 branch
+      const endpointStats = await service.getEndpointStats();
+      expect(Array.isArray(endpointStats)).toBe(true);
     });
 
     it('should group endpoint stats by method and path', async () => {

@@ -30,29 +30,17 @@ module.exports = {
     '!src/ui/routeTree.gen.ts',
     '!src/ui/shared/routes/*.tsx',
     '!src/ui/**/*.types.ts',
+    '!src/ui/shared/components/index.ts', // Barrel file
     '!**/node_modules/**',
     '!**/dist/**',
   ],
   coverageReporters: ['html', 'text', 'text-summary', 'cobertura'],
   coverageThreshold: {
     global: {
-      statements: 97,
-      branches: 90,
-      functions: 97,
-      lines: 98,
-    },
-    // Dependencies container has edge cases for graph rendering
-    './src/ui/containers/architecture/dependencies.container.tsx': {
-      statements: 96,
+      statements: 98,
       branches: 92,
-      functions: 90,
-      lines: 96,
-    },
-    './src/ui/containers/architecture/hooks/useArchitecture.ts': {
-      statements: 100,
-      branches: 66,
-      functions: 100,
-      lines: 100,
+      functions: 98,
+      lines: 98,
     },
   },
 };

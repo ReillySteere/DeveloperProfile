@@ -39,7 +39,6 @@ export function TelemetryCharts({ data }: TelemetryChartsProps) {
     }));
   }, [data]);
 
-  /* istanbul ignore next -- recharts internals are mocked in tests */
   const formatTime = (t: number): string => `-${60 - t}s`;
 
   return (

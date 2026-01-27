@@ -341,5 +341,73 @@ describe('TracingInterceptor', () => {
         },
       });
     });
+
+    it('should handle traceContext with undefined handlerStart', (done) => {
+      // To cover the fallback branches (context?.phases.handlerStart), we need to test
+      // when handlerStart is undefined. The interceptor normally sets this, but we can
+      // use a getter to make it return undefined when recordTrace reads it.
+      let callCount = 0;
+      Object.defineProperty(mockRequest, 'traceContext', {
+        get() {
+          callCount++;
+          // Return phases with handlerStart on first reads (during setup),
+          // but return phases with undefined handlerStart when recordTrace accesses it
+          if (callCount <= 2) {
+            return { startTime: performance.now(), phases: {} };
+          }
+          // After setup, return context with undefined handlerStart to trigger fallback
+          return { phases: { handlerStart: undefined } };
+        },
+        set() {
+          // Allow sets during interceptor setup
+        },
+        configurable: true,
+      });
+
+      interceptor.intercept(mockContext, mockCallHandler).subscribe({
+        complete: () => {
+          setImmediate(() => {
+            const call = mockTraceService.recordTrace.mock
+              .calls[0][0] as CreateTraceInput;
+            // When handlerStart is undefined, interceptorPre falls back to 0
+            expect(call.timing.interceptorPre).toBe(0);
+            done();
+          });
+        },
+      });
+    });
+
+    it('should handle missing traceContext entirely', (done) => {
+      // To cover the case where traceContext is undefined/null,
+      // we use a getter that returns undefined after initial setup
+      let callCount = 0;
+      Object.defineProperty(mockRequest, 'traceContext', {
+        get() {
+          callCount++;
+          // Return valid context during setup (first 2 reads)
+          if (callCount <= 2) {
+            return { startTime: performance.now(), phases: {} };
+          }
+          // Return undefined when recordTrace accesses it to trigger fallback
+          return undefined;
+        },
+        set() {
+          // Allow sets during interceptor setup
+        },
+        configurable: true,
+      });
+
+      interceptor.intercept(mockContext, mockCallHandler).subscribe({
+        complete: () => {
+          setImmediate(() => {
+            const call = mockTraceService.recordTrace.mock
+              .calls[0][0] as CreateTraceInput;
+            // When context is undefined, interceptorPre falls back to 0
+            expect(call.timing.interceptorPre).toBe(0);
+            done();
+          });
+        },
+      });
+    });
   });
 });

@@ -24,6 +24,7 @@ module.exports = {
     '!src/server/app.module.ts',
     '!src/server/**/*.types.ts',
     '!src/server/modules/seeding/**',
+    '!src/server/**/index.ts', // Barrel files
     '!**/node_modules/**',
     '!**/dist/**',
   ],
@@ -32,13 +33,6 @@ module.exports = {
     global: {
       statements: 100,
       branches: 100,
-      functions: 100,
-      lines: 100,
-    },
-    // Ternary branch for future middleware instrumentation (phases.handlerStart)
-    './src/server/shared/interceptors/tracing.interceptor.ts': {
-      statements: 100,
-      branches: 95,
       functions: 100,
       lines: 100,
     },

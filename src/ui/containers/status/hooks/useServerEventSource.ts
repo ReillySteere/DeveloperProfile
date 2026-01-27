@@ -33,18 +33,12 @@ interface UseServerEventSourceResult {
  *
  * @see architecture/components/status.md
  */
-export function useServerEventSource(
-  options: UseServerEventSourceOptions,
-): UseServerEventSourceResult {
-  // Apply defaults for optional parameters
-  const baseUrl = options.baseUrl;
-  /* istanbul ignore next -- nullish coalescing defaults tested via integration */
-  const maxDataPoints = options.maxDataPoints ?? 60;
-  /* istanbul ignore next -- nullish coalescing defaults tested via integration */
-  const enabled = options.enabled ?? true;
-  /* istanbul ignore next -- nullish coalescing defaults tested via integration */
-  const chaosFlags = options.chaosFlags ?? { cpu: false, memory: false };
-
+export function useServerEventSource({
+  baseUrl,
+  maxDataPoints = 60,
+  enabled = true,
+  chaosFlags = { cpu: false, memory: false },
+}: UseServerEventSourceOptions): UseServerEventSourceResult {
   const [data, setData] = useState<TelemetrySnapshot[]>([]);
   const [connectionState, setConnectionState] =
     useState<ConnectionState>('disconnected');
@@ -94,12 +88,10 @@ export function useServerEventSource(
       setConnectionState('error');
       eventSource.close();
 
-      // Auto-reconnect after 3 seconds
+      // Auto-reconnect after 3 seconds if still enabled
+      if (!enabled) return;
       reconnectTimeoutRef.current = setTimeout(() => {
-        /* istanbul ignore else -- enabled is always true in production usage */
-        if (enabled) {
-          connect();
-        }
+        connect();
       }, 3000);
     };
   }, [url, maxDataPoints, enabled]);
@@ -109,11 +101,8 @@ export function useServerEventSource(
       clearTimeout(reconnectTimeoutRef.current);
       reconnectTimeoutRef.current = null;
     }
-    /* istanbul ignore else -- ref is always set before disconnect is called */
-    if (eventSourceRef.current) {
-      eventSourceRef.current.close();
-      eventSourceRef.current = null;
-    }
+    eventSourceRef.current?.close();
+    eventSourceRef.current = null;
     setConnectionState('disconnected');
   }, []);
 
@@ -125,12 +114,10 @@ export function useServerEventSource(
 
   // Connect/disconnect based on enabled state and chaos flags
   useEffect(() => {
-    /* istanbul ignore else -- enabled is always true in production usage */
-    if (enabled) {
-      // Clear data when chaos flags change to show fresh metrics
-      setData([]);
-      connect();
-    }
+    if (!enabled) return;
+    // Clear data when chaos flags change to show fresh metrics
+    setData([]);
+    connect();
 
     return () => {
       disconnect();

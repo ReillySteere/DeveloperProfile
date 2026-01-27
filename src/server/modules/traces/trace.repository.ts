@@ -85,7 +85,6 @@ export class TraceRepository implements ITraceRepository {
     const result = await this.#repo.delete({
       timestamp: LessThan(date),
     });
-    /* istanbul ignore next -- defensive coding, TypeORM always returns affected */
     return result.affected ?? 0;
   }
 
@@ -108,7 +107,6 @@ export class TraceRepository implements ITraceRepository {
         errorRate: string;
       }>();
 
-    /* istanbul ignore next -- defensive coding, getRawOne always returns an object */
     return {
       totalCount: parseInt(result?.totalCount ?? '0', 10),
       avgDuration: parseFloat(result?.avgDuration ?? '0'),
@@ -116,7 +114,6 @@ export class TraceRepository implements ITraceRepository {
     };
   }
 
-  /* istanbul ignore next -- default parameter branch */
   async getHourlyStats(hours: number = 24): Promise<HourlyStatsResult[]> {
     const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
 
@@ -152,17 +149,15 @@ export class TraceRepository implements ITraceRepository {
     const results: HourlyStatsResult[] = [];
     for (const [hour, bucket] of hourlyMap) {
       const count = bucket.durations.length;
-      /* istanbul ignore next -- defensive: count is always > 0 when bucket exists */
-      const avgDuration =
-        bucket.durations.reduce((a, b) => a + b, 0) / count || 0;
-      /* istanbul ignore next -- defensive: count is always > 0 when bucket exists */
-      const errorRate = (bucket.errorCount / count) * 100 || 0;
+      // count is guaranteed >= 1 since we only add to hourlyMap when processing traces
+      const avgDuration = bucket.durations.reduce((a, b) => a + b, 0) / count;
+      const errorRate = (bucket.errorCount / count) * 100;
 
       // Calculate p95
       const sorted = [...bucket.durations].sort((a, b) => a - b);
       const p95Index = Math.ceil(sorted.length * 0.95) - 1;
-      /* istanbul ignore next -- defensive: sorted array always has at least 1 element */
-      const p95Duration = sorted[Math.max(0, p95Index)] ?? 0;
+      // sorted is guaranteed non-empty since count >= 1
+      const p95Duration = sorted[Math.max(0, p95Index)];
 
       results.push({
         hour,
@@ -176,7 +171,6 @@ export class TraceRepository implements ITraceRepository {
     return results;
   }
 
-  /* istanbul ignore next -- default parameter branch */
   async getEndpointStats(limit: number = 20): Promise<EndpointStatsResult[]> {
     const result = await this.#repo
       .createQueryBuilder('trace')
@@ -205,7 +199,6 @@ export class TraceRepository implements ITraceRepository {
       method: row.method,
       count: parseInt(row.count, 10),
       avgDuration: parseFloat(row.avgDuration),
-      /* istanbul ignore next -- defensive: errorRate is always set by SQL query */
       errorRate: parseFloat(row.errorRate ?? '0'),
     }));
   }

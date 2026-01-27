@@ -60,6 +60,9 @@ jobs:
       - name: 🕸️ Verify Architecture
         run: npm run depcruise:verify
 
+      - name: 🗃️ Verify Entity Sync
+        run: npm run verify:entities
+
   unit-tests:
     name: Unit Tests
     runs-on: ubuntu-latest

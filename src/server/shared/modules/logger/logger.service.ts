@@ -1,5 +1,7 @@
 import { Injectable, LoggerService } from '@nestjs/common';
 
+type LogLevel = 'error' | 'warn' | 'info' | 'debug' | 'verbose';
+
 /**
  * Structured logging service that outputs JSON in production
  * and human-readable logs in development.
@@ -43,7 +45,7 @@ export class AppLoggerService implements LoggerService {
     this.printLog('verbose', message, optionalParams);
   }
 
-  private printLog(level: string, message: string, params: unknown[]): void {
+  private printLog(level: LogLevel, message: string, params: unknown[]): void {
     const isProduction = process.env.NODE_ENV === 'production';
     const timestamp = new Date().toISOString();
 
@@ -88,23 +90,16 @@ export class AppLoggerService implements LoggerService {
     }
   }
 
-  private getLevelColor(level: string): string {
+  private getLevelColor(level: LogLevel): string {
     // ANSI color codes for terminal
-    switch (level) {
-      case 'error':
-        return '\x1b[31m'; // Red
-      case 'warn':
-        return '\x1b[33m'; // Yellow
-      case 'info':
-        return '\x1b[32m'; // Green
-      case 'debug':
-        return '\x1b[36m'; // Cyan
-      case 'verbose':
-        return '\x1b[35m'; // Magenta
-      /* istanbul ignore next -- defensive: all valid levels handled above */
-      default:
-        return '';
-    }
+    const colors: Record<LogLevel, string> = {
+      error: '\x1b[31m', // Red
+      warn: '\x1b[33m', // Yellow
+      info: '\x1b[32m', // Green
+      debug: '\x1b[36m', // Cyan
+      verbose: '\x1b[35m', // Magenta
+    };
+    return colors[level];
   }
 
   private getResetColor(): string {
