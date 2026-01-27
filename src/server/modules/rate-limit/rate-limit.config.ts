@@ -51,6 +51,26 @@ export const RATE_LIMIT_EXCLUDED_PATHS: string[] = [
 ];
 
 /**
+ * Header for bypassing rate limits in e2e tests.
+ * Only works when E2E_RATE_LIMIT_BYPASS=true is set.
+ */
+export const E2E_BYPASS_HEADER = 'x-e2e-bypass';
+
+/**
+ * Check if e2e bypass is enabled for this request.
+ * Requires both:
+ * - E2E_RATE_LIMIT_BYPASS environment variable set to 'true'
+ * - Request includes the x-e2e-bypass header
+ */
+export function isE2EBypassEnabled(
+  headers: Record<string, string | string[] | undefined>,
+): boolean {
+  const bypassEnabled = process.env.E2E_RATE_LIMIT_BYPASS === 'true';
+  const hasHeader = headers[E2E_BYPASS_HEADER] !== undefined;
+  return bypassEnabled && hasHeader;
+}
+
+/**
  * Check if a path matches a glob pattern.
  * Supports:
  * - Exact match: "/api/blog"

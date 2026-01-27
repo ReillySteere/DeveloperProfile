@@ -234,4 +234,45 @@ describe('RateLimiterGuard (unit)', () => {
       );
     });
   });
+
+  describe('e2e bypass', () => {
+    const originalEnv = process.env.E2E_RATE_LIMIT_BYPASS;
+
+    afterEach(() => {
+      if (originalEnv === undefined) {
+        delete process.env.E2E_RATE_LIMIT_BYPASS;
+      } else {
+        process.env.E2E_RATE_LIMIT_BYPASS = originalEnv;
+      }
+    });
+
+    it('should bypass rate limiting when env var and header are set', async () => {
+      process.env.E2E_RATE_LIMIT_BYPASS = 'true';
+      mockRequest.headers['x-e2e-bypass'] = 'true';
+
+      const result = await guard.canActivate(createMockContext());
+
+      expect(result).toBe(true);
+      expect(mockRateLimitService.checkLimit).not.toHaveBeenCalled();
+    });
+
+    it('should not bypass when env var is not set', async () => {
+      delete process.env.E2E_RATE_LIMIT_BYPASS;
+      mockRequest.headers['x-e2e-bypass'] = 'true';
+      mockRateLimitService.checkLimit.mockResolvedValue(allowedResult);
+
+      await guard.canActivate(createMockContext());
+
+      expect(mockRateLimitService.checkLimit).toHaveBeenCalled();
+    });
+
+    it('should not bypass when header is missing', async () => {
+      process.env.E2E_RATE_LIMIT_BYPASS = 'true';
+      mockRateLimitService.checkLimit.mockResolvedValue(allowedResult);
+
+      await guard.canActivate(createMockContext());
+
+      expect(mockRateLimitService.checkLimit).toHaveBeenCalled();
+    });
+  });
 });

@@ -54,48 +54,5 @@ module.exports = {
       functions: 100,
       lines: 100,
     },
-    // Traces module - Phase 2 observability components with SSE/chart edge cases
-    './src/ui/containers/status/traces/trace-detail.container.tsx': {
-      statements: 100,
-      branches: 91,
-      functions: 100,
-      lines: 100,
-    },
-    './src/ui/containers/status/traces/components/TraceRow.tsx': {
-      statements: 89,
-      branches: 85,
-      functions: 100,
-      lines: 100,
-    },
-    './src/ui/containers/status/traces/components/TimingWaterfall.tsx': {
-      statements: 90,
-      branches: 75,
-      functions: 100,
-      lines: 93,
-    },
-    './src/ui/containers/status/traces/components/TraceTrends.tsx': {
-      statements: 70,
-      branches: 47,
-      functions: 60,
-      lines: 68,
-    },
-    './src/ui/containers/status/traces/components/EndpointBreakdown.tsx': {
-      statements: 86,
-      branches: 76,
-      functions: 100,
-      lines: 86,
-    },
-    './src/ui/containers/status/traces/components/AlertsPanel.tsx': {
-      statements: 97,
-      branches: 90,
-      functions: 100,
-      lines: 100,
-    },
-    './src/ui/containers/status/traces/hooks/useTraces.ts': {
-      statements: 89,
-      branches: 61,
-      functions: 85,
-      lines: 90,
-    },
   },
 };

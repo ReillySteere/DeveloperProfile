@@ -29,6 +29,11 @@ export default defineConfig({
 
     /* Take screenshot on failure */
     screenshot: 'only-on-failure',
+
+    /* Custom headers for all requests - bypass rate limiting in e2e tests */
+    extraHTTPHeaders: {
+      'x-e2e-bypass': 'true',
+    },
   },
 
   /* Configure projects for major browsers */
@@ -45,5 +50,9 @@ export default defineConfig({
     url: process.env.CI ? 'http://localhost:3000' : 'http://localhost:8081',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000, // 2 minutes to start
+    env: {
+      /* Enable rate limit bypass for e2e tests */
+      E2E_RATE_LIMIT_BYPASS: 'true',
+    },
   },
 });

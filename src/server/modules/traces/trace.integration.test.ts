@@ -2,9 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ScheduleModule } from '@nestjs/schedule';
+import { NotFoundException } from '@nestjs/common';
 import { TraceModule } from './trace.module';
 import { ITraceService, CreateTraceInput } from './trace.service';
+import { TraceAlertService } from './trace-alert.service';
 import { RequestTrace, PhaseTiming } from './trace.entity';
+import { AlertHistory } from './alert-history.entity';
 import { TraceController } from './trace.controller';
 import { User } from 'server/shared/modules/auth/user.entity';
 import TOKENS from './tokens';
@@ -12,6 +15,7 @@ import TOKENS from './tokens';
 describe('Trace Integration', () => {
   let module: TestingModule;
   let service: ITraceService;
+  let alertService: TraceAlertService;
   let controller: TraceController;
 
   const mockTiming: PhaseTiming = {
@@ -42,7 +46,7 @@ describe('Trace Integration', () => {
         TypeOrmModule.forRoot({
           type: 'better-sqlite3',
           database: ':memory:',
-          entities: [RequestTrace, User],
+          entities: [RequestTrace, AlertHistory, User],
           synchronize: true,
         }),
         EventEmitterModule.forRoot(),
@@ -52,6 +56,7 @@ describe('Trace Integration', () => {
     }).compile();
 
     service = module.get<ITraceService>(TOKENS.ITraceService);
+    alertService = module.get<TraceAlertService>(TOKENS.ITraceAlertService);
     controller = module.get<TraceController>(TraceController);
   });
 
@@ -327,6 +332,254 @@ describe('Trace Integration', () => {
 
       expect(result).toHaveProperty('deleted');
       expect(typeof result.deleted).toBe('number');
+    });
+
+    it('should return an observable for alert stream', () => {
+      const result = controller.streamAlerts();
+
+      expect(result).toBeDefined();
+      expect(typeof result.subscribe).toBe('function');
+    });
+
+    it('should return alert rules', () => {
+      const rules = controller.getAlertRules();
+
+      expect(Array.isArray(rules)).toBe(true);
+      expect(rules.length).toBeGreaterThan(0);
+      expect(rules[0]).toHaveProperty('name');
+      expect(rules[0]).toHaveProperty('metric');
+      expect(rules[0]).toHaveProperty('threshold');
+    });
+
+    it('should return alert history', async () => {
+      const history = await controller.getAlertHistory();
+
+      expect(Array.isArray(history)).toBe(true);
+    });
+
+    it('should return alert history with custom limit', async () => {
+      const history = await controller.getAlertHistory('5');
+
+      expect(Array.isArray(history)).toBe(true);
+    });
+
+    it('should return unresolved alerts', async () => {
+      const unresolved = await controller.getUnresolvedAlerts();
+
+      expect(Array.isArray(unresolved)).toBe(true);
+    });
+
+    it('should throw NotFoundException when resolving non-existent alert', async () => {
+      await expect(
+        controller.resolveAlert('999999', { notes: 'test' }),
+      ).rejects.toThrow(NotFoundException);
+    });
+
+    it('should resolve an existing alert via controller', async () => {
+      // First trigger an alert via the service
+      const rules = alertService.getAlertRules();
+      const testRule = rules.find((r) => r.enabled);
+
+      if (testRule) {
+        alertService.clearCooldown(testRule.name);
+        await alertService.triggerAlert(testRule, 9999);
+
+        // Get the most recent unresolved alert
+        const alerts = await controller.getUnresolvedAlerts();
+        expect(alerts.length).toBeGreaterThan(0);
+
+        const alertToResolve = alerts[0];
+
+        // Resolve via controller
+        const resolved = await controller.resolveAlert(
+          String(alertToResolve.id),
+          { notes: 'Resolved via controller test' },
+        );
+
+        expect(resolved).toBeDefined();
+        expect(resolved.resolved).toBe(true);
+        expect(resolved.notes).toBe('Resolved via controller test');
+      }
+    });
+  });
+
+  describe('TraceAlertService', () => {
+    beforeEach(() => {
+      // Clear cooldowns before each test
+      const rules = alertService.getAlertRules();
+      rules.forEach((rule) => alertService.clearCooldown(rule.name));
+    });
+
+    it('should return alert rules', () => {
+      const rules = alertService.getAlertRules();
+
+      expect(Array.isArray(rules)).toBe(true);
+      expect(rules.length).toBeGreaterThan(0);
+
+      // Verify rules are copies (modifying doesn't affect original)
+      const originalLength = rules.length;
+      rules.pop();
+      expect(alertService.getAlertRules().length).toBe(originalLength);
+    });
+
+    it('should check alerts without errors', async () => {
+      const results = await alertService.checkAlerts();
+
+      expect(Array.isArray(results)).toBe(true);
+      results.forEach((result) => {
+        expect(result).toHaveProperty('ruleName');
+        expect(result).toHaveProperty('triggered');
+        expect(result).toHaveProperty('currentValue');
+        expect(result).toHaveProperty('threshold');
+      });
+    });
+
+    it('should evaluate a rule', async () => {
+      const rules = alertService.getAlertRules();
+      const testRule = rules.find((r) => r.enabled);
+
+      if (testRule) {
+        const result = await alertService.evaluateRule(testRule);
+
+        expect(result).toHaveProperty('ruleName', testRule.name);
+        expect(result).toHaveProperty('triggered');
+        expect(result).toHaveProperty('currentValue');
+        expect(result).toHaveProperty('threshold', testRule.threshold);
+        expect(result).toHaveProperty('inCooldown');
+      }
+    });
+
+    it('should get recent alerts', async () => {
+      const alerts = await alertService.getRecentAlerts(10);
+
+      expect(Array.isArray(alerts)).toBe(true);
+    });
+
+    it('should get recent alerts with default limit', async () => {
+      // Call without limit parameter to cover default branch
+      const alerts = await alertService.getRecentAlerts();
+
+      expect(Array.isArray(alerts)).toBe(true);
+    });
+
+    it('should get unresolved alerts', async () => {
+      const alerts = await alertService.getUnresolvedAlerts();
+
+      expect(Array.isArray(alerts)).toBe(true);
+    });
+
+    it('should return null when resolving non-existent alert', async () => {
+      const result = await alertService.resolveAlert(999999);
+
+      expect(result).toBeNull();
+    });
+
+    it('should cleanup old alerts without error', async () => {
+      const deleted = await alertService.cleanupOldAlerts();
+
+      expect(typeof deleted).toBe('number');
+    });
+
+    it('should manage cooldowns correctly', async () => {
+      const rules = alertService.getAlertRules();
+      const testRule = rules.find((r) => r.enabled);
+
+      if (testRule) {
+        // Initially not in cooldown
+        let result = await alertService.evaluateRule(testRule);
+        expect(result.inCooldown).toBe(false);
+
+        // Trigger alert to set cooldown
+        await alertService.triggerAlert(testRule, 9999);
+
+        // Now should be in cooldown
+        result = await alertService.evaluateRule(testRule);
+        expect(result.inCooldown).toBe(true);
+
+        // Clear cooldown
+        alertService.clearCooldown(testRule.name);
+
+        // No longer in cooldown
+        result = await alertService.evaluateRule(testRule);
+        expect(result.inCooldown).toBe(false);
+      }
+    });
+
+    it('should record alert history when triggered', async () => {
+      const rules = alertService.getAlertRules();
+      const testRule = rules.find((r) => r.enabled);
+
+      if (testRule) {
+        const beforeCount = (await alertService.getRecentAlerts(100)).length;
+
+        await alertService.triggerAlert(testRule, 9999);
+
+        const afterCount = (await alertService.getRecentAlerts(100)).length;
+        expect(afterCount).toBe(beforeCount + 1);
+      }
+    });
+
+    it('should resolve alert with notes', async () => {
+      const rules = alertService.getAlertRules();
+      const testRule = rules.find((r) => r.enabled);
+
+      if (testRule) {
+        // Clear cooldown and trigger a new alert
+        alertService.clearCooldown(testRule.name);
+        await alertService.triggerAlert(testRule, 9999);
+
+        // Get the most recent alert
+        const alerts = await alertService.getRecentAlerts(1);
+        expect(alerts.length).toBeGreaterThan(0);
+
+        const alertToResolve = alerts[0];
+
+        // Resolve it
+        const resolved = await alertService.resolveAlert(
+          alertToResolve.id,
+          'Test resolution note',
+        );
+
+        expect(resolved).not.toBeNull();
+        expect(resolved!.resolved).toBe(true);
+        expect(resolved!.notes).toBe('Test resolution note');
+        expect(resolved!.resolvedAt).toBeDefined();
+      }
+    });
+
+    it('should resolve alert without notes', async () => {
+      const rules = alertService.getAlertRules();
+      const testRule = rules.find((r) => r.enabled);
+
+      if (testRule) {
+        // Clear cooldown and trigger a new alert
+        alertService.clearCooldown(testRule.name);
+        await alertService.triggerAlert(testRule, 9999);
+
+        // Get the most recent unresolved alert
+        const alerts = await alertService.getUnresolvedAlerts();
+        expect(alerts.length).toBeGreaterThan(0);
+
+        const alertToResolve = alerts[0];
+
+        // Resolve without notes
+        const resolved = await alertService.resolveAlert(alertToResolve.id);
+
+        expect(resolved).not.toBeNull();
+        expect(resolved!.resolved).toBe(true);
+      }
+    });
+
+    it('should get window stats', async () => {
+      // Create some traces for stats
+      await service.recordTrace(createTraceInput({ durationMs: 100 }));
+      await service.recordTrace(createTraceInput({ durationMs: 200 }));
+
+      const stats = await alertService.getWindowStats(60);
+
+      expect(stats).toHaveProperty('totalCount');
+      expect(stats).toHaveProperty('avgDuration');
+      expect(stats).toHaveProperty('errorRate');
     });
   });
 });

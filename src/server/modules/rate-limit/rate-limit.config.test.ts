@@ -3,6 +3,8 @@ import {
   findMatchingRule,
   isExcludedPath,
   generateKey,
+  isE2EBypassEnabled,
+  E2E_BYPASS_HEADER,
   DEFAULT_RATE_LIMIT_RULES,
   RATE_LIMIT_EXCLUDED_PATHS,
 } from './rate-limit.config';
@@ -143,6 +145,52 @@ describe('rate-limit.config', () => {
     it('should include health and streaming endpoints', () => {
       expect(RATE_LIMIT_EXCLUDED_PATHS).toContain('/api/health');
       expect(RATE_LIMIT_EXCLUDED_PATHS).toContain('/api/traces/stream');
+    });
+  });
+
+  describe('isE2EBypassEnabled', () => {
+    const originalEnv = process.env.E2E_RATE_LIMIT_BYPASS;
+
+    afterEach(() => {
+      if (originalEnv === undefined) {
+        delete process.env.E2E_RATE_LIMIT_BYPASS;
+      } else {
+        process.env.E2E_RATE_LIMIT_BYPASS = originalEnv;
+      }
+    });
+
+    it('should export E2E_BYPASS_HEADER constant', () => {
+      expect(E2E_BYPASS_HEADER).toBe('x-e2e-bypass');
+    });
+
+    it('should return true when both env var and header are present', () => {
+      process.env.E2E_RATE_LIMIT_BYPASS = 'true';
+      const headers = { 'x-e2e-bypass': 'true' };
+      expect(isE2EBypassEnabled(headers)).toBe(true);
+    });
+
+    it('should return false when env var is not set', () => {
+      delete process.env.E2E_RATE_LIMIT_BYPASS;
+      const headers = { 'x-e2e-bypass': 'true' };
+      expect(isE2EBypassEnabled(headers)).toBe(false);
+    });
+
+    it('should return false when env var is set but header is missing', () => {
+      process.env.E2E_RATE_LIMIT_BYPASS = 'true';
+      const headers = {};
+      expect(isE2EBypassEnabled(headers)).toBe(false);
+    });
+
+    it('should return false when env var is set to something other than "true"', () => {
+      process.env.E2E_RATE_LIMIT_BYPASS = 'yes';
+      const headers = { 'x-e2e-bypass': 'true' };
+      expect(isE2EBypassEnabled(headers)).toBe(false);
+    });
+
+    it('should work with empty string header value', () => {
+      process.env.E2E_RATE_LIMIT_BYPASS = 'true';
+      const headers = { 'x-e2e-bypass': '' };
+      expect(isE2EBypassEnabled(headers)).toBe(true);
     });
   });
 });

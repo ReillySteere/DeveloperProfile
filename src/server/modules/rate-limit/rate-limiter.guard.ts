@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import type { IRateLimitService } from './rate-limit.types';
+import { isE2EBypassEnabled } from './rate-limit.config';
 import TOKENS from './tokens';
 
 /**
@@ -19,6 +20,9 @@ import TOKENS from './tokens';
  * - X-RateLimit-Remaining: Requests remaining in current window
  * - X-RateLimit-Reset: Unix timestamp when window resets
  * - Retry-After: Seconds until window resets (only on 429)
+ *
+ * Supports e2e test bypass via x-e2e-bypass header when
+ * E2E_RATE_LIMIT_BYPASS=true environment variable is set.
  *
  * @see ADR-013: Rate Limiting and Advanced Visualization
  */
@@ -32,6 +36,11 @@ export class RateLimiterGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const response: Response = context.switchToHttp().getResponse();
+
+    // Check for e2e test bypass
+    if (isE2EBypassEnabled(request.headers)) {
+      return true;
+    }
 
     // Extract request info
     const ip = this.getClientIp(request);

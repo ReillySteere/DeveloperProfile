@@ -1,5 +1,10 @@
 import { test, expect } from '@playwright/test';
 
+// These tests need to actually test rate limiting, so disable the bypass header
+test.use({
+  extraHTTPHeaders: {}, // Override the global bypass header
+});
+
 test.describe('Rate Limiting', () => {
   test('should include rate limit headers on API responses', async ({
     request,

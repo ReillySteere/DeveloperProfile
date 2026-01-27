@@ -178,7 +178,6 @@ export class TraceController {
   @ApiResponse({ status: 200, description: 'SSE stream of new traces' })
   streamTraces(): Observable<MessageEvent> {
     return fromEvent<RequestTrace>(this.#eventEmitter, 'trace.created').pipe(
-      /* istanbul ignore next -- callback is tested via SSE integration, hard to unit test with EventEmitter2 */
       map((trace) => ({
         data: trace,
       })),
@@ -194,7 +193,6 @@ export class TraceController {
   @ApiResponse({ status: 200, description: 'SSE stream of alerts' })
   streamAlerts(): Observable<MessageEvent> {
     return fromEvent<AlertEvent>(this.#eventEmitter, 'alert.triggered').pipe(
-      /* istanbul ignore next -- callback tested via SSE integration */
       map((alert) => ({
         data: alert,
       })),

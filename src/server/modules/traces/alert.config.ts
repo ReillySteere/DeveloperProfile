@@ -60,6 +60,16 @@ export const defaultAlertRules: AlertRule[] = [
     channels: ['sentry', 'log'],
     enabled: true,
   },
+  // Example disabled rule - demonstrates the feature
+  {
+    name: 'Extreme Latency (Disabled)',
+    metric: 'avgDuration',
+    threshold: 5000, // 5 second average - very high
+    windowMinutes: 15,
+    cooldownMinutes: 120,
+    channels: ['email'],
+    enabled: false,
+  },
 ];
 
 /**
