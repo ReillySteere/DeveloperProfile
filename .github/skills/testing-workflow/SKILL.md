@@ -186,27 +186,105 @@ describe('BlogModule (Integration)', () => {
 
 - **Strategy**: Container-level integration tests. Avoid testing leaf components in isolation unless they are shared library components.
 - **Rendering**: ALWAYS use `render` from `ui/test-utils` (wraps QueryClient).
-- **Mocking**:
-  - Mock network requests by mocking `axios`.
-  - Mock **global state hooks** (like `useAuth`) when needed to control auth state.
-  - Do **not** mock feature-specific data hooks (like `useBlog`); let them execute and mock `axios` instead.
+- **API Mocking**: Use **MSW (Mock Service Worker)** for network-level API mocking. This is the preferred approach over axios mocks.
+- **User Interactions**: Use **@testing-library/user-event** for realistic user interaction simulation.
+- **Global State**: Mock **global state hooks** (like `useAuth`) when needed to control auth state.
+
+### MSW Setup (Preferred for API Mocking)
+
+MSW intercepts requests at the network level, providing more realistic testing:
+
+```typescript
+// Using MSW handlers from test-utils
+import { render, screen, waitFor, userEvent } from 'ui/test-utils';
+import { server, createBlogHandlers } from 'ui/test-utils/msw';
+
+describe('BlogContainer', () => {
+  it('should display blog posts after loading', async () => {
+    // Default handlers are already set up in jest-preloaded.ts
+    render(<BlogContainer />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Post')).toBeInTheDocument();
+    });
+  });
+
+  it('should handle API errors', async () => {
+    // Override handlers for error scenario
+    server.use(
+      http.get('/api/blog', () => {
+        return new HttpResponse(null, { status: 500 });
+      }),
+    );
+
+    render(<BlogContainer />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/error/i)).toBeInTheDocument();
+    });
+  });
+});
+```
+
+### Available MSW Handler Factories
+
+| Factory                        | Endpoints                                                |
+| ------------------------------ | -------------------------------------------------------- |
+| `createTraceHandlers()`        | `/api/traces/*`, alerts, stats                           |
+| `createExperienceHandlers()`   | `/api/experience`                                        |
+| `createProjectHandlers()`      | `/api/projects`                                          |
+| `createBlogHandlers()`         | `/api/blog`, `/api/blog/:slug`                           |
+| `createAboutHandlers()`        | `/api/about/resume`                                      |
+| `createArchitectureHandlers()` | `/api/architecture/adrs`, `/api/architecture/components` |
+| `createAuthHandlers()`         | `/api/auth/login`, `/api/auth/logout`                    |
+
+### userEvent for Interactions (Required)
+
+Always use `userEvent` instead of `fireEvent` for user interactions:
+
+```typescript
+import { render, screen, waitFor, userEvent } from 'ui/test-utils';
+
+it('should submit form when button is clicked', async () => {
+  const user = userEvent.setup();
+
+  render(<MyForm />);
+
+  await user.type(screen.getByLabelText('Username'), 'demo');
+  await user.type(screen.getByLabelText('Password'), 'password');
+  await user.click(screen.getByRole('button', { name: /submit/i }));
+
+  await waitFor(() => {
+    expect(screen.getByText('Success')).toBeInTheDocument();
+  });
+});
+
+// For keyboard events
+await user.keyboard('{Escape}');
+await user.keyboard('{Enter}');
+```
+
+### Legacy: Axios Mocking (Deprecated)
+
+**Note:** Axios mocking is still supported but MSW is preferred for new tests.
+
+```typescript
+// Legacy pattern - still works but prefer MSW
+jest.mock('axios');
+const mockAxios = axios as jest.Mocked<typeof axios>;
+
+mockAxios.get.mockResolvedValue({ data: [...] });
+```
 
 ### Example: UI Container Integration Test
 
 ```typescript
 // blog.container.test.tsx
-import { render, screen, waitFor } from 'ui/test-utils';
-import axios from 'axios';
-import { useAuth } from 'ui/shared/hooks/useAuth';
+import { render, screen, waitFor, userEvent } from 'ui/test-utils';
+import { server, createBlogHandlers } from 'ui/test-utils/msw';
+import { http, HttpResponse } from 'msw';
+import { useAuthStore } from 'ui/shared/hooks/useAuthStore';
 import { BlogContainer } from './blog.container';
-
-// Mock axios at module level
-jest.mock('axios');
-const mockAxios = axios as jest.Mocked<typeof axios>;
-
-// Mock auth hook (global state, not feature-specific)
-jest.mock('ui/shared/hooks/useAuth');
-const mockUseAuth = useAuth as jest.MockedFunction<typeof useAuth>;
 
 // Mock ESM libraries that cause issues
 jest.mock('react-markdown', () => ({
@@ -217,11 +295,18 @@ jest.mock('react-markdown', () => ({
 describe('BlogContainer', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseAuth.mockReturnValue({ isAuthenticated: false, token: null });
+    // Reset auth state
+    useAuthStore.setState({ isAuthenticated: false, token: null });
   });
 
-  it('should display loading state initially', () => {
-    mockAxios.get.mockReturnValue(new Promise(() => {})); // Never resolves
+  it('should display loading state initially', async () => {
+    // Use MSW with delay to show loading state
+    server.use(
+      http.get('/api/blog', async () => {
+        await new Promise((r) => setTimeout(r, 100));
+        return HttpResponse.json([]);
+      }),
+    );
 
     render(<BlogContainer />);
 
@@ -229,23 +314,20 @@ describe('BlogContainer', () => {
   });
 
   it('should display blog posts after loading', async () => {
-    mockAxios.get.mockResolvedValue({
-      data: [
-        { id: '1', title: 'First Post', slug: 'first-post' },
-        { id: '2', title: 'Second Post', slug: 'second-post' },
-      ],
-    });
-
+    // Default handlers already provide mock data
     render(<BlogContainer />);
 
     await waitFor(() => {
-      expect(screen.getByText('First Post')).toBeInTheDocument();
-      expect(screen.getByText('Second Post')).toBeInTheDocument();
+      expect(screen.getByText('Test Post')).toBeInTheDocument();
     });
   });
 
   it('should display error state when API fails', async () => {
-    mockAxios.get.mockRejectedValue(new Error('Network error'));
+    server.use(
+      http.get('/api/blog', () => {
+        return new HttpResponse(null, { status: 500 });
+      }),
+    );
 
     render(<BlogContainer />);
 
@@ -255,7 +337,7 @@ describe('BlogContainer', () => {
   });
 
   it('should display empty state when no posts exist', async () => {
-    mockAxios.get.mockResolvedValue({ data: [] });
+    server.use(...createBlogHandlers({ posts: [] }));
 
     render(<BlogContainer />);
 
@@ -266,16 +348,23 @@ describe('BlogContainer', () => {
 });
 ```
 
-### Example: Testing User Interactions
+### Example: Testing User Interactions with userEvent
 
 ```typescript
-import { render, screen, waitFor } from 'ui/test-utils';
-import userEvent from '@testing-library/user-event';
+import { render, screen, waitFor, userEvent } from 'ui/test-utils';
+import { server } from 'ui/test-utils/msw';
+import { http, HttpResponse } from 'msw';
 
 it('should create a new post when form is submitted', async () => {
   const user = userEvent.setup();
-  mockAxios.get.mockResolvedValue({ data: [] });
-  mockAxios.post.mockResolvedValue({ data: { id: '1', title: 'New Post' } });
+  let capturedBody: any;
+
+  server.use(
+    http.post('/api/blog', async ({ request }) => {
+      capturedBody = await request.json();
+      return HttpResponse.json({ id: '1', ...capturedBody }, { status: 201 });
+    }),
+  );
 
   render(<CreateBlogPostContainer />);
 
@@ -284,7 +373,7 @@ it('should create a new post when form is submitted', async () => {
   await user.click(screen.getByRole('button', { name: /submit/i }));
 
   await waitFor(() => {
-    expect(mockAxios.post).toHaveBeenCalledWith('/api/blog', {
+    expect(capturedBody).toEqual({
       title: 'New Post',
       content: 'Post content',
     });

@@ -13,6 +13,7 @@ import { FixProjectsTableName1769267844749 } from '../migrations/1769267844749-F
 import { CreateRequestTraceTable1769293753892 } from '../migrations/1769293753892-CreateRequestTraceTable';
 import { CreateAlertHistoryTable1769489440468 } from '../migrations/1769489440468-CreateAlertHistoryTable';
 import { CreateRateLimitTable1769489275619 } from '../migrations/1769489275619-CreateRateLimitTable';
+import { AddAlertHistoryResolvedAtColumn1769489440469 } from '../migrations/1769489440469-AddAlertHistoryResolvedAtColumn';
 
 /**
  * Integration test that verifies migrations create all required tables.
@@ -51,6 +52,7 @@ describe('Migration Integration', () => {
     CreateRequestTraceTable1769293753892,
     CreateAlertHistoryTable1769489440468,
     CreateRateLimitTable1769489275619,
+    AddAlertHistoryResolvedAtColumn1769489440469,
   ];
 
   beforeAll(async () => {
@@ -148,6 +150,34 @@ describe('Migration Integration', () => {
       expect(
         indexNames.some((name: string) => name.includes('expiresAt')),
       ).toBe(true);
+    } finally {
+      await queryRunner.release();
+    }
+  });
+
+  it('should have correct schema for alert_history table', async () => {
+    const queryRunner = dataSource.createQueryRunner();
+
+    try {
+      const columns = await queryRunner.query(`
+        PRAGMA table_info(alert_history)
+      `);
+
+      const columnNames = columns.map((c: { name: string }) => c.name);
+
+      // Core columns from original migration
+      expect(columnNames).toContain('id');
+      expect(columnNames).toContain('ruleName');
+      expect(columnNames).toContain('metric');
+      expect(columnNames).toContain('threshold');
+      expect(columnNames).toContain('actualValue');
+      expect(columnNames).toContain('triggeredAt');
+      expect(columnNames).toContain('channels');
+      expect(columnNames).toContain('resolved');
+
+      // Columns added in follow-up migration
+      expect(columnNames).toContain('resolvedAt');
+      expect(columnNames).toContain('notes');
     } finally {
       await queryRunner.release();
     }
