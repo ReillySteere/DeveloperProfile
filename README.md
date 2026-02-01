@@ -24,8 +24,10 @@ A full-stack developer profile application built with a modern React frontend an
 ### Testing
 
 - **Unit/Integration:** Jest (configured for both Node and Browser environments)
+- **API Mocking:** MSW (Mock Service Worker) with custom axios fetch adapter for network-level mocking
 - **E2E:** Playwright (Chromium) for end-to-end testing
 - **Quality Gates:** Husky `pre-push` hooks enforce strict testing, linting, and dependency validation before code can be pushed.
+- **Coverage:** 100% required for server; frontend targets 100% (see [ADR-015](architecture/decisions/ADR-015-testing-strategy.md))
 
 ## Project Setup Instructions
 
@@ -250,6 +252,59 @@ Detailed architectural documentation for each feature can be found here:
 - [ADR-010: Request Tracing & Observability](architecture/decisions/ADR-010-request-tracing-observability.md)
 - [ADR-011: Event-Driven Architecture](architecture/decisions/ADR-011-event-driven-architecture.md)
 - [ADR-012: Scheduled Tasks and Maintenance](architecture/decisions/ADR-012-scheduled-tasks-and-maintenance.md)
+- [ADR-013: Rate Limiting Visualization](architecture/decisions/ADR-013-rate-limiting-visualization.md)
+- [ADR-014: AI Tooling Architecture](architecture/decisions/ADR-014-ai-tooling-architecture.md)
+- [ADR-015: Testing Strategy](architecture/decisions/ADR-015-testing-strategy.md)
+- [ADR-016: Test Utilities Architecture](architecture/decisions/ADR-016-test-utilities-architecture.md)
+- [ADR-017: Frontend State Management](architecture/decisions/ADR-017-frontend-state-management.md)
+- [ADR-018: Container-Component Pattern](architecture/decisions/ADR-018-container-component-pattern.md)
+- [ADR-019: Styling Architecture](architecture/decisions/ADR-019-styling-architecture.md)
+- [ADR-020: Frontend Authentication Architecture](architecture/decisions/ADR-020-frontend-authentication-architecture.md)
+- [ADR-021: Axios Fetch Adapter for MSW Compatibility](architecture/decisions/ADR-021-axios-fetch-adapter-for-msw.md)
+
+## AI Tooling & Claude Support
+
+This repository is optimized for AI-assisted development with comprehensive documentation and tooling:
+
+### Skills System
+
+**Skills** are domain-specific knowledge modules located in [.github/skills/](.github/skills/) that guide AI agents through complex workflows:
+
+- **15 Skills Available:** API design, code review, architecture navigation, database migrations, debugging, dependency enforcement, error handling, documentation review, feature scaffolding, documentation standards, observability, routing, security, state management, and testing workflows.
+- **Index:** See [.github/skills/README.md](.github/skills/README.md) for the complete catalog.
+
+### Claude Desktop Integration
+
+For Claude Desktop users, synchronize the skills system to your Claude configuration:
+
+```bash
+npm run sync:claude-skills
+```
+
+This command:
+
+1. Copies all skills from `.github/skills/` to your Claude Desktop knowledge directory
+2. Updates the Claude configuration to include this repository's skills
+3. Enables Claude Desktop to use project-specific workflows and patterns
+
+**Configuration Location:**
+
+- **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+- **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Linux:** `~/.config/Claude/claude_desktop_config.json`
+
+### Main Instructions
+
+The [.github/copilot-instructions.md](.github/copilot-instructions.md) file contains comprehensive guidance for AI assistants including:
+
+- Architecture overview and patterns
+- Critical workflows (build, test, lint)
+- Code generation requirements
+- Backend and frontend patterns
+- Testing specifics with MSW
+- Key files and their roles
+
+See [ADR-014](architecture/decisions/ADR-014-ai-tooling-architecture.md) for the complete AI tooling architecture decision.
 
 ## Key Features
 

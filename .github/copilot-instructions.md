@@ -18,7 +18,7 @@
 
 - **Start:** `npm start` (concurrently runs `start:server:dev` and `start:ui`).
 - **Test:** `npm test` (runs `test:server` and `test:ui`).
-  - **Coverage:** 100% required for server; frontend targets 100% (currently 92-98% during MSW migration). See ADR-015.
+  - **Coverage:** 100% required for server; frontend targets 100% (currently 92-98% with 8 legacy tests using axios mocks). See ADR-015 and ADR-021.
 - **Lint:** `npm run lint` (ESLint + Prettier + React Compiler).
 - **Format:** `npm run format` (runs `format:server` and `format:ui`).
 - **Type Check:** `npm run type-check` (runs `tsc --noEmit`).
@@ -135,7 +135,7 @@
 - **UI Utils:** Located in `src/ui/test-utils/` (aliased as `test-utils` in Jest).
 - **API Mocking:**
   - **MSW (Preferred):** Network-level mocking via `ui/test-utils/msw`. Handlers defined in `src/ui/test-utils/msw/handlers.ts`.
-  - **axios mocks (Legacy):** Still supported but MSW is preferred for new tests.
+  - **axios mocks (Legacy):** 8 existing tests still use jest.mock('axios'). For new tests, use MSW handlers. See ADR-021 for the axios fetch adapter that enables MSW with axios.
 - **Mocks:**
   - Use `jest.mock` with `__esModule: true`.
   - Prefix mock variables with `mock` (e.g., `mockUpdate`).
