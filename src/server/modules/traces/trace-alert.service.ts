@@ -13,6 +13,7 @@ import {
 import type { WindowStats, AlertCheckResult } from './trace-alert.types';
 import type { ITraceRepository } from './trace.types';
 import TOKENS from './tokens';
+import { TRACE_EVENTS } from './events';
 import {
   IAlertChannel,
   SentryAlertChannel,
@@ -166,7 +167,7 @@ export class TraceAlertService implements OnModuleInit {
         totalRequests: stats.totalCount,
       },
     };
-    this.#eventEmitter.emit('alert.triggered', event);
+    this.#eventEmitter.emit(TRACE_EVENTS.ALERT_TRIGGERED, event);
   }
 
   /**

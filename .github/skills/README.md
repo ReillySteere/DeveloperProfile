@@ -2,26 +2,20 @@
 
 This directory contains skills that provide domain-specific knowledge to AI agents working in this repository.
 
-## Pre-Push Review Workflow
+## Validation Workflow
 
-Before pushing changes, run an AI code review using your project's conventions:
+Before committing or pushing changes, validate your work:
 
 1. **Open Command Palette** (`Ctrl+Shift+P` / `Cmd+Shift+P`)
 2. **Run:** `Chat: Use Prompt from File`
-3. **Select:** `pre-push-review`
-4. **Review** the AI's findings and address any issues
+3. **Select:** `validate`
+4. **Review** the findings and address any issues
 
 This leverages the `code-review` and `doc-review` skills automatically.
 
 ### Full Documentation Audit
 
 For comprehensive documentation verification (recommended before major releases):
-
-```
-/pre-push-review --full-doc-audit
-```
-
-Or run standalone:
 
 ```
 /doc-audit

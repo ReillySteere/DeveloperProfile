@@ -269,7 +269,7 @@ export const CommentEvents = {
 ```typescript
 // src/server/modules/comments/comments.service.ts
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { CommentEvents } from './events';
+import { COMMENT_EVENTS } from './events';
 
 @Injectable()
 export class CommentsService {
@@ -277,7 +277,7 @@ export class CommentsService {
 
   async create(dto: CreateCommentDto): Promise<Comment> {
     const comment = await this.repository.save(dto);
-    this.eventEmitter.emit(CommentEvents.CREATED, comment);
+    this.eventEmitter.emit(COMMENT_EVENTS.CREATED, comment);
     return comment;
   }
 }
@@ -288,12 +288,14 @@ export class CommentsService {
 ```typescript
 // src/server/modules/comments/comments.controller.ts
 import { fromEvent } from 'rxjs';
-import { CommentEvents } from './events';
+import { COMMENT_EVENTS } from './events';
 
 @Sse('stream')
 streamComments(): Observable<MessageEvent> {
-  return fromEvent<Comment>(this.eventEmitter, CommentEvents.CREATED).pipe(
-    map((comment) => ({ data: comment })),
+  // Note: Do NOT use explicit type parameters with fromEvent (deprecated in RxJS v8)
+  // Instead, use type assertions in the callback
+  return fromEvent(this.eventEmitter, COMMENT_EVENTS.CREATED).pipe(
+    map((comment) => ({ data: comment as Comment })),
   );
 }
 ```

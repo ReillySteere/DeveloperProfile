@@ -15,6 +15,7 @@ import type {
   ITraceService,
 } from './trace.types';
 import TOKENS from './tokens';
+import { TRACE_EVENTS } from './events';
 
 // Re-export types for backward compatibility
 export type { CreateTraceInput, ITraceService } from './trace.types';
@@ -55,7 +56,7 @@ export class TraceService implements ITraceService {
     const trace = await this.#repository.create(input);
 
     // Emit event for real-time streaming
-    this.#eventEmitter.emit('trace.created', trace);
+    this.#eventEmitter.emit(TRACE_EVENTS.TRACE_CREATED, trace);
 
     return trace;
   }

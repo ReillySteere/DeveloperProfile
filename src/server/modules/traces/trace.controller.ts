@@ -34,6 +34,7 @@ import type { AlertRule, AlertEvent } from './alert.config';
 import type { AlertHistory } from './alert-history.entity';
 import { RequestTrace } from './trace.entity';
 import TOKENS from './tokens';
+import { TRACE_EVENTS } from './events';
 
 /**
  * Controller for request trace observability endpoints.
@@ -177,9 +178,9 @@ export class TraceController {
   })
   @ApiResponse({ status: 200, description: 'SSE stream of new traces' })
   streamTraces(): Observable<MessageEvent> {
-    return fromEvent<RequestTrace>(this.#eventEmitter, 'trace.created').pipe(
+    return fromEvent(this.#eventEmitter, TRACE_EVENTS.TRACE_CREATED).pipe(
       map((trace) => ({
-        data: trace,
+        data: trace as RequestTrace,
       })),
     );
   }
@@ -192,9 +193,9 @@ export class TraceController {
   })
   @ApiResponse({ status: 200, description: 'SSE stream of alerts' })
   streamAlerts(): Observable<MessageEvent> {
-    return fromEvent<AlertEvent>(this.#eventEmitter, 'alert.triggered').pipe(
+    return fromEvent(this.#eventEmitter, TRACE_EVENTS.ALERT_TRIGGERED).pipe(
       map((alert) => ({
-        data: alert,
+        data: alert as AlertEvent,
       })),
     );
   }

@@ -35,7 +35,8 @@
 - **Style:** Follow existing patterns (functional components, manual DI for server unit tests).
 - **Before/After Protocol:** Include clear before/after code snippets when proposing changes.
 - **Documentation Consistency:** When modifying any `.md` file in `.github/` or `architecture/`, review related documentation for consistency before marking the task complete. Use the `doc-review` skill.
-- **Pre-Push Audit:** Before major pushes, run `/pre-push-review --full-doc-audit` to verify all documentation matches the current codebase.
+- **Validation:** Before committing, run `/validate` to check types, lint, tests, and dependencies.
+- **Full Implementation:** For end-to-end feature work with automatic MR creation, use `/implement`.
 
 ## Backend Patterns (`src/server`)
 
@@ -58,10 +59,19 @@
   - Serves pre-generated dependency graphs from `public/data/dependency-graphs.json`.
 - **Event-Driven Architecture (EDA):**
   - Use `EventEmitter2` from `@nestjs/event-emitter` for internal events.
-  - **Event Names:** Define as constants in a dedicated `events.ts` file within the module (e.g., `src/server/modules/traces/events.ts`).
+  - **Event Names:** Define as constants in a dedicated `events.ts` file within the module (e.g., `src/server/modules/traces/events.ts`). Export a `TRACE_EVENTS` object for namespaced access.
   - **Emitting Events:** Services should emit events even if no listeners exist yet (loose coupling).
   - **Consuming Events:** Use `fromEvent()` from `rxjs` for SSE endpoints or `@OnEvent()` decorator for handlers.
-  - **Pattern:** `<domain>.<action>` (e.g., `trace.created`, `blog.published`).
+  - **Pattern:** `<domain>.<action>` (e.g., `trace.created`, `alert.triggered`).
+  - **fromEvent Typing:** Do NOT use explicit type parameters (deprecated in RxJS v8). Instead, use type assertions in the callback:
+    ```typescript
+    // ✅ Correct - type assertion in map
+    fromEvent(eventEmitter, TRACE_EVENTS.TRACE_CREATED).pipe(
+      map((trace) => ({ data: trace as RequestTrace }))
+    );
+    // ❌ Wrong - explicit type parameter (deprecated)
+    fromEvent<RequestTrace>(eventEmitter, 'trace.created').pipe(...)
+    ```
 - **Rate Limiting:**
   - Use `@nestjs/throttler` with custom `RateLimitGuard` for per-endpoint limits.
   - Configure rules in `rate-limit.config.ts` with pattern, limit, and TTL.

@@ -181,14 +181,15 @@ Request tracing captures timing, status, and path information for all API reques
 ### Key Files
 
 - `src/server/modules/traces/trace.middleware.ts` - Captures request traces
-- `src/server/modules/traces/traces.service.ts` - Trace storage and queries
+- `src/server/modules/traces/trace.service.ts` - Trace storage and queries
+- `src/server/modules/traces/events.ts` - Event name constants
 - `src/shared/types/traces.types.ts` - Trace type definitions
 
 ### Trace Data Flow
 
 ```
-Request → TraceMiddleware → TracesService.recordTrace()
-        → EventEmitter.emit('trace.created') → SSE to UI
+Request → TraceMiddleware → TraceService.recordTrace()
+        → EventEmitter.emit(TRACE_EVENTS.TRACE_CREATED) → SSE to UI
 ```
 
 ## 5. Testing Patterns

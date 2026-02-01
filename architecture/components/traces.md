@@ -83,8 +83,10 @@ Request → TracingInterceptor → Handler → Response
 
 ```typescript
 // TraceService emits event after persisting
+import { TRACE_EVENTS } from './events';
+
 const trace = await this.repository.create(input);
-this.eventEmitter.emit('trace.created', trace);
+this.eventEmitter.emit(TRACE_EVENTS.TRACE_CREATED, trace);
 ```
 
 ### 3. Real-Time Streaming (SSE)

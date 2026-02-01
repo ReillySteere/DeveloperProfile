@@ -4,6 +4,34 @@ This file tracks significant changes to AI agent documentation (skills, prompts,
 
 ---
 
+## 2026-02-01 (Prompt Consolidation)
+
+### Prompts Added
+
+- `implement.prompt.md` - Full AI workflow: assess → clarify → plan → implement → test → review → PR(s)
+- `validate.prompt.md` - Merged validation and code review checks (replaces `validate-changes` and `pre-push-review`)
+
+### Prompts Removed
+
+- `pre-push-review.prompt.md` - Merged into `validate.prompt.md`
+- `validate-changes.prompt.md` - Merged into `validate.prompt.md`
+- `scaffold-feature.prompt.md` - Absorbed into `write-code.prompt.md`
+
+### Prompts Updated
+
+- `write-code.prompt.md` - Streamlined and absorbed scaffolding patterns from `scaffold-feature`
+- `doc-audit.prompt.md` - Updated references to new `validate` prompt
+
+### Skills Updated
+
+- `README.md` - Updated workflow section to reference `validate` prompt
+
+### Other Changes
+
+- Updated `copilot-instructions.md` to reference new `validate` and `implement` prompts
+
+---
+
 ## 2026-01-17 (Phase 1-5 Implementation)
 
 ### Skills Added
@@ -16,11 +44,9 @@ This file tracks significant changes to AI agent documentation (skills, prompts,
 ### Prompts Added
 
 - `build-debug.prompt.md` - Diagnose and fix build/test failures
-- `pre-push-review.prompt.md` - AI code review before pushing
 - `doc-audit.prompt.md` - Comprehensive documentation verification
 - `create-pr.prompt.md` - Branch creation and PR workflow
 - `refactor.prompt.md` - Safe refactoring patterns
-- `validate-changes.prompt.md` - Quality gate verification
 
 ### Chat Modes Added
 
