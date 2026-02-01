@@ -13,7 +13,7 @@ import { useTraceHourlyStats } from '../hooks/useTraces';
 import styles from './TraceTrends.module.scss';
 
 interface TraceTrendsProps {
-  hours?: number;
+  hours: number;
 }
 
 function formatHour(isoString: string): string {
@@ -21,7 +21,7 @@ function formatHour(isoString: string): string {
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
-export function TraceTrends({ hours = 24 }: TraceTrendsProps): React.ReactNode {
+export function TraceTrends({ hours }: TraceTrendsProps): React.ReactNode {
   const { data: hourlyStats, isLoading, error } = useTraceHourlyStats(hours);
 
   if (isLoading) {

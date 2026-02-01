@@ -20,7 +20,7 @@ function formatTimestamp(timestamp: string): string {
 }
 
 function getMethodClass(method: string): string {
-  return styles[`method${method}`] || '';
+  return styles[`method${method}`];
 }
 
 function getStatusClass(status: number): string {
@@ -135,7 +135,6 @@ export default function TraceDetailContainer() {
           <TimingWaterfall
             timing={trace.timing}
             totalDuration={trace.durationMs}
-            expanded
           />
         </div>
 

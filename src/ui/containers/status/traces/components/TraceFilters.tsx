@@ -5,12 +5,12 @@ import styles from './TraceFilters.module.scss';
 
 interface TraceFiltersProps {
   onFiltersChange: (filters: TraceFiltersType) => void;
-  initialFilters?: TraceFiltersType;
+  initialFilters: TraceFiltersType;
 }
 
 export function TraceFilters({
   onFiltersChange,
-  initialFilters = {},
+  initialFilters,
 }: TraceFiltersProps): React.ReactNode {
   const [method, setMethod] = useState(initialFilters.method ?? '');
   const [path, setPath] = useState(initialFilters.path ?? '');
@@ -23,7 +23,7 @@ export function TraceFilters({
   const [maxDuration, setMaxDuration] = useState(
     initialFilters.maxDuration ? String(initialFilters.maxDuration) : '',
   );
-  const [limit, setLimit] = useState(String(initialFilters.limit ?? 50));
+  const [limit, setLimit] = useState(String(initialFilters.limit!));
 
   const handleApply = useCallback(() => {
     const filters: TraceFiltersType = {

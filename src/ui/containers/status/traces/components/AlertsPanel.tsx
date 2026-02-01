@@ -12,7 +12,7 @@ import styles from './AlertsPanel.module.scss';
 /**
  * Panel displaying unresolved alerts with ability to resolve them.
  */
-export function AlertsPanel(): React.ReactNode {
+function AlertsPanel(): React.ReactNode {
   const { data: alerts, isLoading, error } = useUnresolvedAlerts();
   const resolveAlert = useResolveAlert();
 
@@ -42,7 +42,8 @@ export function AlertsPanel(): React.ReactNode {
     );
   }
 
-  const unresolvedAlerts = alerts ?? [];
+  // After loading and error checks, alerts is guaranteed to be defined
+  const unresolvedAlerts = alerts!;
 
   return (
     <Card className={styles.container}>

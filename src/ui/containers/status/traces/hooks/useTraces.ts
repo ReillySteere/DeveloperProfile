@@ -14,7 +14,7 @@ import type {
 /**
  * Fetches the list of recent traces with optional filtering.
  */
-export function useTraces(filters: TraceFilters = {}) {
+export function useTraces(filters: TraceFilters) {
   return useQuery({
     queryKey: ['traces', filters],
     queryFn: async () => {
@@ -30,11 +30,8 @@ export function useTraces(filters: TraceFilters = {}) {
         params.append('maxDuration', String(filters.maxDuration));
       if (filters.limit !== undefined)
         params.append('limit', String(filters.limit));
-      if (filters.offset !== undefined)
-        params.append('offset', String(filters.offset));
 
-      const queryString = params.toString();
-      const url = queryString ? `/api/traces?${queryString}` : '/api/traces';
+      const url = `/api/traces?${params.toString()}`;
 
       const response = await axios.get<RequestTrace[]>(url);
       return response.data;
@@ -74,7 +71,7 @@ export function useTraceStats() {
 /**
  * Fetches hourly trace statistics for trend charts.
  */
-export function useTraceHourlyStats(hours: number = 24) {
+export function useTraceHourlyStats(hours: number) {
   return useQuery({
     queryKey: ['traceHourlyStats', hours],
     queryFn: async () => {
@@ -90,7 +87,7 @@ export function useTraceHourlyStats(hours: number = 24) {
 /**
  * Fetches per-endpoint statistics.
  */
-export function useTraceEndpointStats(limit: number = 20) {
+export function useTraceEndpointStats(limit: number) {
   return useQuery({
     queryKey: ['traceEndpointStats', limit],
     queryFn: async () => {
@@ -120,8 +117,8 @@ interface UseTraceStreamResult {
  * @param enabled Whether the stream should be active (default true)
  */
 export function useTraceStream(
-  maxTraces: number = 100,
-  enabled: boolean = true,
+  maxTraces: number,
+  enabled: boolean,
 ): UseTraceStreamResult {
   const [traces, setTraces] = useState<RequestTrace[]>([]);
   const [connectionState, setConnectionState] =
@@ -129,8 +126,6 @@ export function useTraceStream(
   const eventSourceRef = useRef<EventSource | null>(null);
 
   const connect = useCallback(() => {
-    if (!enabled) return;
-
     // Close existing connection
     if (eventSourceRef.current) {
       eventSourceRef.current.close();
@@ -162,13 +157,11 @@ export function useTraceStream(
       eventSource.close();
 
       // Attempt reconnect after 3 seconds
-      setTimeout(() => {
-        if (enabled) {
-          connect();
-        }
-      }, 3000);
+      // Note: If user disables live mode during the timeout,
+      // the useEffect cleanup will close any new connection
+      setTimeout(connect, 3000);
     };
-  }, [enabled, maxTraces]);
+  }, [maxTraces]);
 
   useEffect(() => {
     if (enabled) {

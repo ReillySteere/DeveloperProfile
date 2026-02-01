@@ -25,7 +25,15 @@ jest.mock('recharts', () => {
       <div data-testid="line-chart">{children}</div>
     ),
     Line: () => null,
-    XAxis: () => null,
+    XAxis: ({
+      tickFormatter,
+    }: {
+      tickFormatter?: (value: number) => string;
+    }) => {
+      // Call tickFormatter to cover the formatTime function
+      tickFormatter?.(0);
+      return null;
+    },
     YAxis: () => null,
     CartesianGrid: () => null,
     Tooltip: () => null,

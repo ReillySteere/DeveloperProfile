@@ -339,14 +339,53 @@ export function createAboutHandlers() {
 /**
  * Creates architecture API handlers.
  */
+
+// Mock data for dependency graphs
+export const mockDependencyGraphsData = {
+  generatedAt: '2026-01-18T00:00:00Z',
+  ui: {
+    containers: [
+      {
+        name: 'blog',
+        label: 'Blog',
+        nodes: [
+          { id: 'blog', label: 'Blog' },
+          { id: 'auth', label: 'Auth' },
+        ],
+        edges: [{ source: 'blog', target: 'auth' }],
+      },
+      {
+        name: 'about',
+        label: 'About',
+        nodes: [{ id: 'about', label: 'About' }],
+        edges: [],
+      },
+    ],
+  },
+  server: {
+    modules: [
+      {
+        name: 'auth',
+        label: 'Auth',
+        nodes: [{ id: 'auth', label: 'Auth' }],
+        edges: [],
+      },
+    ],
+  },
+};
+
 export function createArchitectureHandlers(
   overrides: {
     adrs?: AdrListItem[];
     components?: ComponentDocSummary[];
+    dependencyGraphs?: typeof mockDependencyGraphsData;
+    emptyGraph?: boolean;
   } = {},
 ) {
   const adrs = overrides.adrs ?? mockAdrs;
   const components = overrides.components ?? mockComponents;
+  const dependencyGraphs =
+    overrides.dependencyGraphs ?? mockDependencyGraphsData;
 
   return [
     http.get('/api/architecture/adrs', () => {
@@ -374,6 +413,37 @@ export function createArchitectureHandlers(
         ...component,
         content: '# Component Content',
       });
+    }),
+
+    http.get('/api/architecture/dependencies', () => {
+      return HttpResponse.json(dependencyGraphs);
+    }),
+
+    http.get('/api/architecture/dependencies/:scope/:target', ({ params }) => {
+      const scope = params.scope as 'ui' | 'server';
+      const target = params.target as string;
+
+      // Find the specific graph
+      const graphs =
+        scope === 'ui'
+          ? dependencyGraphs.ui.containers
+          : dependencyGraphs.server.modules;
+      const graph = graphs.find((g) => g.name === target);
+
+      if (!graph) {
+        return new HttpResponse(null, { status: 404 });
+      }
+
+      // Return empty graph if requested
+      if (overrides.emptyGraph) {
+        return HttpResponse.json({
+          ...graph,
+          nodes: [],
+          edges: [],
+        });
+      }
+
+      return HttpResponse.json(graph);
     }),
   ];
 }

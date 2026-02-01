@@ -128,7 +128,7 @@ export default function DependenciesContainer() {
                       scope: scope,
                       nodes: graph.nodes,
                       edges: graph.edges,
-                      generatedAt: graphsQuery.data?.generatedAt ?? '',
+                      generatedAt: graphsQuery.data!.generatedAt,
                     }}
                     title={`${graph.label} Dependencies`}
                   />
