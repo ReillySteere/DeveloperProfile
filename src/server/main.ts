@@ -11,6 +11,7 @@ import { AppModule } from './app.module';
 import * as Sentry from '@sentry/node';
 import { SentryExceptionFilter } from './sentry-exception.filter';
 import { AppLoggerService } from './shared/modules/logger';
+import { JwtAuthGuard } from './shared/modules/auth/jwt-auth.guard';
 
 import * as fs from 'fs';
 import { NextFunction, Request, Response } from 'express';
@@ -61,6 +62,39 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
+
+  // Protect Swagger documentation with JWT authentication
+  const httpAdapter = app.getHttpAdapter();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  httpAdapter.use('/api/docs', async (req: any, res: any, next: any) => {
+    const jwtGuard = new JwtAuthGuard();
+    const context = {
+      switchToHttp: () => ({
+        getRequest: () => req,
+        getResponse: () => res,
+      }),
+      getHandler: () => ({}),
+      getClass: () => ({}),
+      getArgs: () => [],
+      getArgByIndex: () => ({}),
+      switchToRpc: () => ({}),
+      switchToWs: () => ({}),
+      getType: () => 'http' as const,
+    };
+
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const canActivate = await jwtGuard.canActivate(context as any);
+      if (canActivate) {
+        next();
+      } else {
+        res.status(401).json({ message: 'Unauthorized' });
+      }
+    } catch {
+      res.status(401).json({ message: 'Unauthorized' });
+    }
+  });
+
   SwaggerModule.setup('api/docs', app, document);
 
   /**
