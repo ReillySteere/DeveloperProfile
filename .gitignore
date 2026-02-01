@@ -71,3 +71,8 @@ dependency-graph*
 /playwright-report
 /playwright/.cache
 /test-results
+
+# Claude Code
+.claude/settings.local.json
+# Skills generated from .github/prompts/ (run: npm run sync:claude-skills)
+.claude/skills/
