@@ -19,6 +19,7 @@ import { HealthModule } from './modules/health/health.module';
 import { LoggerModule } from './shared/modules/logger';
 import { ArchitectureModule } from './modules/architecture/architecture.module';
 import { TraceModule } from './modules/traces/trace.module';
+import { ApiRootModule } from './modules/api-root/api-root.module';
 import { RequestTrace } from './modules/traces/trace.entity';
 import { AlertHistory } from './modules/traces/alert-history.entity';
 import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
@@ -59,6 +60,7 @@ const isProduction = process.env.NODE_ENV === 'production';
     }),
     RateLimitModule, // Must be before TraceModule so guard is available
     TraceModule, // Must be before other modules so interceptor is available
+    ApiRootModule,
     ExperienceModule,
     AboutModule,
     ProjectModule,
