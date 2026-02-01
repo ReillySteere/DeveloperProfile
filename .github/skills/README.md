@@ -148,9 +148,33 @@ Use this skill when...
 1. Create a new folder: `.github/skills/<skill-name>/`
 2. Add `SKILL.md` with the frontmatter format above
 3. The skill will be auto-discovered by VS Code
+4. Run `npm run sync:claude-skills` to sync with Claude Desktop (if applicable)
+
+## Claude Desktop Integration
+
+For Claude Desktop users, synchronize skills to your Claude configuration:
+
+```bash
+npm run sync:claude-skills
+```
+
+This command:
+
+- Copies all skills from `.github/skills/` to your Claude Desktop knowledge directory
+- Updates `claude_desktop_config.json` to include this repository's skills
+- Enables Claude Desktop to access project-specific workflows
+
+**Configuration Locations:**
+
+- **Windows:** `%APPDATA%\\Claude\\claude_desktop_config.json`
+- **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Linux:** `~/.config/Claude/claude_desktop_config.json`
+
+See [ADR-014: AI Tooling Architecture](../../architecture/decisions/ADR-014-ai-tooling-architecture.md) for details.
 
 ## Related Resources
 
 - [copilot-instructions.md](../copilot-instructions.md) - Main AI agent instructions
 - [prompts/](../prompts/) - Task-specific prompts
 - [chatmodes/](../chatmodes/) - Specialized conversation modes
+- [ADR-014](../../architecture/decisions/ADR-014-ai-tooling-architecture.md) - AI tooling architecture decision
