@@ -29,14 +29,17 @@ communication.
 1. **Producer** (TraceService) emits events after recording traces:
 
    ```typescript
-   this.eventEmitter.emit('trace.created', trace);
+   import { TRACE_EVENTS } from './events';
+   this.eventEmitter.emit(TRACE_EVENTS.TRACE_CREATED, trace);
    ```
 
 2. **Consumer** (TraceController) subscribes via RxJS `fromEvent()`:
 
    ```typescript
-   return fromEvent<RequestTrace>(this.eventEmitter, 'trace.created').pipe(
-     map((trace) => ({ data: trace })),
+   // Note: Do NOT use explicit type parameters with fromEvent (deprecated in RxJS v8)
+   // Instead, use type assertions in the callback
+   return fromEvent(this.eventEmitter, TRACE_EVENTS.TRACE_CREATED).pipe(
+     map((trace) => ({ data: trace as RequestTrace })),
    );
    ```
 
@@ -45,8 +48,8 @@ communication.
 Events follow a `<domain>.<action>` pattern:
 
 - `trace.created` - New trace recorded
+- `alert.triggered` - Alert rule triggered
 - `blog.published` - Blog post published (future)
-- `auth.login` - User logged in (future)
 
 ### Event Constants
 
@@ -54,9 +57,12 @@ Event names are defined as constants in dedicated `events.ts` files:
 
 ```typescript
 // src/server/modules/traces/events.ts
-export const TraceEvents = {
-  CREATED: 'trace.created',
-  DELETED: 'trace.deleted',
+export const TRACE_CREATED = 'trace.created' as const;
+export const ALERT_TRIGGERED = 'alert.triggered' as const;
+
+export const TRACE_EVENTS = {
+  TRACE_CREATED,
+  ALERT_TRIGGERED,
 } as const;
 ```
 
@@ -95,7 +101,7 @@ We use a **hybrid testing strategy**:
    it('should emit trace.created event', async () => {
      await service.recordTrace(input);
      expect(mockEventEmitter.emit).toHaveBeenCalledWith(
-       'trace.created',
+       TRACE_EVENTS.TRACE_CREATED,
        expect.any(Object),
      );
    });

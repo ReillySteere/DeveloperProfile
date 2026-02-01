@@ -19,11 +19,13 @@ The project is a **Modular Monolith** with a strictly separated Frontend and Bac
 
 Features are vertical slices split across the two main directories.
 
-| Feature Area | UI Path | Server Path |
-|Details|---|---|
-| **Blog** | `src/ui/containers/blog/` | `src/server/modules/blog/` |
-| **Experience** | `src/ui/containers/experience/` | `src/server/modules/experience/` |
-| **Auth** | `src/ui/shared/components/SignIn/` | `src/server/shared/modules/auth/` |
+| Feature Area      | UI Path                            | Server Path                                                    |
+| ----------------- | ---------------------------------- | -------------------------------------------------------------- |
+| **Blog**          | `src/ui/containers/blog/`          | `src/server/modules/blog/`                                     |
+| **Experience**    | `src/ui/containers/experience/`    | `src/server/modules/experience/`                               |
+| **Projects**      | `src/ui/containers/projects/`      | `src/server/modules/projects/`                                 |
+| **Status/Traces** | `src/ui/containers/status/`        | `src/server/modules/traces/`, `src/server/modules/rate-limit/` |
+| **Auth**          | `src/ui/shared/components/SignIn/` | `src/server/shared/modules/auth/`                              |
 
 ### Example: Finding Code for a Feature
 

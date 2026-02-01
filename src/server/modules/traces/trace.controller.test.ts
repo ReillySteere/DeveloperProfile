@@ -7,6 +7,7 @@ import type { ITraceService } from './trace.service';
 import type { TraceAlertService } from './trace-alert.service';
 import type { RequestTrace } from './trace.entity';
 import type { AlertEvent, AlertRule } from './alert.config';
+import { TRACE_EVENTS } from './events';
 
 /**
  * Unit tests for TraceController SSE streams.
@@ -62,7 +63,7 @@ describe('TraceController SSE streams', () => {
       const result = await testSseStream(
         controller.streamTraces(),
         mockEmitter,
-        'trace.created',
+        TRACE_EVENTS.TRACE_CREATED,
         testTrace,
       );
 
@@ -91,7 +92,7 @@ describe('TraceController SSE streams', () => {
       const result = await testSseStream(
         controller.streamTraces(),
         mockEmitter,
-        'trace.created',
+        TRACE_EVENTS.TRACE_CREATED,
         fullTrace,
       );
 
@@ -124,7 +125,7 @@ describe('TraceController SSE streams', () => {
       const result = await testSseStream(
         controller.streamAlerts(),
         mockEmitter,
-        'alert.triggered',
+        TRACE_EVENTS.ALERT_TRIGGERED,
         alertEvent,
       );
 
@@ -157,7 +158,7 @@ describe('TraceController SSE streams', () => {
       const result = await testSseStream(
         controller.streamAlerts(),
         mockEmitter,
-        'alert.triggered',
+        TRACE_EVENTS.ALERT_TRIGGERED,
         alertEvent,
       );
 

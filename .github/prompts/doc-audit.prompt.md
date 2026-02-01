@@ -168,21 +168,14 @@ For each issue:
 
 - [List any undocumented components, features, or patterns discovered during audit]
 
-## Integration with Pre-Push Review
+## Integration with Validation
 
-When invoked as part of `pre-push-review`:
+This prompt performs a full documentation audit. For incremental validation during development, use the `validate` prompt instead.
 
-1. **Full Audit Mode** (default for this prompt): Review ALL documentation regardless of what files changed
-2. **Incremental Mode** (pre-push-review behavior): Only review docs related to changed files
-
-To trigger a full documentation audit before pushing:
+To trigger a full documentation audit:
 
 ```
-@workspace /doc-audit
+/doc-audit
 ```
 
-Or combine with pre-push review:
-
-```
-@workspace /pre-push-review --full-doc-audit
-```
+This is recommended before major releases or after significant structural changes.

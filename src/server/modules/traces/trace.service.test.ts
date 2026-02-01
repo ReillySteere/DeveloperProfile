@@ -10,6 +10,7 @@ import type {
   PhaseTiming,
   IRequestTrace,
 } from './trace.types';
+import { TRACE_EVENTS } from './events';
 
 // Mock Sentry before importing anything that uses it
 jest.mock('@sentry/node', () => ({
@@ -91,7 +92,7 @@ describe('TraceService', () => {
 
       expect(mockRepository.create).toHaveBeenCalledWith(mockTraceInput);
       expect(mockEventEmitter.emit).toHaveBeenCalledWith(
-        'trace.created',
+        TRACE_EVENTS.TRACE_CREATED,
         mockTrace,
       );
       expect(result).toEqual(mockTrace);
