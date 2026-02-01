@@ -18,7 +18,7 @@
 
 - **Start:** `npm start` (concurrently runs `start:server:dev` and `start:ui`).
 - **Test:** `npm test` (runs `test:server` and `test:ui`).
-  - **Coverage:** 100% required for statements, branches, functions, lines.
+  - **Coverage:** 100% required for server; frontend targets 100% (currently 92-98% during MSW migration). See ADR-015.
 - **Lint:** `npm run lint` (ESLint + Prettier + React Compiler).
 - **Format:** `npm run format` (runs `format:server` and `format:ui`).
 - **Type Check:** `npm run type-check` (runs `tsc --noEmit`).

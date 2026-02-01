@@ -219,3 +219,5 @@ mockUseAuthStore.mockReturnValue({
 
 - [ADR-003: Centralized Axios Interceptors](../decisions/ADR-003-centralized-axios-interceptors.md)
 - [ADR-005: Hexagonal Architecture for Shared Modules](../decisions/ADR-005-hexagonal-architecture-shared-modules.md)
+- [ADR-017: Frontend State Management](../decisions/ADR-017-frontend-state-management.md) - Zustand for auth state
+- [ADR-020: Frontend Authentication](../decisions/ADR-020-frontend-authentication.md) - AuthInterceptor pattern

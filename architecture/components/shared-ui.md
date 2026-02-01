@@ -59,6 +59,7 @@ import { Button } from 'ui/shared/components/Button/Button';
 | `CardHeader`  | Card header section                    | With `Card`               |
 | `CardTitle`   | Card title text                        | With `CardHeader`         |
 | `CardContent` | Card body section                      | With `Card`               |
+| `CardFooter`  | Card footer section                    | With `Card`               |
 | `Badge`       | Small label/tag                        | Tags, status indicators   |
 | `Skeleton`    | Loading placeholder                    | While data is loading     |
 
@@ -111,27 +112,25 @@ import { Mermaid } from 'ui/shared/components/Mermaid/Mermaid';
 
 ## QueryState Component
 
-The `QueryState` component simplifies handling TanStack Query states:
+The `QueryState` component simplifies handling TanStack Query states using a **render props pattern**:
 
 ```tsx
 import { QueryState } from 'ui/shared/components';
 import { useBlogPosts } from './hooks/useBlog';
 
 export const BlogContainer = () => {
-  const { data, isLoading, isError, error } = useBlogPosts();
+  const { data, isLoading, isError, error, refetch } = useBlogPosts();
 
   return (
     <QueryState
       isLoading={isLoading}
       isError={isError}
       error={error}
-      isEmpty={!data?.length}
-      emptyMessage="No blog posts yet"
+      data={data}
+      refetch={refetch}
+      isEmpty={(posts) => !posts?.length}
     >
-      {/* Rendered only when data is available */}
-      {data?.map((post) => (
-        <PostCard key={post.id} post={post} />
-      ))}
+      {(posts) => posts.map((post) => <PostCard key={post.id} post={post} />)}
     </QueryState>
   );
 };
@@ -217,3 +216,6 @@ describe('Button', () => {
 
 - [auth.md](./auth.md) - Authentication-specific components
 - [Testing Workflow Skill](../../.github/skills/testing-workflow/SKILL.md) - Testing patterns
+- [ADR-017: Frontend State Management](../decisions/ADR-017-frontend-state-management.md) - TanStack Query + Zustand patterns
+- [ADR-018: Container Component Pattern](../decisions/ADR-018-container-component-pattern.md) - Container/component separation
+- [ADR-019: Styling Architecture](../decisions/ADR-019-styling-architecture.md) - SCSS Modules and CSS Variables
