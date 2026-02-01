@@ -3,7 +3,11 @@
     "allow": [
       "Bash(git checkout:*)",
       "Bash(npm run sync:claude-skills:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(node scripts/sync-claude-skills.js:*)",
+      "Bash(npm run depcruise:verify:*)",
+      "Bash(grep:*)",
+      "Bash(npm run scaffold:*)"
     ]
   }
 }

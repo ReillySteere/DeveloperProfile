@@ -121,6 +121,43 @@ module.exports = {
         path: '^src/server/shared/(modules|adapters)/',
       },
     },
+    {
+      name: 'adapter-limited-imports',
+      severity: 'error',
+      comment:
+        'Adapters may only import ports, DTOs, tokens, and barrel files from shared modules. See ADR-005.',
+      from: {
+        path: '^src/server/shared/adapters/',
+      },
+      to: {
+        path: '^src/server/shared/modules/',
+        pathNot: [
+          // Allow: tokens, DTOs, barrel files
+          'tokens\\.ts$',
+          '\\.dto\\.ts$',
+          'index\\.ts$',
+        ],
+      },
+    },
+    {
+      name: 'adapters-no-cross-import',
+      severity: 'error',
+      comment:
+        'Adapters should not import from other adapters (except barrel files). See ADR-005.',
+      from: {
+        path: '^src/server/shared/adapters/([^/]+)',
+        pathNot: [
+          // Allow barrel files to re-export adapters
+          '^src/server/shared/adapters/index\\.ts$',
+        ],
+      },
+      to: {
+        path: '^src/server/shared/adapters/([^/]+)',
+        pathNot: [
+          '^src/server/shared/adapters/$1', // Allow internal imports within same adapter
+        ],
+      },
+    },
   ],
   options: {
     doNotFollow: {

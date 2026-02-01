@@ -4,6 +4,33 @@ This file tracks significant changes to AI agent documentation (skills, prompts,
 
 ---
 
+## 2026-02-01 (ADR Documentation & Tooling Enhancement)
+
+### ADRs Added
+
+- `ADR-014-ai-tooling-architecture.md` - Documents AI instruction hierarchy (skills, prompts, chatmodes, sync mechanism)
+- `ADR-015-testing-strategy.md` - Documents Testing Trophy approach, 100% coverage requirement, MSW over axios
+- `ADR-016-test-utilities-architecture.md` - Documents MockEventSource, mockRecharts, MSW handler factories, QueryState
+- `ADR-017-frontend-state-management.md` - Documents TanStack Query + Zustand approach, deliberate exclusion of Redux
+- `ADR-018-container-component-pattern.md` - Documents thin containers, hook co-location, data orchestration separation
+- `ADR-019-styling-architecture.md` - Documents SCSS Modules, CSS Variables, theming via data attributes
+- `ADR-020-frontend-authentication.md` - Documents AuthInterceptor pattern for session handling
+
+### Tooling Enhanced
+
+- `scripts/sync-claude-skills.js` - Now syncs both GitHub prompts AND GitHub skills to Claude Code
+- `.dependency-cruiser.server.js` - Added `adapter-limited-imports` and `adapters-no-cross-import` rules (ADR-005)
+
+### Claude Skills Synced
+
+All 16 GitHub skills now available in Claude Code (previously only 9 prompts were synced):
+
+- `api-design`, `architecture-nav`, `code-review`, `database-migration`, `debugging`
+- `dependency-enforcement`, `doc-review`, `documentation-standards`, `error-handling`
+- `feature-scaffold`, `observability`, `routing`, `security`, `state-management`, `testing-workflow`
+
+---
+
 ## 2026-02-01 (Prompt Consolidation)
 
 ### Prompts Added
