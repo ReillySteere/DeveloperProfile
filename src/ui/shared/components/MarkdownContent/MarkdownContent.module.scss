@@ -83,12 +83,22 @@
   }
 
   a {
-    color: var(--primary-color);
+    color: var(--primary-default);
     text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s ease;
 
     &:hover {
+      color: var(--primary-hover);
       text-decoration: underline;
     }
+  }
+
+  .unavailableLink {
+    color: var(--text-secondary);
+    text-decoration: none;
+    cursor: help;
+    border-bottom: 1px dashed var(--text-tertiary);
   }
 
   code {

@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { Link } from '@tanstack/react-router';
 import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter';
 import ts from 'react-syntax-highlighter/dist/cjs/languages/prism/typescript';
 import bash from 'react-syntax-highlighter/dist/cjs/languages/prism/bash';
@@ -18,13 +19,15 @@ SyntaxHighlighter.registerLanguage('markdown', markdown);
 
 /**
  * Result of a link transformation.
- * - `route`: An internal app route for SPA navigation (uses onClick handler)
+ * - `route`: An internal app route for SPA navigation (uses TanStack Router Link)
  * - `external`: Opens in new tab with rel="noopener noreferrer"
+ * - `unavailable`: Content exists but is not web-accessible (renders as styled text with tooltip)
  * - `null`: Use default anchor behavior
  */
 export type LinkTransformResult =
-  | { type: 'route'; to: string }
+  | { type: 'route'; to: string; params?: Record<string, string> }
   | { type: 'external' }
+  | { type: 'unavailable'; tooltip: string }
   | null;
 
 /**
@@ -39,13 +42,13 @@ export interface MarkdownContentProps {
   className?: string;
   /**
    * Optional link transformer for custom link handling.
-   * Return { type: 'route', to: '/path' } for SPA navigation.
+   * Return { type: 'route', to: '/path' } for SPA navigation using TanStack Router Link.
    * Return { type: 'external' } for external links (new tab).
    * Return null for default anchor behavior.
    */
   transformLink?: LinkTransformer;
   /**
-   * Navigate function for SPA routing. Required if transformLink returns routes.
+   * @deprecated No longer used. Internal routes now use TanStack Router Link directly.
    */
   onNavigate?: (to: string) => void;
 }
@@ -64,7 +67,6 @@ export const MarkdownContent: React.FC<MarkdownContentProps> = ({
   content,
   className,
   transformLink,
-  onNavigate,
 }) => {
   const combinedClassName = className
     ? `${styles.markdownContent} ${className}`
@@ -75,7 +77,11 @@ export const MarkdownContent: React.FC<MarkdownContentProps> = ({
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
-          a({ href, children, ...props }) {
+          a({ href, children, node, ref, ...props }) {
+            // Filter out ReactMarkdown-specific props that are incompatible with Link
+            void node;
+            void ref;
+
             if (!href) {
               return <a {...props}>{children}</a>;
             }
@@ -83,18 +89,15 @@ export const MarkdownContent: React.FC<MarkdownContentProps> = ({
             // Check custom link transformer first
             if (transformLink) {
               const result = transformLink(href);
-              if (result?.type === 'route' && onNavigate) {
+              if (result?.type === 'route') {
+                // Use params when provided for proper TanStack Router navigation
+                const linkProps = result.params
+                  ? { to: result.to, params: result.params }
+                  : { to: result.to };
                 return (
-                  <a
-                    href={result.to}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      onNavigate(result.to);
-                    }}
-                    {...props}
-                  >
+                  <Link {...linkProps} {...(props as object)}>
                     {children}
-                  </a>
+                  </Link>
                 );
               }
               if (result?.type === 'external') {
@@ -107,6 +110,17 @@ export const MarkdownContent: React.FC<MarkdownContentProps> = ({
                   >
                     {children}
                   </a>
+                );
+              }
+              if (result?.type === 'unavailable') {
+                return (
+                  <span
+                    className={styles.unavailableLink}
+                    title={result.tooltip}
+                    {...(props as object)}
+                  >
+                    {children}
+                  </span>
                 );
               }
             }

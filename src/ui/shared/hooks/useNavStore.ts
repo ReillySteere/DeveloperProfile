@@ -29,7 +29,6 @@ export const useNavStore = create<NavStoreState>()(
     {
       name: 'nav-store',
       partialize: (state) => ({
-        activeSection: state.activeSection,
         isExpanded: state.isExpanded,
         theme: state.theme,
       }),

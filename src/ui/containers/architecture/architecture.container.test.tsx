@@ -86,10 +86,16 @@ jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useParams: jest.fn(() => ({ slug: 'ADR-001-test' })),
   useNavigate: () => mockNavigate,
-  Link: ({ children, to, ...props }: any) => {
+  Link: ({ children, to, params, ...props }: any) => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const React = require('react');
-    return React.createElement('a', { href: to, ...props }, children);
+    // Store params as data attribute for testing
+    const dataProps = params ? { 'data-params': JSON.stringify(params) } : {};
+    return React.createElement(
+      'a',
+      { href: to, ...dataProps, ...props },
+      children,
+    );
   },
 }));
 
@@ -857,39 +863,43 @@ describe('AdrCard edge cases', () => {
 });
 
 describe('transformArchitectureLink', () => {
-  it('transforms ADR links with ./ prefix to app routes', () => {
+  it('transforms ADR links with ./ prefix to route pattern with params', () => {
     const result = transformArchitectureLink(
       './ADR-001-persistent-storage-for-blog.md',
     );
     expect(result).toEqual({
       type: 'route',
-      to: '/architecture/ADR-001-persistent-storage-for-blog',
+      to: '/architecture/$slug',
+      params: { slug: 'ADR-001-persistent-storage-for-blog' },
     });
   });
 
-  it('transforms ADR links with ../decisions/ prefix to app routes', () => {
+  it('transforms ADR links with ../decisions/ prefix to route pattern with params', () => {
     const result = transformArchitectureLink(
       '../decisions/ADR-002-sqlite-typeorm.md',
     );
     expect(result).toEqual({
       type: 'route',
-      to: '/architecture/ADR-002-sqlite-typeorm',
+      to: '/architecture/$slug',
+      params: { slug: 'ADR-002-sqlite-typeorm' },
     });
   });
 
-  it('transforms component doc links with ./ prefix to app routes', () => {
+  it('transforms component doc links with ./ prefix to route pattern with params', () => {
     const result = transformArchitectureLink('./about.md');
     expect(result).toEqual({
       type: 'route',
-      to: '/architecture/components/about',
+      to: '/architecture/components/$slug',
+      params: { slug: 'about' },
     });
   });
 
-  it('transforms component doc links with ../components/ prefix to app routes', () => {
+  it('transforms component doc links with ../components/ prefix to route pattern with params', () => {
     const result = transformArchitectureLink('../components/auth.md');
     expect(result).toEqual({
       type: 'route',
-      to: '/architecture/components/auth',
+      to: '/architecture/components/$slug',
+      params: { slug: 'auth' },
     });
   });
 
@@ -907,33 +917,71 @@ describe('transformArchitectureLink', () => {
     const result = transformArchitectureLink('./ADR-003-Mixed-Case-Title.md');
     expect(result).toEqual({
       type: 'route',
-      to: '/architecture/ADR-003-Mixed-Case-Title',
+      to: '/architecture/$slug',
+      params: { slug: 'ADR-003-Mixed-Case-Title' },
+    });
+  });
+
+  it('transforms local references outside architecture to unavailable type with tooltip', () => {
+    // Copilot skill link
+    const result = transformArchitectureLink(
+      '../../.github/skills/testing-workflow/SKILL.md',
+    );
+    expect(result).toEqual({
+      type: 'unavailable',
+      tooltip: 'SKILL (not web-accessible)',
+    });
+  });
+
+  it('handles various non-architecture local paths as unavailable', () => {
+    // Different skill paths
+    const stateResult = transformArchitectureLink(
+      '../../.github/skills/state-management/SKILL.md',
+    );
+    expect(stateResult).toEqual({
+      type: 'unavailable',
+      tooltip: 'SKILL (not web-accessible)',
+    });
+
+    const securityResult = transformArchitectureLink(
+      '../../.github/skills/security/SKILL.md',
+    );
+    expect(securityResult).toEqual({
+      type: 'unavailable',
+      tooltip: 'SKILL (not web-accessible)',
+    });
+
+    // Random relative path that's not in architecture
+    const otherResult = transformArchitectureLink(
+      '../some-folder/random-file.md',
+    );
+    expect(otherResult).toEqual({
+      type: 'unavailable',
+      tooltip: 'random-file (not web-accessible)',
+    });
+
+    // Deep nested path
+    const deepResult = transformArchitectureLink('../../src/server/README.md');
+    expect(deepResult).toEqual({
+      type: 'unavailable',
+      tooltip: 'README (not web-accessible)',
     });
   });
 });
 
 describe('ArchitectureContent navigation', () => {
-  const mockNavigate = jest.fn();
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-    jest
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      .spyOn(require('@tanstack/react-router'), 'useNavigate')
-      .mockReturnValue(mockNavigate);
-  });
-
-  it('navigates when ADR link is clicked', async () => {
+  it('renders ADR links using TanStack Router Link with params', async () => {
     const { ArchitectureContent } =
       await import('./components/ArchitectureContent');
 
     render(<ArchitectureContent content="See [ADR Link](./ADR-001-test.md)" />);
 
     const link = screen.getByText('ADR Link');
-    fireEvent.click(link);
-
-    expect(mockNavigate).toHaveBeenCalledWith({
-      to: '/architecture/ADR-001-test',
-    });
+    // Link component renders with the route pattern and params
+    expect(link).toHaveAttribute('href', '/architecture/$slug');
+    expect(link).toHaveAttribute(
+      'data-params',
+      JSON.stringify({ slug: 'ADR-001-test' }),
+    );
   });
 });
