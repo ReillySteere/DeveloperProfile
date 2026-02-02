@@ -25,6 +25,7 @@ module.exports = {
           '(^|/)(babel|webpack|jest|cypress)\\.config\\.(js|ts)$', // config files
           'src/server/main.ts', // entry points
           'src/server/sentry-exception.filter.ts', // global filter used in main
+          'src/server/migrations/', // migrations are run by TypeORM, not imported
           'src/ui/index.tsx', // entry points
         ],
       },
