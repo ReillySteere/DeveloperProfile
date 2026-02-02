@@ -33,27 +33,6 @@ export default function AdrDetailContainer() {
         >
           {(adr) => (
             <article className={styles.article}>
-              <header className={styles.detailHeader}>
-                <h1>{adr.title}</h1>
-                <div className={styles.detailMeta}>
-                  <span
-                    className={`${styles.status} ${styles[adr.status.toLowerCase()]}`}
-                  >
-                    {adr.status}
-                  </span>
-                  <time dateTime={adr.date}>
-                    {new Date(adr.date + 'T00:00:00Z').toLocaleDateString(
-                      'en-US',
-                      {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        timeZone: 'UTC',
-                      },
-                    )}
-                  </time>
-                </div>
-              </header>
               <div className={styles.content}>
                 <ArchitectureContent content={adr.content} />
               </div>

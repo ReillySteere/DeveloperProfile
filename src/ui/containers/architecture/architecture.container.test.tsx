@@ -332,16 +332,19 @@ describe('AdrDetailContainer', () => {
     jest.clearAllMocks();
   });
 
-  it('should render ADR detail with content', async () => {
+  it('should render ADR detail with markdown content', async () => {
     mockedAxios.get.mockResolvedValue({ data: mockAdr });
 
     render(<AdrDetailContainer />);
 
     await waitFor(() => {
-      expect(screen.getByText('ADR-001: Test Decision')).toBeInTheDocument();
+      expect(screen.getByTestId('markdown')).toBeInTheDocument();
     });
 
-    expect(screen.getByText('Accepted')).toBeInTheDocument();
+    // Content is rendered via markdown (title and body are part of the markdown)
+    expect(screen.getByTestId('markdown')).toHaveTextContent(
+      '# ADR-001: Test Decision',
+    );
   });
 
   it('should display back button', async () => {
