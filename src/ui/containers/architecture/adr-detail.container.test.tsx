@@ -84,7 +84,7 @@ describe('AdrDetailContainer', () => {
       });
 
       expect(screen.getByText('Accepted')).toBeInTheDocument();
-      expect(screen.getByText('December 31, 2024')).toBeInTheDocument();
+      expect(screen.getByText('January 1, 2025')).toBeInTheDocument();
       expect(screen.getByTestId('markdown')).toHaveTextContent('# ADR Content');
     });
 
@@ -104,10 +104,10 @@ describe('AdrDetailContainer', () => {
       render(<AdrDetailContainer />);
 
       await waitFor(() => {
-        expect(screen.getByText('December 31, 2024')).toBeInTheDocument();
+        expect(screen.getByText('January 1, 2025')).toBeInTheDocument();
       });
 
-      const timeElement = screen.getByText('December 31, 2024');
+      const timeElement = screen.getByText('January 1, 2025');
       expect(timeElement.tagName).toBe('TIME');
       expect(timeElement).toHaveAttribute('datetime', '2025-01-01');
     });
