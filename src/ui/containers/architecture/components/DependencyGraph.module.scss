@@ -18,7 +18,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem;
-  background: var(--surface-secondary);
+  background: var(--bg-surface-active);
   border-radius: 0.5rem;
   width: fit-content;
 }
@@ -28,7 +28,7 @@
   height: 2rem;
   border: 1px solid var(--border-default);
   border-radius: 0.25rem;
-  background: var(--surface-primary);
+  background: var(--bg-surface);
   color: var(--text-primary);
   font-size: 1.25rem;
   font-weight: 600;
@@ -41,7 +41,7 @@
     border-color 0.15s;
 
   &:hover:not(:disabled) {
-    background: var(--surface-hover);
+    background: var(--bg-surface-hover);
     border-color: var(--border-hover);
   }
 
@@ -64,7 +64,7 @@
   padding: 0.375rem 0.75rem;
   border: 1px solid var(--border-default);
   border-radius: 0.25rem;
-  background: var(--surface-primary);
+  background: var(--bg-surface);
   color: var(--text-secondary);
   font-size: 0.8125rem;
   cursor: pointer;
@@ -73,7 +73,7 @@
     border-color 0.15s;
 
   &:hover {
-    background: var(--surface-hover);
+    background: var(--bg-surface-hover);
     border-color: var(--border-hover);
   }
 }
@@ -85,7 +85,7 @@
   overflow: hidden;
   border: 1px solid var(--border-default);
   border-radius: 0.5rem;
-  background: var(--surface-primary);
+  background: var(--bg-surface);
   position: relative;
   user-select: none;
 }
@@ -134,7 +134,7 @@
 .code {
   margin: 0;
   padding: 1rem;
-  background: var(--surface-secondary);
+  background: var(--bg-surface-active);
   border-radius: 0.5rem;
   font-size: 0.75rem;
   overflow-x: auto;
