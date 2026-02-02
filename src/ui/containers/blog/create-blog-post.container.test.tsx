@@ -4,6 +4,12 @@ import CreateBlogPostContainer from './create-blog-post.container';
 import axios from 'axios';
 import { useAuthStore } from 'ui/shared/hooks/useAuthStore';
 
+// Mock remark-gfm
+jest.mock('remark-gfm', () => ({
+  __esModule: true,
+  default: () => () => {},
+}));
+
 // Mock axios
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;

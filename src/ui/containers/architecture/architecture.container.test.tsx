@@ -16,6 +16,12 @@ import type {
   DependencyGraph,
 } from 'shared/types';
 
+// Mock remark-gfm
+jest.mock('remark-gfm', () => ({
+  __esModule: true,
+  default: () => () => {},
+}));
+
 // Mock axios
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;

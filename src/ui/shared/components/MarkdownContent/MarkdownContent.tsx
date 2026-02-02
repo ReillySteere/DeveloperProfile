@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter';
 import ts from 'react-syntax-highlighter/dist/cjs/languages/prism/typescript';
 import bash from 'react-syntax-highlighter/dist/cjs/languages/prism/bash';
@@ -53,6 +54,7 @@ export interface MarkdownContentProps {
  * Shared markdown rendering component with syntax highlighting and Mermaid support.
  *
  * Features:
+ * - GitHub Flavored Markdown (tables, strikethrough, task lists)
  * - Code syntax highlighting (TypeScript, Bash, JSON, Markdown)
  * - Mermaid diagram rendering
  * - Customizable link transformation via props
@@ -71,6 +73,7 @@ export const MarkdownContent: React.FC<MarkdownContentProps> = ({
   return (
     <div className={combinedClassName}>
       <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
         components={{
           a({ href, children, ...props }) {
             if (!href) {

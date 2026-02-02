@@ -6,6 +6,12 @@ import axios from 'axios';
 import { useAuth } from 'ui/shared/hooks/useAuth';
 import { useAuthStore } from 'ui/shared/hooks/useAuthStore';
 
+// Mock remark-gfm
+jest.mock('remark-gfm', () => ({
+  __esModule: true,
+  default: () => () => {},
+}));
+
 // Mock axios
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
