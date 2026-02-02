@@ -193,6 +193,31 @@ const fetchAdapter: AxiosAdapter = async (
       }
     });
 
+    // Check if response should be rejected based on status code
+    // Default axios behavior: reject on status outside 200-299
+    const validateStatus =
+      config.validateStatus ??
+      ((status: number) => status >= 200 && status < 300);
+    if (!validateStatus(response.status)) {
+      const error = new Error(
+        `Request failed with status code ${response.status}`,
+      ) as Error & {
+        response: object;
+        config: object;
+        isAxiosError: boolean;
+      };
+      error.response = {
+        data: responseData,
+        status: response.status,
+        statusText: response.statusText,
+        headers: Object.fromEntries(response.headers.entries()),
+        config,
+      };
+      error.config = config;
+      error.isAxiosError = true;
+      throw error;
+    }
+
     return {
       data: responseData,
       status: response.status,

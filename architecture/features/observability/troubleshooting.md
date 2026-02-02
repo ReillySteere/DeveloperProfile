@@ -1,6 +1,6 @@
 # Troubleshooting Guide
 
-Common issues and solutions for the Phase 2 Observability features.
+Common issues and solutions for the Observability features.
 
 ---
 

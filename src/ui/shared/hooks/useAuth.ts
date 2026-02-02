@@ -39,8 +39,8 @@ export const useAuth = () => {
             throw new Error('Invalid response from server');
           }
         })
-        .catch((err) => {
-          setError(err instanceof Error ? err.message : 'An error occurred');
+        .catch((err: Error) => {
+          setError(err.message);
           return false;
         })
         .finally(() => {

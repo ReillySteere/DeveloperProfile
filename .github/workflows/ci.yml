@@ -83,8 +83,13 @@ jobs:
       - name: 🛣️ Generate Routes
         run: npm run generate-routes
 
-      - name: 🧪 Run Tests
-        run: npm run test
+      - name: 🧪 Run Server Tests
+        run: npm run test:server
+        env:
+          CI: true
+
+      - name: 🧪 Run UI Tests
+        run: npm run test:ui
         env:
           CI: true
 

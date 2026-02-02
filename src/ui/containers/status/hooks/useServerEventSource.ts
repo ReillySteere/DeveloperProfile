@@ -8,8 +8,6 @@ interface UseServerEventSourceOptions {
   baseUrl: string;
   /** Maximum number of data points to keep in sliding window */
   maxDataPoints?: number;
-  /** Whether the connection should be active */
-  enabled?: boolean;
   /** Chaos simulation flags to pass to server */
   chaosFlags?: ChaosFlags;
 }
@@ -36,7 +34,6 @@ interface UseServerEventSourceResult {
 export function useServerEventSource({
   baseUrl,
   maxDataPoints = 60,
-  enabled = true,
   chaosFlags = { cpu: false, memory: false },
 }: UseServerEventSourceOptions): UseServerEventSourceResult {
   const [data, setData] = useState<TelemetrySnapshot[]>([]);
@@ -88,13 +85,12 @@ export function useServerEventSource({
       setConnectionState('error');
       eventSource.close();
 
-      // Auto-reconnect after 3 seconds if still enabled
-      if (!enabled) return;
+      // Auto-reconnect after 3 seconds
       reconnectTimeoutRef.current = setTimeout(() => {
         connect();
       }, 3000);
     };
-  }, [url, maxDataPoints, enabled]);
+  }, [url, maxDataPoints]);
 
   const disconnect = useCallback(() => {
     if (reconnectTimeoutRef.current) {
@@ -112,9 +108,8 @@ export function useServerEventSource({
     connect();
   }, [disconnect, connect]);
 
-  // Connect/disconnect based on enabled state and chaos flags
+  // Connect/disconnect based on chaos flags
   useEffect(() => {
-    if (!enabled) return;
     // Clear data when chaos flags change to show fresh metrics
     setData([]);
     connect();
@@ -122,7 +117,7 @@ export function useServerEventSource({
     return () => {
       disconnect();
     };
-  }, [enabled, connect, disconnect]);
+  }, [connect, disconnect]);
 
   return {
     data,

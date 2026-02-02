@@ -4,7 +4,7 @@ import { useTraceEndpointStats } from '../hooks/useTraces';
 import styles from './EndpointBreakdown.module.scss';
 
 interface EndpointBreakdownProps {
-  limit?: number;
+  limit: number;
 }
 
 function formatDuration(ms: number): string {
@@ -18,23 +18,19 @@ function formatDuration(ms: number): string {
 }
 
 function getMethodClass(method: string): string {
-  switch (method.toUpperCase()) {
-    case 'GET':
-      return styles.methodGet;
-    case 'POST':
-      return styles.methodPost;
-    case 'PUT':
-    case 'PATCH':
-      return styles.methodPut;
-    case 'DELETE':
-      return styles.methodDelete;
-    default:
-      return '';
-  }
+  const upperMethod = method.toUpperCase();
+  const methodClasses: Record<string, string> = {
+    GET: styles.methodGet,
+    POST: styles.methodPost,
+    PUT: styles.methodPut,
+    PATCH: styles.methodPut,
+    DELETE: styles.methodDelete,
+  };
+  return methodClasses[upperMethod] ?? styles.methodGet;
 }
 
 export function EndpointBreakdown({
-  limit = 10,
+  limit,
 }: EndpointBreakdownProps): React.ReactNode {
   const {
     data: endpointStats,

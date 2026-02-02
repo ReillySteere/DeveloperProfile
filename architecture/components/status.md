@@ -200,9 +200,9 @@ GET /api/health/stream
 
 ---
 
-## Phase 2 Integration (Implemented)
+## Observability Integration
 
-Phase 2 added request tracing, visualization, rate limiting, and alerting capabilities. The Status/Mission Control dashboard now includes:
+The Status/Mission Control dashboard includes comprehensive observability features with request tracing, visualization, rate limiting, and alerting capabilities:
 
 ### Request Traces Sub-Route
 
@@ -245,4 +245,4 @@ The AlertsPanel component shows active alerts:
 | Alerting Service         | ✅ Complete |
 | E2E Tests                | ✅ Complete |
 
-See [Phase 2: Observability Suite](../features/phase-2-observability/README.md) for comprehensive documentation.
+See [Observability Suite](../features/observability/README.md) for comprehensive documentation.

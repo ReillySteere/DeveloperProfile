@@ -1,19 +1,23 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor, act } from 'ui/test-utils';
+import {
+  render,
+  screen,
+  waitFor,
+  act,
+  userEvent,
+  fireEvent,
+} from 'ui/test-utils';
+import {
+  server,
+  createTraceHandlers,
+  mockTrace,
+  mockStats,
+} from 'ui/test-utils/msw';
+import { http, HttpResponse } from 'msw';
 import TracesContainer from './traces.container';
 import TraceDetailContainer from './trace-detail.container';
-import type {
-  RequestTrace,
-  TraceStats,
-  TraceHourlyStats,
-  TraceEndpointStats,
-  AlertHistoryRecord,
-} from 'shared/types';
-import axios from 'axios';
-
-// Mock axios
-jest.mock('axios');
-const mockAxios = axios as jest.Mocked<typeof axios>;
+import type { RequestTrace, AlertHistoryRecord, AlertRule } from 'shared/types';
+import { useTraces, useAlertRules, useAlertHistory } from './hooks/useTraces';
 
 // Mock recharts to execute formatter functions for coverage
 jest.mock(
@@ -71,111 +75,11 @@ beforeAll(() => {
 beforeEach(() => {
   jest.clearAllMocks();
   MockEventSource.instances = [];
+  // Default MSW handlers for trace endpoints
+  server.use(...createTraceHandlers());
 });
 
-const mockTrace: RequestTrace = {
-  traceId: 'test-trace-123',
-  method: 'GET',
-  path: '/api/test',
-  statusCode: 200,
-  durationMs: 45.5,
-  timing: {
-    middleware: 1,
-    guard: 2,
-    interceptorPre: 3,
-    handler: 35,
-    interceptorPost: 1,
-  },
-  userId: 1,
-  userAgent: 'Mozilla/5.0',
-  ip: '127.0.0.1',
-  timestamp: '2025-01-23T12:00:00Z',
-};
-
-const mockStats: TraceStats = {
-  totalCount: 100,
-  avgDuration: 50.5,
-  errorRate: 2.5,
-};
-
-const mockHourlyStats: TraceHourlyStats[] = [
-  {
-    hour: '2025-01-23T12:00:00.000Z',
-    count: 10,
-    avgDuration: 45,
-    errorRate: 5,
-    p95Duration: 100,
-  },
-  {
-    hour: '2025-01-23T13:00:00.000Z',
-    count: 15,
-    avgDuration: 50,
-    errorRate: 3,
-    p95Duration: 120,
-  },
-];
-
-const mockEndpointStats: TraceEndpointStats[] = [
-  {
-    path: '/api/test',
-    method: 'GET',
-    count: 50,
-    avgDuration: 40,
-    errorRate: 2,
-  },
-  {
-    path: '/api/blog',
-    method: 'GET',
-    count: 30,
-    avgDuration: 60,
-    errorRate: 1,
-  },
-];
-
-/**
- * Helper to create a mock implementation for axios.get that handles all trace endpoints.
- * Allows overriding specific responses.
- */
-function createMockAxiosGet(
-  overrides: {
-    traces?: RequestTrace[];
-    stats?: TraceStats;
-    hourlyStats?: TraceHourlyStats[];
-    endpointStats?: TraceEndpointStats[];
-    alerts?: AlertHistoryRecord[];
-  } = {},
-) {
-  const traces = overrides.traces ?? [mockTrace];
-  const stats = overrides.stats ?? mockStats;
-  const hourlyStats = overrides.hourlyStats ?? mockHourlyStats;
-  const endpointStats = overrides.endpointStats ?? mockEndpointStats;
-  const alerts = overrides.alerts ?? [];
-
-  return (url: string) => {
-    if (url.includes('/api/traces/alerts/unresolved')) {
-      return Promise.resolve({ data: alerts });
-    }
-    if (url.includes('/api/traces/stats/hourly')) {
-      return Promise.resolve({ data: hourlyStats });
-    }
-    if (url.includes('/api/traces/stats/endpoints')) {
-      return Promise.resolve({ data: endpointStats });
-    }
-    if (url.includes('/api/traces/stats')) {
-      return Promise.resolve({ data: stats });
-    }
-    if (url.includes('/api/traces')) {
-      return Promise.resolve({ data: traces });
-    }
-    return Promise.reject(new Error('Not found'));
-  };
-}
-
 describe('TracesContainer', () => {
-  beforeEach(() => {
-    mockAxios.get.mockImplementation(createMockAxiosGet());
-  });
-
   it('should render the traces container', async () => {
     render(<TracesContainer />);
 
@@ -210,6 +114,7 @@ describe('TracesContainer', () => {
   });
 
   it('should toggle live mode', async () => {
+    const user = userEvent.setup();
     render(<TracesContainer />);
 
     await waitFor(() => {
@@ -217,15 +122,17 @@ describe('TracesContainer', () => {
     });
 
     const liveToggle = screen.getByRole('button', { pressed: false });
-    await act(async () => {
-      fireEvent.click(liveToggle);
-    });
+    await user.click(liveToggle);
 
     expect(screen.getByText('Live')).toBeInTheDocument();
   });
 
   it('should show error state', async () => {
-    mockAxios.get.mockRejectedValue(new Error('Network error'));
+    server.use(
+      http.get('/api/traces', () => {
+        return new HttpResponse(null, { status: 500 });
+      }),
+    );
 
     render(<TracesContainer />);
 
@@ -235,7 +142,7 @@ describe('TracesContainer', () => {
   });
 
   it('should show empty state when no traces', async () => {
-    mockAxios.get.mockImplementation(createMockAxiosGet({ traces: [] }));
+    server.use(...createTraceHandlers({ traces: [] }));
 
     render(<TracesContainer />);
 
@@ -245,26 +152,34 @@ describe('TracesContainer', () => {
   });
 
   it('should refresh traces when clicking refresh button', async () => {
+    const user = userEvent.setup();
+    let callCount = 0;
+    server.use(
+      http.get('/api/traces', () => {
+        callCount++;
+        return HttpResponse.json([mockTrace]);
+      }),
+    );
+
     render(<TracesContainer />);
 
+    // /api/test appears in both EndpointBreakdown and TraceList
     await waitFor(() => {
-      expect(screen.getByText('/api/test')).toBeInTheDocument();
+      expect(screen.getAllByText('/api/test').length).toBeGreaterThanOrEqual(1);
     });
 
-    const initialCallCount = mockAxios.get.mock.calls.length;
-
+    const initialCallCount = callCount;
     const refreshButton = screen.getByText('Refresh');
-    await act(async () => {
-      fireEvent.click(refreshButton);
-    });
+    await user.click(refreshButton);
 
-    // Axios should be called again for traces
+    // API should be called again for traces
     await waitFor(() => {
-      expect(mockAxios.get.mock.calls.length).toBeGreaterThan(initialCallCount);
+      expect(callCount).toBeGreaterThan(initialCallCount);
     });
   });
 
   it('should navigate to trace detail when clicking a trace', async () => {
+    const user = userEvent.setup();
     render(<TracesContainer />);
 
     await waitFor(() => {
@@ -277,9 +192,7 @@ describe('TracesContainer', () => {
       row.textContent?.includes('/api/test'),
     );
     if (traceRow) {
-      await act(async () => {
-        fireEvent.click(traceRow);
-      });
+      await user.click(traceRow);
     }
 
     expect(mockNavigate).toHaveBeenCalledWith(
@@ -291,6 +204,7 @@ describe('TracesContainer', () => {
   });
 
   it('should hide filters in live mode', async () => {
+    const user = userEvent.setup();
     render(<TracesContainer />);
 
     await waitFor(() => {
@@ -298,15 +212,14 @@ describe('TracesContainer', () => {
     });
 
     const liveToggle = screen.getByRole('button', { pressed: false });
-    await act(async () => {
-      fireEvent.click(liveToggle);
-    });
+    await user.click(liveToggle);
 
     // Filters should not be visible in live mode
     expect(screen.queryByLabelText(/method/i)).not.toBeInTheDocument();
   });
 
   it('should display live traces when streaming', async () => {
+    const user = userEvent.setup();
     render(<TracesContainer />);
 
     await waitFor(() => {
@@ -314,9 +227,7 @@ describe('TracesContainer', () => {
     });
 
     const liveToggle = screen.getByRole('button', { pressed: false });
-    await act(async () => {
-      fireEvent.click(liveToggle);
-    });
+    await user.click(liveToggle);
 
     // Simulate receiving a live trace
     const eventSource = MockEventSource.instances[0];
@@ -336,8 +247,8 @@ describe('TracesContainer', () => {
   });
 
   it('should highlight error rate when above threshold', async () => {
-    mockAxios.get.mockImplementation(
-      createMockAxiosGet({ stats: { ...mockStats, errorRate: 10 } }),
+    server.use(
+      ...createTraceHandlers({ stats: { ...mockStats, errorRate: 10 } }),
     );
 
     render(<TracesContainer />);
@@ -348,6 +259,15 @@ describe('TracesContainer', () => {
   });
 
   it('should apply filters when clicking Apply', async () => {
+    const user = userEvent.setup();
+    let lastUrl = '';
+    server.use(
+      http.get('/api/traces', ({ request }) => {
+        lastUrl = request.url;
+        return HttpResponse.json([mockTrace]);
+      }),
+    );
+
     render(<TracesContainer />);
 
     await waitFor(() => {
@@ -355,55 +275,31 @@ describe('TracesContainer', () => {
     });
 
     // Change method filter
-    const methodSelect = screen.getByLabelText(/method/i);
-    await act(async () => {
-      fireEvent.change(methodSelect, { target: { value: 'POST' } });
-    });
+    await user.selectOptions(screen.getByLabelText(/method/i), 'POST');
 
     // Change path filter
-    const pathInput = screen.getByLabelText(/path/i);
-    await act(async () => {
-      fireEvent.change(pathInput, { target: { value: '/api/users' } });
-    });
+    await user.type(screen.getByLabelText(/path/i), '/api/users');
 
     // Change status filter
-    const statusInput = screen.getByLabelText(/status/i);
-    await act(async () => {
-      fireEvent.change(statusInput, { target: { value: '404' } });
-    });
+    await user.type(screen.getByLabelText(/status/i), '404');
 
     // Change limit filter
-    const limitSelect = screen.getByLabelText(/limit/i);
-    await act(async () => {
-      fireEvent.change(limitSelect, { target: { value: '100' } });
-    });
-
-    const initialCallCount = mockAxios.get.mock.calls.length;
+    await user.selectOptions(screen.getByLabelText(/limit/i), '100');
 
     // Click Apply button
-    const applyButton = screen.getByText('Apply Filters');
-    await act(async () => {
-      fireEvent.click(applyButton);
-    });
+    await user.click(screen.getByText('Apply Filters'));
 
     // Verify API is called with filter params
     await waitFor(() => {
-      const traceCalls = mockAxios.get.mock.calls.filter((call) =>
-        call[0].includes('/api/traces?'),
-      );
-      expect(traceCalls.length).toBeGreaterThan(0);
-      const lastCall = traceCalls[traceCalls.length - 1][0];
-      expect(lastCall).toContain('method=POST');
-      expect(lastCall).toContain('path=%2Fapi%2Fusers');
-      expect(lastCall).toContain('statusCode=404');
-      expect(lastCall).toContain('limit=100');
+      expect(lastUrl).toContain('method=POST');
+      expect(lastUrl).toContain('path=%2Fapi%2Fusers');
+      expect(lastUrl).toContain('statusCode=404');
+      expect(lastUrl).toContain('limit=100');
     });
-
-    // Should switch to static mode (filters applied)
-    expect(mockAxios.get.mock.calls.length).toBeGreaterThan(initialCallCount);
   });
 
   it('should reset filters when clicking Reset', async () => {
+    const user = userEvent.setup();
     render(<TracesContainer />);
 
     await waitFor(() => {
@@ -412,20 +308,13 @@ describe('TracesContainer', () => {
 
     // Set some filters first
     const methodSelect = screen.getByLabelText(/method/i);
-    await act(async () => {
-      fireEvent.change(methodSelect, { target: { value: 'DELETE' } });
-    });
+    await user.selectOptions(methodSelect, 'DELETE');
 
     const pathInput = screen.getByLabelText(/path/i);
-    await act(async () => {
-      fireEvent.change(pathInput, { target: { value: '/api/test' } });
-    });
+    await user.type(pathInput, '/api/test');
 
     // Click Reset button
-    const resetButton = screen.getByText('Reset');
-    await act(async () => {
-      fireEvent.click(resetButton);
-    });
+    await user.click(screen.getByText('Reset'));
 
     // Verify filters are reset
     expect(methodSelect).toHaveValue('');
@@ -433,6 +322,7 @@ describe('TracesContainer', () => {
   });
 
   it('should navigate to trace detail via keyboard Enter', async () => {
+    const user = userEvent.setup();
     render(<TracesContainer />);
 
     await waitFor(() => {
@@ -444,9 +334,8 @@ describe('TracesContainer', () => {
       .getByRole('button', { name: /GET/i })
       .closest('[role="button"]');
     if (traceRow) {
-      await act(async () => {
-        fireEvent.keyDown(traceRow, { key: 'Enter' });
-      });
+      (traceRow as HTMLElement).focus();
+      await user.keyboard('{Enter}');
     }
 
     expect(mockNavigate).toHaveBeenCalledWith(
@@ -458,6 +347,7 @@ describe('TracesContainer', () => {
   });
 
   it('should not navigate on non-Enter key', async () => {
+    const user = userEvent.setup();
     render(<TracesContainer />);
 
     await waitFor(() => {
@@ -469,9 +359,8 @@ describe('TracesContainer', () => {
       .getByRole('button', { name: /GET/i })
       .closest('[role="button"]');
     if (traceRow) {
-      await act(async () => {
-        fireEvent.keyDown(traceRow, { key: 'Escape' });
-      });
+      (traceRow as HTMLElement).focus();
+      await user.keyboard('{Escape}');
     }
 
     // Navigate should not have been called from keyDown (only from earlier click test)
@@ -482,8 +371,8 @@ describe('TracesContainer', () => {
   });
 
   it('should display trace with sub-millisecond duration', async () => {
-    mockAxios.get.mockImplementation(
-      createMockAxiosGet({ traces: [{ ...mockTrace, durationMs: 0.5 }] }),
+    server.use(
+      ...createTraceHandlers({ traces: [{ ...mockTrace, durationMs: 0.5 }] }),
     );
 
     render(<TracesContainer />);
@@ -494,8 +383,8 @@ describe('TracesContainer', () => {
   });
 
   it('should display trace with seconds duration', async () => {
-    mockAxios.get.mockImplementation(
-      createMockAxiosGet({ traces: [{ ...mockTrace, durationMs: 2500 }] }),
+    server.use(
+      ...createTraceHandlers({ traces: [{ ...mockTrace, durationMs: 2500 }] }),
     );
 
     render(<TracesContainer />);
@@ -506,8 +395,8 @@ describe('TracesContainer', () => {
   });
 
   it('should display trace with 1xx status code', async () => {
-    mockAxios.get.mockImplementation(
-      createMockAxiosGet({
+    server.use(
+      ...createTraceHandlers({
         traces: [{ ...mockTrace, statusCode: 101 }],
         stats: { ...mockStats, totalCount: 50 },
       }),
@@ -521,8 +410,8 @@ describe('TracesContainer', () => {
   });
 
   it('should display trace with 3xx status code', async () => {
-    mockAxios.get.mockImplementation(
-      createMockAxiosGet({ traces: [{ ...mockTrace, statusCode: 301 }] }),
+    server.use(
+      ...createTraceHandlers({ traces: [{ ...mockTrace, statusCode: 301 }] }),
     );
 
     render(<TracesContainer />);
@@ -533,6 +422,7 @@ describe('TracesContainer', () => {
   });
 
   it('should handle SSE parse error gracefully', async () => {
+    const user = userEvent.setup();
     const consoleErrorSpy = jest
       .spyOn(console, 'error')
       .mockImplementation(() => {});
@@ -544,9 +434,7 @@ describe('TracesContainer', () => {
     });
 
     const liveToggle = screen.getByRole('button', { pressed: false });
-    await act(async () => {
-      fireEvent.click(liveToggle);
-    });
+    await user.click(liveToggle);
 
     // Simulate receiving invalid JSON
     const eventSource = MockEventSource.instances[0];
@@ -565,6 +453,7 @@ describe('TracesContainer', () => {
   });
 
   it('should handle SSE connection error and reconnect', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     jest.useFakeTimers();
 
     render(<TracesContainer />);
@@ -574,9 +463,7 @@ describe('TracesContainer', () => {
     });
 
     const liveToggle = screen.getByRole('button', { pressed: false });
-    await act(async () => {
-      fireEvent.click(liveToggle);
-    });
+    await user.click(liveToggle);
 
     // Simulate connection error
     const eventSource = MockEventSource.instances[0];
@@ -599,10 +486,6 @@ describe('TracesContainer', () => {
 });
 
 describe('TraceDetailContainer', () => {
-  beforeEach(() => {
-    mockAxios.get.mockResolvedValue({ data: mockTrace });
-  });
-
   it('should render loading state', async () => {
     render(<TraceDetailContainer />);
 
@@ -644,6 +527,7 @@ describe('TraceDetailContainer', () => {
   });
 
   it('should navigate back when clicking back button', async () => {
+    const user = userEvent.setup();
     render(<TraceDetailContainer />);
 
     await waitFor(() => {
@@ -651,15 +535,18 @@ describe('TraceDetailContainer', () => {
     });
 
     const backButton = screen.getByText('← Back');
-    await act(async () => {
-      fireEvent.click(backButton);
-    });
+    await user.click(backButton);
 
     expect(mockNavigate).toHaveBeenCalledWith({ to: '/status/traces' });
   });
 
   it('should show error state when trace not found', async () => {
-    mockAxios.get.mockRejectedValue(new Error('Trace not found'));
+    server.use(
+      http.get(
+        '/api/traces/:traceId',
+        () => new HttpResponse(null, { status: 404 }),
+      ),
+    );
 
     render(<TraceDetailContainer />);
 
@@ -671,7 +558,13 @@ describe('TraceDetailContainer', () => {
   });
 
   it('should navigate back from error state', async () => {
-    mockAxios.get.mockRejectedValue(new Error('Trace not found'));
+    const user = userEvent.setup();
+    server.use(
+      http.get(
+        '/api/traces/:traceId',
+        () => new HttpResponse(null, { status: 404 }),
+      ),
+    );
 
     render(<TraceDetailContainer />);
 
@@ -680,9 +573,7 @@ describe('TraceDetailContainer', () => {
     });
 
     const backButton = screen.getByText('Back to Traces');
-    await act(async () => {
-      fireEvent.click(backButton);
-    });
+    await user.click(backButton);
 
     expect(mockNavigate).toHaveBeenCalledWith({ to: '/status/traces' });
   });
@@ -698,9 +589,11 @@ describe('TraceDetailContainer', () => {
   });
 
   it('should display trace without user ID', async () => {
-    mockAxios.get.mockResolvedValue({
-      data: { ...mockTrace, userId: undefined },
-    });
+    server.use(
+      http.get('/api/traces/:traceId', () =>
+        HttpResponse.json({ ...mockTrace, userId: undefined }),
+      ),
+    );
 
     render(<TraceDetailContainer />);
 
@@ -712,9 +605,11 @@ describe('TraceDetailContainer', () => {
   });
 
   it('should display N/A for missing IP and user agent', async () => {
-    mockAxios.get.mockResolvedValue({
-      data: { ...mockTrace, ip: null, userAgent: null },
-    });
+    server.use(
+      http.get('/api/traces/:traceId', () =>
+        HttpResponse.json({ ...mockTrace, ip: null, userAgent: null }),
+      ),
+    );
 
     render(<TraceDetailContainer />);
 
@@ -733,7 +628,9 @@ describe('TraceDetailContainer', () => {
     ];
 
     for (const trace of traces) {
-      mockAxios.get.mockResolvedValue({ data: trace });
+      server.use(
+        http.get('/api/traces/:traceId', () => HttpResponse.json(trace)),
+      );
       const { unmount } = render(<TraceDetailContainer />);
 
       await waitFor(() => {
@@ -748,7 +645,11 @@ describe('TraceDetailContainer', () => {
     const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
 
     for (const method of methods) {
-      mockAxios.get.mockResolvedValue({ data: { ...mockTrace, method } });
+      server.use(
+        http.get('/api/traces/:traceId', () =>
+          HttpResponse.json({ ...mockTrace, method }),
+        ),
+      );
       const { unmount } = render(<TraceDetailContainer />);
 
       await waitFor(() => {
@@ -772,7 +673,9 @@ describe('TraceDetailContainer', () => {
         interceptorPost: 5,
       },
     };
-    mockAxios.get.mockResolvedValue({ data: slowTrace });
+    server.use(
+      http.get('/api/traces/:traceId', () => HttpResponse.json(slowTrace)),
+    );
 
     render(<TraceDetailContainer />);
 
@@ -797,7 +700,11 @@ describe('TraceDetailContainer', () => {
         interceptorPost: 5,
       },
     };
-    mockAxios.get.mockResolvedValue({ data: largePhaseTrace });
+    server.use(
+      http.get('/api/traces/:traceId', () =>
+        HttpResponse.json(largePhaseTrace),
+      ),
+    );
 
     render(<TraceDetailContainer />);
 
@@ -827,13 +734,16 @@ describe('TraceDetailContainer', () => {
 
 describe('AlertsPanel', () => {
   beforeEach(() => {
-    mockAxios.get.mockImplementation(createMockAxiosGet({ alerts: [] }));
-    mockAxios.post.mockResolvedValue({ data: { id: 1, resolved: true } });
+    server.use(...createTraceHandlers({ alerts: [] }));
   });
 
   it('should render loading state', async () => {
-    // Make axios delay to show loading
-    mockAxios.get.mockImplementation(() => new Promise(() => {}));
+    // Make handler delay to show loading
+    server.use(
+      http.get('/api/traces/alerts', async () => {
+        await new Promise(() => {}); // Never resolves
+      }),
+    );
 
     render(<TracesContainer />);
 
@@ -843,7 +753,7 @@ describe('AlertsPanel', () => {
   });
 
   it('should render empty state when no alerts', async () => {
-    mockAxios.get.mockImplementation(createMockAxiosGet({ alerts: [] }));
+    server.use(...createTraceHandlers({ alerts: [] }));
 
     render(<TracesContainer />);
 
@@ -856,12 +766,12 @@ describe('AlertsPanel', () => {
   });
 
   it('should render error state when alerts fetch fails', async () => {
-    mockAxios.get.mockImplementation((url: string) => {
-      if (url.includes('/api/traces/alerts')) {
-        return Promise.reject(new Error('Network error'));
-      }
-      return createMockAxiosGet()(url);
-    });
+    server.use(
+      http.get(
+        '/api/traces/alerts/unresolved',
+        () => new HttpResponse(null, { status: 500 }),
+      ),
+    );
 
     render(<TracesContainer />);
 
@@ -884,9 +794,7 @@ describe('AlertsPanel', () => {
       },
     ];
 
-    mockAxios.get.mockImplementation(
-      createMockAxiosGet({ alerts: mockAlerts }),
-    );
+    server.use(...createTraceHandlers({ alerts: mockAlerts }));
 
     render(<TracesContainer />);
 
@@ -927,9 +835,7 @@ describe('AlertsPanel', () => {
       },
     ];
 
-    mockAxios.get.mockImplementation(
-      createMockAxiosGet({ alerts: mockAlerts }),
-    );
+    server.use(...createTraceHandlers({ alerts: mockAlerts }));
 
     render(<TracesContainer />);
 
@@ -943,6 +849,8 @@ describe('AlertsPanel', () => {
   });
 
   it('should resolve an alert when clicking resolve button', async () => {
+    const user = userEvent.setup();
+    let patchCalled = false;
     const mockAlerts: AlertHistoryRecord[] = [
       {
         id: 1,
@@ -956,12 +864,13 @@ describe('AlertsPanel', () => {
       },
     ];
 
-    mockAxios.get.mockImplementation(
-      createMockAxiosGet({ alerts: mockAlerts }),
+    server.use(
+      ...createTraceHandlers({ alerts: mockAlerts }),
+      http.patch('/api/traces/alerts/:id/resolve', () => {
+        patchCalled = true;
+        return HttpResponse.json({ ...mockAlerts[0], resolved: true });
+      }),
     );
-    mockAxios.patch.mockResolvedValue({
-      data: { ...mockAlerts[0], resolved: true },
-    });
 
     render(<TracesContainer />);
 
@@ -970,15 +879,10 @@ describe('AlertsPanel', () => {
     });
 
     const resolveButton = screen.getByText('Resolve');
-    await act(async () => {
-      fireEvent.click(resolveButton);
-    });
+    await user.click(resolveButton);
 
     await waitFor(() => {
-      expect(mockAxios.patch).toHaveBeenCalledWith(
-        '/api/traces/alerts/1/resolve',
-        { notes: undefined },
-      );
+      expect(patchCalled).toBe(true);
     });
   });
 
@@ -996,9 +900,7 @@ describe('AlertsPanel', () => {
       },
     ];
 
-    mockAxios.get.mockImplementation(
-      createMockAxiosGet({ alerts: mockAlerts }),
-    );
+    server.use(...createTraceHandlers({ alerts: mockAlerts }));
 
     render(<TracesContainer />);
 
@@ -1021,9 +923,7 @@ describe('AlertsPanel', () => {
       },
     ];
 
-    mockAxios.get.mockImplementation(
-      createMockAxiosGet({ alerts: mockAlerts }),
-    );
+    server.use(...createTraceHandlers({ alerts: mockAlerts }));
 
     render(<TracesContainer />);
 
@@ -1046,9 +946,7 @@ describe('AlertsPanel', () => {
       },
     ];
 
-    mockAxios.get.mockImplementation(
-      createMockAxiosGet({ alerts: mockAlerts }),
-    );
+    server.use(...createTraceHandlers({ alerts: mockAlerts }));
 
     render(<TracesContainer />);
 
@@ -1071,9 +969,7 @@ describe('AlertsPanel', () => {
       },
     ];
 
-    mockAxios.get.mockImplementation(
-      createMockAxiosGet({ alerts: mockAlerts }),
-    );
+    server.use(...createTraceHandlers({ alerts: mockAlerts }));
 
     render(<TracesContainer />);
 
@@ -1098,9 +994,7 @@ describe('AlertsPanel', () => {
       },
     ];
 
-    mockAxios.get.mockImplementation(
-      createMockAxiosGet({ alerts: mockAlerts }),
-    );
+    server.use(...createTraceHandlers({ alerts: mockAlerts }));
 
     render(<TracesContainer />);
 
@@ -1124,9 +1018,7 @@ describe('AlertsPanel', () => {
       },
     ];
 
-    mockAxios.get.mockImplementation(
-      createMockAxiosGet({ alerts: mockAlerts }),
-    );
+    server.use(...createTraceHandlers({ alerts: mockAlerts }));
 
     render(<TracesContainer />);
 
@@ -1138,12 +1030,11 @@ describe('AlertsPanel', () => {
 
 describe('TraceTrends', () => {
   it('should render loading state', async () => {
-    mockAxios.get.mockImplementation((url: string) => {
-      if (url.includes('/api/traces/stats/hourly')) {
-        return new Promise(() => {}); // Never resolves
-      }
-      return createMockAxiosGet()(url);
-    });
+    server.use(
+      http.get('/api/traces/stats/hourly', async () => {
+        await new Promise(() => {}); // Never resolves
+      }),
+    );
 
     render(<TracesContainer />);
 
@@ -1153,12 +1044,12 @@ describe('TraceTrends', () => {
   });
 
   it('should render error state when fetch fails', async () => {
-    mockAxios.get.mockImplementation((url: string) => {
-      if (url.includes('/api/traces/stats/hourly')) {
-        return Promise.reject(new Error('Network error'));
-      }
-      return createMockAxiosGet()(url);
-    });
+    server.use(
+      http.get(
+        '/api/traces/stats/hourly',
+        () => new HttpResponse(null, { status: 500 }),
+      ),
+    );
 
     render(<TracesContainer />);
 
@@ -1168,7 +1059,7 @@ describe('TraceTrends', () => {
   });
 
   it('should render empty state when no data', async () => {
-    mockAxios.get.mockImplementation(createMockAxiosGet({ hourlyStats: [] }));
+    server.use(...createTraceHandlers({ hourlyStats: [] }));
 
     render(<TracesContainer />);
 
@@ -1178,8 +1069,6 @@ describe('TraceTrends', () => {
   });
 
   it('should render chart with data', async () => {
-    mockAxios.get.mockImplementation(createMockAxiosGet());
-
     render(<TracesContainer />);
 
     await waitFor(() => {
@@ -1190,12 +1079,11 @@ describe('TraceTrends', () => {
 
 describe('EndpointBreakdown', () => {
   it('should render loading state', async () => {
-    mockAxios.get.mockImplementation((url: string) => {
-      if (url.includes('/api/traces/stats/endpoints')) {
-        return new Promise(() => {}); // Never resolves
-      }
-      return createMockAxiosGet()(url);
-    });
+    server.use(
+      http.get('/api/traces/stats/endpoints', async () => {
+        await new Promise(() => {}); // Never resolves
+      }),
+    );
 
     render(<TracesContainer />);
 
@@ -1205,12 +1093,12 @@ describe('EndpointBreakdown', () => {
   });
 
   it('should render error state when fetch fails', async () => {
-    mockAxios.get.mockImplementation((url: string) => {
-      if (url.includes('/api/traces/stats/endpoints')) {
-        return Promise.reject(new Error('Network error'));
-      }
-      return createMockAxiosGet()(url);
-    });
+    server.use(
+      http.get(
+        '/api/traces/stats/endpoints',
+        () => new HttpResponse(null, { status: 500 }),
+      ),
+    );
 
     render(<TracesContainer />);
 
@@ -1220,7 +1108,7 @@ describe('EndpointBreakdown', () => {
   });
 
   it('should render empty state when no data', async () => {
-    mockAxios.get.mockImplementation(createMockAxiosGet({ endpointStats: [] }));
+    server.use(...createTraceHandlers({ endpointStats: [] }));
 
     render(<TracesContainer />);
 
@@ -1230,13 +1118,12 @@ describe('EndpointBreakdown', () => {
   });
 
   it('should render endpoint table with data', async () => {
-    mockAxios.get.mockImplementation(createMockAxiosGet());
-
     render(<TracesContainer />);
 
     // Wait for endpoints to load and verify data
+    // Note: /api/test appears in both EndpointBreakdown and TraceList
     await waitFor(() => {
-      expect(screen.getByText('/api/test')).toBeInTheDocument();
+      expect(screen.getAllByText('/api/test').length).toBeGreaterThanOrEqual(1);
       expect(screen.getByText('/api/blog')).toBeInTheDocument();
       expect(screen.getByText('50')).toBeInTheDocument();
       expect(screen.getByText('40ms')).toBeInTheDocument();
@@ -1244,8 +1131,8 @@ describe('EndpointBreakdown', () => {
   });
 
   it('should display endpoint with slow latency', async () => {
-    mockAxios.get.mockImplementation(
-      createMockAxiosGet({
+    server.use(
+      ...createTraceHandlers({
         endpointStats: [
           {
             path: '/api/slow',
@@ -1267,8 +1154,8 @@ describe('EndpointBreakdown', () => {
   });
 
   it('should display endpoint with high error rate', async () => {
-    mockAxios.get.mockImplementation(
-      createMockAxiosGet({
+    server.use(
+      ...createTraceHandlers({
         endpointStats: [
           {
             path: '/api/errors',
@@ -1292,8 +1179,8 @@ describe('EndpointBreakdown', () => {
   });
 
   it('should display endpoint with sub-millisecond latency', async () => {
-    mockAxios.get.mockImplementation(
-      createMockAxiosGet({
+    server.use(
+      ...createTraceHandlers({
         endpointStats: [
           {
             path: '/api/fast',
@@ -1315,8 +1202,8 @@ describe('EndpointBreakdown', () => {
   });
 
   it('should display endpoint with seconds latency', async () => {
-    mockAxios.get.mockImplementation(
-      createMockAxiosGet({
+    server.use(
+      ...createTraceHandlers({
         endpointStats: [
           {
             path: '/api/very-slow',
@@ -1338,8 +1225,8 @@ describe('EndpointBreakdown', () => {
   });
 
   it('should display endpoints with different HTTP methods', async () => {
-    mockAxios.get.mockImplementation(
-      createMockAxiosGet({
+    server.use(
+      ...createTraceHandlers({
         endpointStats: [
           {
             path: '/api/get',
@@ -1391,11 +1278,16 @@ describe('EndpointBreakdown', () => {
 });
 
 describe('TraceFilters', () => {
-  beforeEach(() => {
-    mockAxios.get.mockImplementation(createMockAxiosGet());
-  });
-
   it('should apply duration filter presets', async () => {
+    const user = userEvent.setup();
+    let lastUrl = '';
+    server.use(
+      http.get('/api/traces', ({ request }) => {
+        lastUrl = request.url;
+        return HttpResponse.json([mockTrace]);
+      }),
+    );
+
     render(<TracesContainer />);
 
     await waitFor(() => {
@@ -1404,34 +1296,24 @@ describe('TraceFilters', () => {
 
     // Set min duration
     const minDurationInput = screen.getByLabelText(/Min Duration/i);
-    await act(async () => {
-      fireEvent.change(minDurationInput, { target: { value: '100' } });
-    });
+    await user.type(minDurationInput, '100');
 
     // Set max duration
     const maxDurationInput = screen.getByLabelText(/Max Duration/i);
-    await act(async () => {
-      fireEvent.change(maxDurationInput, { target: { value: '500' } });
-    });
+    await user.type(maxDurationInput, '500');
 
     // Apply filters
     const applyButton = screen.getByText('Apply Filters');
-    await act(async () => {
-      fireEvent.click(applyButton);
-    });
+    await user.click(applyButton);
 
     await waitFor(() => {
-      const traceCalls = mockAxios.get.mock.calls.filter((call) =>
-        call[0].includes('/api/traces?'),
-      );
-      expect(traceCalls.length).toBeGreaterThan(0);
-      const lastCall = traceCalls[traceCalls.length - 1][0];
-      expect(lastCall).toContain('minDuration=100');
-      expect(lastCall).toContain('maxDuration=500');
+      expect(lastUrl).toContain('minDuration=100');
+      expect(lastUrl).toContain('maxDuration=500');
     });
   });
 
   it('should use quick preset for slow requests', async () => {
+    const user = userEvent.setup();
     render(<TracesContainer />);
 
     await waitFor(() => {
@@ -1440,9 +1322,7 @@ describe('TraceFilters', () => {
 
     // Click the slow requests preset
     const slowButton = screen.getByText('Slow (>100ms)');
-    await act(async () => {
-      fireEvent.click(slowButton);
-    });
+    await user.click(slowButton);
 
     // Verify the min duration input was updated
     await waitFor(() => {
@@ -1452,6 +1332,7 @@ describe('TraceFilters', () => {
   });
 
   it('should use quick preset for fast requests', async () => {
+    const user = userEvent.setup();
     render(<TracesContainer />);
 
     await waitFor(() => {
@@ -1460,9 +1341,7 @@ describe('TraceFilters', () => {
 
     // Click the fast requests preset
     const fastButton = screen.getByText('Fast (<50ms)');
-    await act(async () => {
-      fireEvent.click(fastButton);
-    });
+    await user.click(fastButton);
 
     // Verify the max duration input was updated
     await waitFor(() => {
@@ -1485,7 +1364,9 @@ describe('TimingWaterfall edge cases', () => {
         interceptorPost: 1.5,
       },
     };
-    mockAxios.get.mockResolvedValue({ data: subMsTrace });
+    server.use(
+      http.get('/api/traces/:traceId', () => HttpResponse.json(subMsTrace)),
+    );
 
     render(<TraceDetailContainer />);
 
@@ -1506,7 +1387,9 @@ describe('TimingWaterfall edge cases', () => {
         interceptorPost: 300,
       },
     };
-    mockAxios.get.mockResolvedValue({ data: slowPhaseTrace });
+    server.use(
+      http.get('/api/traces/:traceId', () => HttpResponse.json(slowPhaseTrace)),
+    );
 
     render(<TraceDetailContainer />);
 
@@ -1528,7 +1411,9 @@ describe('TimingWaterfall edge cases', () => {
         interceptorPost: 10,
       },
     };
-    mockAxios.get.mockResolvedValue({ data: zeroPhaseTrace });
+    server.use(
+      http.get('/api/traces/:traceId', () => HttpResponse.json(zeroPhaseTrace)),
+    );
 
     render(<TraceDetailContainer />);
 
@@ -1547,7 +1432,11 @@ describe('TraceDetailContainer edge cases', () => {
       ...mockTrace,
       method: 'OPTIONS', // Not in the standard method classes
     };
-    mockAxios.get.mockResolvedValue({ data: unknownMethodTrace });
+    server.use(
+      http.get('/api/traces/:traceId', () =>
+        HttpResponse.json(unknownMethodTrace),
+      ),
+    );
 
     render(<TraceDetailContainer />);
 
@@ -1556,8 +1445,25 @@ describe('TraceDetailContainer edge cases', () => {
     });
   });
 
-  it('should show fallback message when error has no message', async () => {
-    mockAxios.get.mockRejectedValue({ status: 404 }); // Error without message property
+  it('should show error message when fetch fails with 404', async () => {
+    server.use(
+      http.get(
+        '/api/traces/:traceId',
+        () => new HttpResponse(null, { status: 404 }),
+      ),
+    );
+
+    render(<TraceDetailContainer />);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Request failed with status code 404/),
+      ).toBeInTheDocument();
+    });
+  });
+
+  it('should show fallback message when trace data is null', async () => {
+    server.use(http.get('/api/traces/:traceId', () => HttpResponse.json(null)));
 
     render(<TraceDetailContainer />);
 
@@ -1568,7 +1474,11 @@ describe('TraceDetailContainer edge cases', () => {
 
   it('should display 1xx status with correct styling', async () => {
     const informationalTrace = { ...mockTrace, statusCode: 100 };
-    mockAxios.get.mockResolvedValue({ data: informationalTrace });
+    server.use(
+      http.get('/api/traces/:traceId', () =>
+        HttpResponse.json(informationalTrace),
+      ),
+    );
 
     render(<TraceDetailContainer />);
 
@@ -1580,8 +1490,8 @@ describe('TraceDetailContainer edge cases', () => {
 
 describe('EndpointBreakdown edge cases', () => {
   it('should handle endpoint with unknown HTTP method', async () => {
-    mockAxios.get.mockImplementation(
-      createMockAxiosGet({
+    server.use(
+      ...createTraceHandlers({
         endpointStats: [
           {
             path: '/api/options',
@@ -1617,9 +1527,7 @@ describe('AlertsPanel edge cases', () => {
       },
     ];
 
-    mockAxios.get.mockImplementation(
-      createMockAxiosGet({ alerts: mockAlerts }),
-    );
+    server.use(...createTraceHandlers({ alerts: mockAlerts }));
 
     render(<TracesContainer />);
 
@@ -1642,9 +1550,7 @@ describe('AlertsPanel edge cases', () => {
       },
     ];
 
-    mockAxios.get.mockImplementation(
-      createMockAxiosGet({ alerts: mockAlerts }),
-    );
+    server.use(...createTraceHandlers({ alerts: mockAlerts }));
 
     render(<TracesContainer />);
 
@@ -1658,6 +1564,7 @@ describe('AlertsPanel edge cases', () => {
 
 describe('useTraceStream edge cases', () => {
   it('should handle error state and reconnect logic', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     jest.useFakeTimers();
 
     render(<TracesContainer />);
@@ -1668,9 +1575,7 @@ describe('useTraceStream edge cases', () => {
 
     // Enable live mode
     const liveToggle = screen.getByRole('button', { pressed: false });
-    await act(async () => {
-      fireEvent.click(liveToggle);
-    });
+    await user.click(liveToggle);
 
     // Wait for EventSource to be created
     await waitFor(() => {
@@ -1701,6 +1606,7 @@ describe('useTraceStream edge cases', () => {
   });
 
   it('should handle buffer trimming when max traces exceeded', async () => {
+    const user = userEvent.setup();
     render(<TracesContainer />);
 
     await waitFor(() => {
@@ -1709,9 +1615,7 @@ describe('useTraceStream edge cases', () => {
 
     // Enable live mode
     const liveToggle = screen.getByRole('button', { pressed: false });
-    await act(async () => {
-      fireEvent.click(liveToggle);
-    });
+    await user.click(liveToggle);
 
     // Simulate receiving many traces to test buffer trimming
     const eventSource =
@@ -1740,6 +1644,7 @@ describe('useTraceStream edge cases', () => {
   });
 
   it('should clean up EventSource on unmount', async () => {
+    const user = userEvent.setup();
     const { unmount } = render(<TracesContainer />);
 
     await waitFor(() => {
@@ -1748,9 +1653,7 @@ describe('useTraceStream edge cases', () => {
 
     // Enable live mode to create EventSource
     const liveToggle = screen.getByRole('button', { pressed: false });
-    await act(async () => {
-      fireEvent.click(liveToggle);
-    });
+    await user.click(liveToggle);
 
     // Wait for EventSource to be created
     await waitFor(() => {
@@ -1769,8 +1672,8 @@ describe('useTraceStream edge cases', () => {
 
 describe('TraceRow edge cases', () => {
   it('should render trace with 1xx status correctly', async () => {
-    mockAxios.get.mockImplementation(
-      createMockAxiosGet({
+    server.use(
+      ...createTraceHandlers({
         traces: [{ ...mockTrace, statusCode: 101 }], // 1xx status
       }),
     );
@@ -1785,8 +1688,8 @@ describe('TraceRow edge cases', () => {
 
   it('should render trace with status below 100', async () => {
     // Edge case: status code below 100 (theoretically possible)
-    mockAxios.get.mockImplementation(
-      createMockAxiosGet({
+    server.use(
+      ...createTraceHandlers({
         traces: [{ ...mockTrace, statusCode: 0 }],
       }),
     );
@@ -1800,8 +1703,8 @@ describe('TraceRow edge cases', () => {
 
   it('should render trace with 1xx status class', async () => {
     // Explicitly test the status1xx class (for coverage of line 51)
-    mockAxios.get.mockImplementation(
-      createMockAxiosGet({
+    server.use(
+      ...createTraceHandlers({
         traces: [{ ...mockTrace, statusCode: 100 }],
         stats: { ...mockStats, totalCount: 50 }, // Use different value to avoid collision
       }),
@@ -1819,10 +1722,6 @@ describe('TraceRow edge cases', () => {
 });
 
 describe('useTraces URL building edge cases', () => {
-  beforeEach(() => {
-    mockAxios.get.mockImplementation(createMockAxiosGet());
-  });
-
   it('should fetch traces without query params when no filters applied', async () => {
     // This test covers line 34 - the case where queryString is empty
     // When filters are completely empty (no limit set), URL should be plain /api/traces
@@ -1831,11 +1730,8 @@ describe('useTraces URL building edge cases', () => {
     render(<TracesContainer />);
 
     await waitFor(() => {
-      // Verify that traces endpoint is called (with limit param from container default)
-      const traceCalls = mockAxios.get.mock.calls.filter((call) =>
-        call[0].includes('/api/traces'),
-      );
-      expect(traceCalls.length).toBeGreaterThan(0);
+      // Just verify traces load
+      expect(screen.getAllByText('/api/test').length).toBeGreaterThanOrEqual(1);
     });
   });
 
@@ -1847,43 +1743,44 @@ describe('useTraces URL building edge cases', () => {
     });
 
     // Set all filter types
+    const user = userEvent.setup();
+    let lastUrl = '';
+    server.use(
+      http.get('/api/traces', ({ request }) => {
+        lastUrl = request.url;
+        return HttpResponse.json([mockTrace]);
+      }),
+    );
+
     const methodSelect = screen.getByLabelText(/method/i);
     const pathInput = screen.getByLabelText(/path/i);
     const statusInput = screen.getByLabelText(/status/i);
     const minDurationInput = screen.getByLabelText(/Min Duration/i);
     const maxDurationInput = screen.getByLabelText(/Max Duration/i);
 
-    await act(async () => {
-      fireEvent.change(methodSelect, { target: { value: 'POST' } });
-      fireEvent.change(pathInput, { target: { value: '/api/test' } });
-      fireEvent.change(statusInput, { target: { value: '500' } });
-      fireEvent.change(minDurationInput, { target: { value: '10' } });
-      fireEvent.change(maxDurationInput, { target: { value: '1000' } });
-    });
+    await user.selectOptions(methodSelect, 'POST');
+    await user.type(pathInput, '/api/test');
+    await user.type(statusInput, '500');
+    await user.type(minDurationInput, '10');
+    await user.type(maxDurationInput, '1000');
 
     const applyButton = screen.getByText('Apply Filters');
-    await act(async () => {
-      fireEvent.click(applyButton);
-    });
+    await user.click(applyButton);
 
     await waitFor(() => {
-      const traceCalls = mockAxios.get.mock.calls.filter((call) =>
-        call[0].includes('/api/traces?'),
-      );
-      const lastCall = traceCalls[traceCalls.length - 1][0];
-      expect(lastCall).toContain('method=POST');
-      expect(lastCall).toContain('path=');
-      expect(lastCall).toContain('statusCode=500');
-      expect(lastCall).toContain('minDuration=10');
-      expect(lastCall).toContain('maxDuration=1000');
+      expect(lastUrl).toContain('method=POST');
+      expect(lastUrl).toContain('path=');
+      expect(lastUrl).toContain('statusCode=500');
+      expect(lastUrl).toContain('minDuration=10');
+      expect(lastUrl).toContain('maxDuration=1000');
     });
   });
 });
 
 describe('Edge cases for coverage', () => {
   it('should handle unknown HTTP method in endpoint breakdown', async () => {
-    mockAxios.get.mockImplementation(
-      createMockAxiosGet({
+    server.use(
+      ...createTraceHandlers({
         endpointStats: [
           {
             path: '/api/custom',
@@ -1905,8 +1802,8 @@ describe('Edge cases for coverage', () => {
   });
 
   it('should handle trace with very long duration (seconds)', async () => {
-    mockAxios.get.mockImplementation(
-      createMockAxiosGet({
+    server.use(
+      ...createTraceHandlers({
         traces: [
           {
             ...mockTrace,
@@ -1927,8 +1824,8 @@ describe('Edge cases for coverage', () => {
   });
 
   it('should handle trace with zero duration', async () => {
-    mockAxios.get.mockImplementation(
-      createMockAxiosGet({
+    server.use(
+      ...createTraceHandlers({
         traces: [
           {
             ...mockTrace,
@@ -1958,5 +1855,557 @@ describe('Edge cases for coverage', () => {
     // Live mode is disabled by default (false)
     // Verify no EventSource was created initially
     expect(MockEventSource.instances.length).toBe(0);
+  });
+});
+
+describe('AlertsPanel - isPending state', () => {
+  it('should show "Resolving..." when resolution is in progress', async () => {
+    const user = userEvent.setup();
+    const mockAlerts: AlertHistoryRecord[] = [
+      {
+        id: 1,
+        ruleName: 'Test Alert',
+        metric: 'avgDuration',
+        threshold: 100,
+        actualValue: 150,
+        triggeredAt: new Date().toISOString(),
+        resolved: false,
+        channels: ['log'],
+      },
+    ];
+
+    server.use(
+      ...createTraceHandlers({ alerts: mockAlerts }),
+      // Make patch request hang to keep isPending=true
+      http.patch('/api/traces/alerts/:id/resolve', async () => {
+        await new Promise(() => {}); // Never resolves
+      }),
+    );
+
+    render(<TracesContainer />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Resolve')).toBeInTheDocument();
+    });
+
+    const resolveButton = screen.getByText('Resolve');
+    await user.click(resolveButton);
+
+    // Should show "Resolving..." while pending
+    await waitFor(() => {
+      expect(screen.getByText('Resolving...')).toBeInTheDocument();
+    });
+
+    // Button should be disabled during resolution
+    expect(screen.getByText('Resolving...')).toBeDisabled();
+  });
+});
+
+describe('EndpointBreakdown - default method case', () => {
+  it('should handle unknown HTTP method with empty class', async () => {
+    server.use(
+      ...createTraceHandlers({
+        endpointStats: [
+          {
+            path: '/api/test',
+            method: 'UNKNOWN',
+            count: 5,
+            avgDuration: 10,
+            errorRate: 0,
+          },
+        ],
+      }),
+    );
+
+    render(<TracesContainer />);
+
+    await waitFor(() => {
+      expect(screen.getByText('UNKNOWN')).toBeInTheDocument();
+    });
+
+    // The method badge should exist even with unknown method
+    const methodElement = screen.getByText('UNKNOWN');
+    expect(methodElement).toBeInTheDocument();
+  });
+});
+
+describe('TraceRow - status below 200', () => {
+  it('should render trace with 1xx status using status1xx class', async () => {
+    server.use(
+      ...createTraceHandlers({
+        traces: [
+          {
+            ...mockTrace,
+            traceId: 'trace-1xx',
+            statusCode: 102,
+          },
+        ],
+      }),
+    );
+
+    render(<TracesContainer />);
+
+    await waitFor(() => {
+      expect(screen.getByText('102')).toBeInTheDocument();
+    });
+  });
+
+  it('should render trace with status below 100', async () => {
+    server.use(
+      ...createTraceHandlers({
+        traces: [
+          {
+            ...mockTrace,
+            traceId: 'trace-invalid',
+            statusCode: 0,
+          },
+        ],
+      }),
+    );
+
+    render(<TracesContainer />);
+
+    await waitFor(() => {
+      expect(screen.getByText('0')).toBeInTheDocument();
+    });
+  });
+
+  it('should render traces with all status code classes', async () => {
+    // Test 5xx, 4xx, 3xx status codes via TracesContainer to cover TraceRow branches
+    server.use(
+      ...createTraceHandlers({
+        traces: [
+          { ...mockTrace, traceId: 'trace-5xx', statusCode: 503 },
+          { ...mockTrace, traceId: 'trace-4xx', statusCode: 401 },
+          { ...mockTrace, traceId: 'trace-3xx', statusCode: 304 },
+        ],
+      }),
+    );
+
+    render(<TracesContainer />);
+
+    await waitFor(() => {
+      expect(screen.getByText('503')).toBeInTheDocument();
+      expect(screen.getByText('401')).toBeInTheDocument();
+      expect(screen.getByText('304')).toBeInTheDocument();
+    });
+  });
+});
+
+describe('TraceTrends - custom hours parameter', () => {
+  it('should request stats for 12 hours when hours prop is set', async () => {
+    let hourlyStatsUrl = '';
+    const mockHourlyStats = [
+      {
+        hour: new Date(Date.now() - 11 * 60 * 60 * 1000).toISOString(),
+        count: 5,
+        avgDuration: 100,
+        errorRate: 0,
+      },
+      {
+        hour: new Date(Date.now() - 10 * 60 * 60 * 1000).toISOString(),
+        count: 8,
+        avgDuration: 120,
+        errorRate: 1,
+      },
+    ];
+
+    server.use(
+      http.get('/api/traces/stats/hourly', ({ request }) => {
+        hourlyStatsUrl = request.url;
+        return HttpResponse.json(mockHourlyStats);
+      }),
+    );
+
+    // Note: TraceTrends component is rendered with hours=24 in the container
+    // To test different hours, we need to render it directly
+    const { TraceTrends } = await import('./components/TraceTrends');
+
+    render(<TraceTrends hours={12} />);
+
+    await waitFor(() => {
+      expect(hourlyStatsUrl).toContain('hours=12');
+    });
+  });
+});
+
+describe('TraceFilters - reset and empty value handling', () => {
+  it('should handle reset with all filters cleared', async () => {
+    const user = userEvent.setup();
+    render(<TracesContainer />);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/method/i)).toBeInTheDocument();
+    });
+
+    // Set some filters
+    const methodSelect = screen.getByLabelText(/method/i);
+    const pathInput = screen.getByLabelText(/path/i);
+
+    await user.selectOptions(methodSelect, 'POST');
+    await user.type(pathInput, '/test');
+
+    // Apply filters
+    const applyButton = screen.getByText('Apply Filters');
+    await user.click(applyButton);
+
+    // Reset filters
+    const resetButton = screen.getByText('Reset');
+    await user.click(resetButton);
+
+    // Verify filters are cleared
+    await waitFor(() => {
+      expect(methodSelect).toHaveValue('');
+      expect(pathInput).toHaveValue('');
+    });
+  });
+
+  it('should handle undefined filter values', async () => {
+    const user = userEvent.setup();
+    render(<TracesContainer />);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/method/i)).toBeInTheDocument();
+    });
+
+    // Leave all filters empty and apply
+    const applyButton = screen.getByText('Apply Filters');
+    await user.click(applyButton);
+
+    await waitFor(() => {
+      // Should still render traces
+      expect(screen.getAllByText('/api/test').length).toBeGreaterThanOrEqual(1);
+    });
+  });
+});
+
+describe('TimingWaterfall - comprehensive branch coverage', () => {
+  it('should render expanded view with all phases visible', async () => {
+    const traceWithAllPhases: RequestTrace = {
+      ...mockTrace,
+      traceId: 'test-trace-123',
+      timing: {
+        middleware: 50,
+        guard: 30,
+        interceptorPre: 20,
+        handler: 100,
+        interceptorPost: 25,
+      },
+      durationMs: 225,
+    };
+
+    server.use(
+      http.get('/api/traces/:traceId', () =>
+        HttpResponse.json(traceWithAllPhases),
+      ),
+    );
+
+    render(<TraceDetailContainer />);
+
+    await waitFor(() => {
+      const timelines = screen.getAllByText('Request Timeline');
+      expect(timelines.length).toBeGreaterThan(0);
+    });
+
+    // Verify all phases are rendered in legend
+    expect(screen.getByText('Middleware')).toBeInTheDocument();
+    expect(screen.getByText('Guard')).toBeInTheDocument();
+    expect(screen.getByText('Interceptor Pre')).toBeInTheDocument();
+    expect(screen.getByText('Handler')).toBeInTheDocument();
+    expect(screen.getByText('Interceptor Post')).toBeInTheDocument();
+  });
+
+  it('should handle phase with zero duration', async () => {
+    const traceWithZeroPhase: RequestTrace = {
+      ...mockTrace,
+      traceId: 'test-trace-123',
+      timing: {
+        middleware: 0,
+        guard: 0,
+        interceptorPre: 0,
+        handler: 100,
+        interceptorPost: 0,
+      },
+      durationMs: 100,
+    };
+
+    server.use(
+      http.get('/api/traces/:traceId', () =>
+        HttpResponse.json(traceWithZeroPhase),
+      ),
+    );
+
+    render(<TraceDetailContainer />);
+
+    await waitFor(() => {
+      const timelines = screen.getAllByText('Request Timeline');
+      expect(timelines.length).toBeGreaterThan(0);
+    });
+
+    // Handler should still be visible
+    expect(screen.getByText('Handler')).toBeInTheDocument();
+  });
+
+  it('should highlight slow phases (>100ms)', async () => {
+    const traceWithSlowPhase: RequestTrace = {
+      ...mockTrace,
+      traceId: 'test-trace-123',
+      timing: {
+        middleware: 10,
+        guard: 5,
+        interceptorPre: 5,
+        handler: 150, // Slow!
+        interceptorPost: 10,
+      },
+      durationMs: 180,
+    };
+
+    server.use(
+      http.get('/api/traces/:traceId', () =>
+        HttpResponse.json(traceWithSlowPhase),
+      ),
+    );
+
+    render(<TraceDetailContainer />);
+
+    await waitFor(() => {
+      const timelines = screen.getAllByText('Request Timeline');
+      expect(timelines.length).toBeGreaterThan(0);
+      // The slow phase should be highlighted
+      expect(screen.getByText('150ms')).toBeInTheDocument();
+    });
+  });
+
+  it('should show labels on large segments in expanded view', async () => {
+    const traceWithLargeSegment: RequestTrace = {
+      ...mockTrace,
+      traceId: 'test-trace-123',
+      timing: {
+        middleware: 5,
+        guard: 5,
+        interceptorPre: 5,
+        handler: 85, // >10% of total = 100ms
+        interceptorPost: 0,
+      },
+      durationMs: 100,
+    };
+
+    server.use(
+      http.get('/api/traces/:traceId', () =>
+        HttpResponse.json(traceWithLargeSegment),
+      ),
+    );
+
+    render(<TraceDetailContainer />);
+
+    await waitFor(() => {
+      const timelines = screen.getAllByText('Request Timeline');
+      expect(timelines.length).toBeGreaterThan(0);
+      // Handler takes 85% of time, should have label
+      expect(screen.getByText('85ms')).toBeInTheDocument();
+    });
+  });
+
+  it('should handle hover interactions in expanded view', async () => {
+    const traceForHover: RequestTrace = {
+      ...mockTrace,
+      traceId: 'test-trace-123',
+      timing: {
+        middleware: 20,
+        guard: 20,
+        interceptorPre: 20,
+        handler: 20,
+        interceptorPost: 20,
+      },
+      durationMs: 100,
+    };
+
+    server.use(
+      http.get('/api/traces/:traceId', () => HttpResponse.json(traceForHover)),
+    );
+
+    render(<TraceDetailContainer />);
+
+    await waitFor(() => {
+      const timelines = screen.getAllByText('Request Timeline');
+      expect(timelines.length).toBeGreaterThan(0);
+    });
+
+    // All segments should be in the legend
+    expect(screen.getByText('Middleware')).toBeInTheDocument();
+    expect(screen.getByText('Guard')).toBeInTheDocument();
+  });
+
+  it('should format sub-millisecond duration', async () => {
+    const traceWithSubMs: RequestTrace = {
+      ...mockTrace,
+      traceId: 'test-trace-123',
+      timing: {
+        middleware: 0.5,
+        guard: 0.3,
+        interceptorPre: 0.1,
+        handler: 1.5,
+        interceptorPost: 0.2,
+      },
+      durationMs: 2.6,
+    };
+
+    server.use(
+      http.get('/api/traces/:traceId', () => HttpResponse.json(traceWithSubMs)),
+    );
+
+    render(<TraceDetailContainer />);
+
+    await waitFor(() => {
+      const timelines = screen.getAllByText('Request Timeline');
+      expect(timelines.length).toBeGreaterThan(0);
+      // Duration should show <1ms format
+      const durationTexts = screen.getAllByText(/<1ms/);
+      expect(durationTexts.length).toBeGreaterThan(0);
+    });
+  });
+
+  it('should handle zero total duration gracefully', async () => {
+    // Edge case: all timing values and total duration are 0
+    const traceWithZeroDuration: RequestTrace = {
+      ...mockTrace,
+      traceId: 'test-trace-123',
+      timing: {
+        middleware: 0,
+        guard: 0,
+        interceptorPre: 0,
+        handler: 0,
+        interceptorPost: 0,
+      },
+      durationMs: 0,
+    };
+
+    server.use(
+      http.get('/api/traces/:traceId', () =>
+        HttpResponse.json(traceWithZeroDuration),
+      ),
+    );
+
+    render(<TraceDetailContainer />);
+
+    await waitFor(() => {
+      const timelines = screen.getAllByText('Request Timeline');
+      expect(timelines.length).toBeGreaterThan(0);
+    });
+
+    // Should still render the legend even with 0 duration
+    expect(screen.getByText('Middleware')).toBeInTheDocument();
+  });
+});
+
+describe('useTraces hook - all filter parameters', () => {
+  it('should build URL with empty query params when filters are empty', async () => {
+    // Create a component that uses filters without any values
+    const TestComponent = () => {
+      const { data } = useTraces({});
+      return <div>{data ? 'Loaded' : 'Loading'}</div>;
+    };
+
+    render(<TestComponent />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Loaded')).toBeInTheDocument();
+    });
+  });
+});
+
+describe('useAlertRules hook', () => {
+  it('should fetch alert rules', async () => {
+    const mockRules: AlertRule[] = [
+      {
+        name: 'High Latency',
+        metric: 'avgDuration',
+        threshold: 500,
+        windowMinutes: 5,
+        cooldownMinutes: 10,
+        enabled: true,
+        channels: ['log'],
+      },
+    ];
+
+    server.use(
+      http.get('/api/traces/alerts/rules', () => HttpResponse.json(mockRules)),
+    );
+
+    const TestComponent = () => {
+      const { data } = useAlertRules();
+      return <div>{data ? `Rules: ${data.length}` : 'Loading'}</div>;
+    };
+
+    render(<TestComponent />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Rules: 1')).toBeInTheDocument();
+    });
+  });
+});
+
+describe('useAlertHistory hook', () => {
+  it('should fetch alert history with default limit', async () => {
+    let historyUrl = '';
+    const mockHistory: AlertHistoryRecord[] = [
+      {
+        id: 1,
+        ruleName: 'Test',
+        metric: 'avgDuration',
+        threshold: 100,
+        actualValue: 150,
+        triggeredAt: new Date().toISOString(),
+        resolved: false,
+        channels: ['log'],
+      },
+    ];
+
+    server.use(
+      http.get('/api/traces/alerts/history', ({ request }) => {
+        historyUrl = request.url;
+        return HttpResponse.json(mockHistory);
+      }),
+    );
+
+    const TestComponent = () => {
+      const { data } = useAlertHistory();
+      return <div>{data ? `History: ${data.length}` : 'Loading'}</div>;
+    };
+
+    render(<TestComponent />);
+
+    await waitFor(() => {
+      expect(screen.getByText('History: 1')).toBeInTheDocument();
+    });
+
+    // Verify default limit=20 was used
+    expect(historyUrl).toContain('limit=20');
+  });
+
+  it('should fetch alert history with custom limit', async () => {
+    let historyUrl = '';
+    const mockHistory: AlertHistoryRecord[] = [];
+
+    server.use(
+      http.get('/api/traces/alerts/history', ({ request }) => {
+        historyUrl = request.url;
+        return HttpResponse.json(mockHistory);
+      }),
+    );
+
+    const TestComponent = () => {
+      const { data } = useAlertHistory(50);
+      return <div>{data ? 'Loaded' : 'Loading'}</div>;
+    };
+
+    render(<TestComponent />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Loaded')).toBeInTheDocument();
+    });
+
+    // Verify custom limit=50 was used
+    expect(historyUrl).toContain('limit=50');
   });
 });

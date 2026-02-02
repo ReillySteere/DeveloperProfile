@@ -6,9 +6,9 @@ Accepted - January 25, 2026
 
 ## Context
 
-Phase 1 of request tracing (ADR-010, ADR-011, ADR-012) established the foundation for
-observability with trace capture, SSE streaming, and scheduled maintenance. Phase 2
-extends this with three capabilities:
+The initial request tracing work (ADR-010, ADR-011, ADR-012) established the foundation for
+observability with trace capture, SSE streaming, and scheduled maintenance. This ADR
+extends the observability suite with three additional capabilities:
 
 1. **Rate Limiting**: Protect endpoints from abuse while maintaining observability
 2. **Advanced Visualization**: Trend analysis, enhanced timing breakdown, endpoint statistics
@@ -141,13 +141,13 @@ E2E tests will cover:
 
 ## Implementation References
 
-- Phase 2 Documentation: [Phase 2: Observability Suite](../features/phase-2-observability/README.md)
+- Observability Documentation: [Observability Suite](../features/observability/README.md)
 - Rate Limit Module: `src/server/modules/rate-limit/`
 - Alert Channels: `src/server/modules/traces/channels/`
 - E2E Tests: `e2e/rate-limit.spec.ts`, `e2e/alerts.spec.ts`
 
 ## Related ADRs
 
-- [ADR-010: Request Tracing](ADR-010-request-tracing-observability.md) - Foundation for Phase 2
+- [ADR-010: Request Tracing](ADR-010-request-tracing-observability.md) - Foundation for observability
 - [ADR-011: Event-Driven Architecture](ADR-011-event-driven-architecture.md) - Alert event emission
 - [ADR-012: Scheduled Tasks](ADR-012-scheduled-tasks-and-maintenance.md) - Rate limit cleanup

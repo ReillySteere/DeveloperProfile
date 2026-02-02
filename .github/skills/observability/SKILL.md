@@ -1,15 +1,15 @@
 ---
 name: observability
-description: Guide for working with Phase 2 observability features including rate limiting, visualization, alerting, and request tracing.
+description: Guide for working with observability features including rate limiting, visualization, alerting, and request tracing.
 ---
 
 # Observability Features
 
-Use this skill when working with the Phase 2 observability features: rate limiting, telemetry visualization, alerting, and request tracing.
+Use this skill when working with the observability features: rate limiting, telemetry visualization, alerting, and request tracing.
 
 ## Feature Documentation
 
-Comprehensive documentation is available in `architecture/features/phase-2-observability/`:
+Comprehensive documentation is available in `architecture/features/observability/`:
 
 | Document             | Purpose                                      |
 | -------------------- | -------------------------------------------- |
@@ -263,7 +263,7 @@ describe('Traces Integration', () => {
 | `RATE_LIMIT_GLOBAL_LIMIT` | `100`   | Default requests per window |
 | `RATE_LIMIT_GLOBAL_TTL`   | `60`    | Window size in seconds      |
 
-See `architecture/features/phase-2-observability/configuration.md` for complete reference.
+See `architecture/features/observability/configuration.md` for complete reference.
 
 ## 7. Troubleshooting
 

@@ -666,6 +666,53 @@ describe('DependenciesContainer', () => {
       expect(screen.getByText('Module:')).toBeInTheDocument();
     });
   });
+
+  it('should show empty state when graph has no dependencies', async () => {
+    // Return empty graph data
+    const emptyGraph = {
+      name: 'blog',
+      label: 'Blog',
+      nodes: [],
+      edges: [],
+    };
+
+    mockedAxios.get.mockImplementation((url: string) => {
+      if (url === '/api/architecture/dependencies') {
+        return Promise.resolve({ data: mockGraphsData });
+      }
+      if (url.includes('/api/architecture/dependencies/')) {
+        return Promise.resolve({ data: emptyGraph });
+      }
+      return Promise.reject(new Error('Not found'));
+    });
+
+    render(<DependenciesContainer />);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('No dependencies found for this target.'),
+      ).toBeInTheDocument();
+    });
+  });
+
+  it('should change target when target selector is changed', async () => {
+    setupMocks();
+
+    render(<DependenciesContainer />);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Select container')).toBeInTheDocument();
+    });
+
+    // Change target from 'blog' to 'about'
+    const targetSelect = screen.getByLabelText('Select container');
+    fireEvent.change(targetSelect, { target: { value: 'about' } });
+
+    // Verify the selector value has changed
+    await waitFor(() => {
+      expect(targetSelect).toHaveValue('about');
+    });
+  });
 });
 
 describe('useComponentDoc hook', () => {

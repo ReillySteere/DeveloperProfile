@@ -44,10 +44,10 @@ module.exports = {
   coverageReporters: ['html', 'text', 'text-summary', 'cobertura'],
   coverageThreshold: {
     global: {
-      statements: 98,
-      branches: 92,
-      functions: 98,
-      lines: 98,
+      statements: 100,
+      branches: 100,
+      functions: 100,
+      lines: 100,
     },
   },
 };

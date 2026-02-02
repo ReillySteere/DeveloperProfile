@@ -10,7 +10,7 @@ interface TraceRowProps {
 /**
  * Displays a single trace in a compact row format.
  */
-export const TraceRow = ({ trace, onClick }: TraceRowProps) => {
+const TraceRow = ({ trace, onClick }: TraceRowProps) => {
   const statusClass = getStatusClass(trace.statusCode);
   const methodClass = getMethodClass(trace.method);
 

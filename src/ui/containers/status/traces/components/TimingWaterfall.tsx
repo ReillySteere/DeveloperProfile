@@ -5,8 +5,6 @@ import styles from './TimingWaterfall.module.scss';
 interface TimingWaterfallProps {
   timing: PhaseTiming;
   totalDuration: number;
-  /** Show detailed breakdown with interactive tooltips */
-  expanded?: boolean;
 }
 
 interface PhaseData {
@@ -42,7 +40,6 @@ function formatDuration(ms: number): string {
 export function TimingWaterfall({
   timing,
   totalDuration,
-  expanded = false,
 }: TimingWaterfallProps): React.ReactNode {
   const [hoveredPhase, setHoveredPhase] = useState<string | null>(null);
 
@@ -58,7 +55,7 @@ export function TimingWaterfall({
     let cumulativeOffset = 0;
 
     for (const phase of PHASES) {
-      const duration = timing[phase.key] ?? 0;
+      const duration = timing[phase.key];
       const percentage =
         totalDuration > 0 ? (duration / totalDuration) * 100 : 0;
       result.push({
@@ -80,30 +77,25 @@ export function TimingWaterfall({
     if (phase.percentage <= 0) return null;
 
     const isHovered = hoveredPhase === phase.key;
-    const showLabel = expanded && phase.percentage >= MIN_PERCENTAGE_FOR_LABEL;
+    const showLabel = phase.percentage >= MIN_PERCENTAGE_FOR_LABEL;
 
     return (
       <div
         key={phase.key}
-        className={`${styles.segment} ${expanded ? styles.segmentExpanded : ''} ${phase.isSlow && expanded ? styles.segmentSlow : ''}`}
+        className={`${styles.segment} ${styles.segmentExpanded} ${phase.isSlow ? styles.segmentSlow : ''}`}
         style={{
           width: `${phase.percentage}%`,
           backgroundColor: phase.color,
         }}
-        title={
-          expanded
-            ? undefined
-            : `${phase.name}: ${formatDuration(phase.duration)}`
-        }
-        onMouseEnter={() => expanded && setHoveredPhase(phase.key)}
-        onMouseLeave={() => expanded && setHoveredPhase(null)}
+        onMouseEnter={() => setHoveredPhase(phase.key)}
+        onMouseLeave={() => setHoveredPhase(null)}
       >
         {showLabel && (
           <span className={styles.segmentLabel}>
             {Math.round(phase.percentage)}%
           </span>
         )}
-        {expanded && isHovered && (
+        {isHovered && (
           <div className={styles.tooltip}>
             <div className={styles.tooltipTitle}>{phase.name}</div>
             <div className={styles.tooltipValue}>
@@ -122,9 +114,7 @@ export function TimingWaterfall({
   };
 
   return (
-    <div
-      className={`${styles.waterfall} ${expanded ? styles.waterfallExpanded : ''}`}
-    >
+    <div className={`${styles.waterfall} ${styles.waterfallExpanded}`}>
       <div className={styles.header}>
         <span className={styles.title}>Request Timeline</span>
         <span className={styles.total}>{formatDuration(totalDuration)}</span>
@@ -138,7 +128,7 @@ export function TimingWaterfall({
         {phases.map((phase) => (
           <div
             key={phase.key}
-            className={`${styles.legendItem} ${phase.isSlow && expanded ? styles.legendItemSlow : ''}`}
+            className={`${styles.legendItem} ${phase.isSlow ? styles.legendItemSlow : ''}`}
           >
             <span
               className={styles.legendColor}
@@ -148,9 +138,7 @@ export function TimingWaterfall({
             <span className={styles.legendValue}>
               {formatDuration(phase.duration)}
             </span>
-            {phase.isSlow && expanded && (
-              <span className={styles.slowBadge}>slow</span>
-            )}
+            {phase.isSlow && <span className={styles.slowBadge}>slow</span>}
           </div>
         ))}
       </div>

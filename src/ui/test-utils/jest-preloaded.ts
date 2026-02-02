@@ -7,6 +7,7 @@
  * - MSW server for API mocking
  * - Axios fetch adapter for MSW compatibility (critical!)
  * - Fetch mocks
+ * - Console warning suppression for known benign warnings
  *
  * Note: Polyfills (TextEncoder, etc.) are set up in jest-polyfills.ts
  * which runs before this file via Jest's setupFiles config.
@@ -28,6 +29,21 @@ import { setupAxiosFetchAdapter } from './axios-fetch-adapter';
 (global as any).__webpack_public_path__ = '';
 
 enableFetchMocks();
+
+// Suppress known benign warnings in tests
+// TanStack Router warns when useNavigate/useRouter is used outside RouterProvider,
+// but our tests intentionally mock the Link component and don't need the full router.
+const originalWarn = console.warn;
+console.warn = (...args: unknown[]) => {
+  const message = args[0];
+  if (
+    typeof message === 'string' &&
+    message.includes('useRouter must be used inside a <RouterProvider>')
+  ) {
+    return; // Suppress this specific warning
+  }
+  originalWarn.apply(console, args);
+};
 
 // Configure axios to use fetch adapter for MSW compatibility
 // This MUST be called before any tests run

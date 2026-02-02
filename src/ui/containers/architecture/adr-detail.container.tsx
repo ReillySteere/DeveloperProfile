@@ -42,11 +42,15 @@ export default function AdrDetailContainer() {
                     {adr.status}
                   </span>
                   <time dateTime={adr.date}>
-                    {new Date(adr.date).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
+                    {new Date(adr.date + 'T00:00:00Z').toLocaleDateString(
+                      'en-US',
+                      {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        timeZone: 'UTC',
+                      },
+                    )}
                   </time>
                 </div>
               </header>
