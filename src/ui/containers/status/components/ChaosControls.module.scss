@@ -1,6 +1,6 @@
 .container {
-  background: var(--color-surface, #1a1a1a);
-  border: 1px solid var(--color-border, #333);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
   border-radius: 8px;
   padding: 1.5rem;
 }
@@ -8,11 +8,11 @@
 .info {
   margin: 0 0 1.5rem;
   font-size: 0.875rem;
-  color: var(--color-text-secondary, #888);
+  color: var(--text-secondary);
   line-height: 1.6;
 
   strong {
-    color: var(--color-text-primary, #fff);
+    color: var(--text-primary);
   }
 }
 
@@ -26,17 +26,17 @@
   flex: 1;
   min-width: 180px;
   padding: 1rem 1.5rem;
-  border: 2px solid var(--color-border, #333);
+  border: 2px solid var(--border-default);
   border-radius: 8px;
   background: transparent;
-  color: var(--color-text-primary, #fff);
+  color: var(--text-primary);
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: var(--color-text-secondary, #888);
+    border-color: var(--text-secondary);
   }
 
   &[data-active='true'] {
@@ -46,7 +46,7 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--color-primary, #00ff88);
+    outline: 2px solid var(--primary-default);
     outline-offset: 2px;
   }
 }

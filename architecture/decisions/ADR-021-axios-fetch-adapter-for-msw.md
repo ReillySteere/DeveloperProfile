@@ -1,9 +1,8 @@
 # ADR-021: Axios Fetch Adapter for MSW Compatibility
 
-**Status:** Accepted  
-**Date:** 2026-02-01  
-**Deciders:** Engineering Team  
-**Tags:** testing, msw, axios, integration-tests
+## Status
+
+Accepted - February 1, 2026
 
 ## Context
 
