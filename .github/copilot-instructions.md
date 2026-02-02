@@ -75,7 +75,7 @@
 - **Rate Limiting:**
   - Use `@nestjs/throttler` with custom `RateLimitGuard` for per-endpoint limits.
   - Configure rules in `rate-limit.config.ts` with pattern, limit, and TTL.
-  - See ADR and docs in `architecture/features/phase-2-observability/rate-limiting.md`.
+  - See ADR and docs in `architecture/features/observability/rate-limiting.md`.
 - **Scheduled Tasks:**
   - Use `@nestjs/schedule` with `@Cron()` decorator for recurring tasks.
   - Define cron expressions as constants in a dedicated config file.
@@ -84,7 +84,7 @@
 - **Alerting:**
   - Alert channels implement `IAlertChannel` interface in traces module.
   - Add new channels in `src/server/modules/traces/channels/`.
-  - See `architecture/features/phase-2-observability/alerting.md` for extension guide.
+  - See `architecture/features/observability/alerting.md` for extension guide.
 
 ## Frontend Patterns (`src/ui`)
 
@@ -146,7 +146,7 @@
   - **Recharts:** Use `mockRecharts` from `ui/test-utils/mockRecharts` to mock chart components.
   - **Cron Jobs:** Use `cronTestUtils` from `server/test-utils/cronTestUtils` to test scheduled tasks.
   - **MSW Handlers:** Use handler factories from `ui/test-utils/msw` for API mocking.
-  - See `architecture/features/phase-2-observability/visualization.md` for testing patterns.
+  - See `architecture/features/observability/visualization.md` for testing patterns.
 
 ## Key Files
 

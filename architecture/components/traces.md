@@ -289,13 +289,13 @@ Authorization: Bearer <jwt>
 - [ADR-012: Scheduled Tasks](../decisions/ADR-012-scheduled-tasks-and-maintenance.md)
 - [ADR-013: Rate Limiting and Advanced Visualization](../decisions/ADR-013-rate-limiting-visualization.md)
 - [Component: Status](status.md) - Parent feature
-- [Phase 2: Observability Suite](../features/phase-2-observability/README.md) - Detailed Phase 2 documentation
+- [Observability Suite](../features/observability/README.md) - Detailed observability documentation
 
 ---
 
-## Phase 2 Features (Implemented)
+## Extended Features
 
-Phase 2 added rate limiting, advanced visualization, and alerting capabilities. For detailed architecture, see [Phase 2: Observability Suite](../features/phase-2-observability/README.md).
+The traces feature includes rate limiting, advanced visualization, and alerting capabilities. For detailed architecture, see [Observability Suite](../features/observability/README.md).
 
 ### Architecture Diagram (Extended)
 

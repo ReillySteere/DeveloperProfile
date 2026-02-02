@@ -1,6 +1,6 @@
 # Configuration Reference
 
-All environment variables used by the Phase 2 Observability features.
+All environment variables used by the Observability features.
 
 ---
 

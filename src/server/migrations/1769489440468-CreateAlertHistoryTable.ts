@@ -4,7 +4,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  * Creates the alert_history table for tracking triggered alerts.
  * Supports the alerting feature for cooldown checks and audit trail.
  *
- * @see architecture/features/phase-2-observability/alerting.md
+ * @see architecture/features/observability/alerting.md
  */
 export class CreateAlertHistoryTable1769489440468 implements MigrationInterface {
   name = 'CreateAlertHistoryTable1769489440468';

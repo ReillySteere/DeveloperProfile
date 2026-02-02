@@ -18,7 +18,7 @@ import TOKENS from './tokens';
  * - Standard rate limit headers on responses
  *
  * @see ADR-013: Rate Limiting and Advanced Visualization
- * @see architecture/features/phase-2-observability/rate-limiting.md
+ * @see architecture/features/observability/rate-limiting.md
  */
 @Global()
 @Module({
