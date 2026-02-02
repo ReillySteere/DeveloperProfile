@@ -1,6 +1,21 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { MarkdownContent, type LinkTransformResult } from './MarkdownContent';
+
+// Mock @tanstack/react-router Link component
+jest.mock('@tanstack/react-router', () => ({
+  Link: ({ children, to, params, ...props }: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const React = require('react');
+    // Store the params as a data attribute for testing
+    const dataProps = params ? { 'data-params': JSON.stringify(params) } : {};
+    return React.createElement(
+      'a',
+      { href: to, ...dataProps, ...props },
+      children,
+    );
+  },
+}));
 
 // Mock remark-gfm
 jest.mock('remark-gfm', () => ({
@@ -87,8 +102,7 @@ jest.mock('../Mermaid', () => ({
 
 describe('MarkdownContent', () => {
   describe('link transformation', () => {
-    it('calls transformLink and navigates for route results', () => {
-      const mockNavigate = jest.fn();
+    it('renders route links using TanStack Router Link component', () => {
       const mockTransformLink = jest.fn(
         (): LinkTransformResult => ({
           type: 'route',
@@ -100,15 +114,39 @@ describe('MarkdownContent', () => {
         <MarkdownContent
           content="[Click me](./test.md)"
           transformLink={mockTransformLink}
-          onNavigate={mockNavigate}
         />,
       );
 
       const link = screen.getByText('Click me');
+      // Link renders with href from the "to" prop
       expect(link).toHaveAttribute('href', '/test-route');
+      expect(mockTransformLink).toHaveBeenCalledWith('./test.md');
+    });
 
-      fireEvent.click(link);
-      expect(mockNavigate).toHaveBeenCalledWith('/test-route');
+    it('renders route links with params for parameterized routes', () => {
+      const mockTransformLink = jest.fn(
+        (): LinkTransformResult => ({
+          type: 'route',
+          to: '/architecture/$slug',
+          params: { slug: 'ADR-001-test' },
+        }),
+      );
+
+      render(
+        <MarkdownContent
+          content="[ADR Link](./ADR-001-test.md)"
+          transformLink={mockTransformLink}
+        />,
+      );
+
+      const link = screen.getByText('ADR Link');
+      // Link renders with route pattern as href and params data attribute
+      expect(link).toHaveAttribute('href', '/architecture/$slug');
+      expect(link).toHaveAttribute(
+        'data-params',
+        JSON.stringify({ slug: 'ADR-001-test' }),
+      );
+      expect(mockTransformLink).toHaveBeenCalledWith('./ADR-001-test.md');
     });
 
     it('renders external links when transformLink returns external type', () => {
@@ -129,6 +167,31 @@ describe('MarkdownContent', () => {
       expect(link).toHaveAttribute('href', 'https://example.com');
       expect(link).toHaveAttribute('target', '_blank');
       expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+    });
+
+    it('renders unavailable links as styled span with tooltip', () => {
+      const mockTransformLink = jest.fn(
+        (): LinkTransformResult => ({
+          type: 'unavailable',
+          tooltip: 'Copilot skill: testing-workflow (not web-accessible)',
+        }),
+      );
+
+      render(
+        <MarkdownContent
+          content="[Testing Workflow](../../.github/skills/testing-workflow/SKILL.md)"
+          transformLink={mockTransformLink}
+        />,
+      );
+
+      const element = screen.getByText('Testing Workflow');
+      // Should be a span, not a link
+      expect(element.tagName).toBe('SPAN');
+      expect(element).not.toHaveAttribute('href');
+      expect(element).toHaveAttribute(
+        'title',
+        'Copilot skill: testing-workflow (not web-accessible)',
+      );
     });
 
     it('falls through to default behavior when transformLink returns null', () => {

@@ -1,5 +1,4 @@
 import React from 'react';
-import { useNavigate } from '@tanstack/react-router';
 import {
   MarkdownContent,
   type LinkTransformResult,
@@ -14,10 +13,10 @@ export interface ArchitectureContentProps {
 
 /**
  * Transforms relative ADR/component markdown links to app routes.
- * Examples:
- *   ./ADR-001-persistent-storage.md -> /architecture/ADR-001-persistent-storage
- *   ../decisions/ADR-002-sqlite.md -> /architecture/ADR-002-sqlite
- *   ./about.md or ../components/about.md -> /architecture/components/about
+ * - ADR links (./ADR-*.md or ../decisions/ADR-*.md) -> /architecture/$slug
+ * - Component doc links (./name.md or ../components/name.md) -> /architecture/components/$slug
+ * - Other local references (../ or ./) -> unavailable (not web-accessible)
+ * - External links (http/https) -> handled by default behavior
  */
 export function transformArchitectureLink(href: string): LinkTransformResult {
   // Match ADR links (e.g., ./ADR-001-foo.md or ../decisions/ADR-002-bar.md)
@@ -25,17 +24,44 @@ export function transformArchitectureLink(href: string): LinkTransformResult {
   // eslint-disable-next-line security/detect-unsafe-regex
   const adrMatch = href.match(/(?:\.\/|\.\.\/[\w-]+\/)?(ADR-\d+-[\w-]+)\.md$/i);
   if (adrMatch) {
-    return { type: 'route', to: `/architecture/${adrMatch[1]}` };
-  }
-
-  // Match component doc links (e.g., ./about.md in components folder context)
-  const componentMatch = href.match(
-    /(?:\.\/|\.\.\/components\/)?([\w-]+)\.md$/i,
-  );
-  if (componentMatch && !href.includes('ADR-')) {
     return {
       type: 'route',
-      to: `/architecture/components/${componentMatch[1]}`,
+      to: '/architecture/$slug',
+      params: { slug: adrMatch[1] },
+    };
+  }
+
+  // Match component doc links from within decisions folder (../components/name.md)
+  const componentFromDecisionsMatch = href.match(
+    /\.\.\/components\/([\w-]+)\.md$/i,
+  );
+  if (componentFromDecisionsMatch) {
+    return {
+      type: 'route',
+      to: '/architecture/components/$slug',
+      params: { slug: componentFromDecisionsMatch[1] },
+    };
+  }
+
+  // Match component doc links from within components folder (./name.md)
+  // Only match if we're in the components context (no ../ prefix or just ./)
+  const componentLocalMatch = href.match(/^\.\/([\w-]+)\.md$/i);
+  if (componentLocalMatch && !href.includes('ADR-')) {
+    return {
+      type: 'route',
+      to: '/architecture/components/$slug',
+      params: { slug: componentLocalMatch[1] },
+    };
+  }
+
+  // Any other local reference (starts with ./ or ../) is not web-accessible
+  if (href.startsWith('./') || href.startsWith('../')) {
+    // Extract a meaningful name from the path for the tooltip
+    const pathParts = href.split('/');
+    const fileName = pathParts[pathParts.length - 1].replace(/\.md$/, '');
+    return {
+      type: 'unavailable',
+      tooltip: `${fileName} (not web-accessible)`,
     };
   }
 
@@ -50,14 +76,11 @@ export const ArchitectureContent: React.FC<ArchitectureContentProps> = ({
   content,
   className,
 }) => {
-  const navigate = useNavigate();
-
   return (
     <MarkdownContent
       content={content}
       className={className}
       transformLink={transformArchitectureLink}
-      onNavigate={(to) => navigate({ to })}
     />
   );
 };
