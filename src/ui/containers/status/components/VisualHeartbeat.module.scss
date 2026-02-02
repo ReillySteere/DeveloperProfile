@@ -85,12 +85,12 @@
   font-size: 2rem;
   font-weight: 600;
   font-family: 'JetBrains Mono', monospace;
-  color: var(--color-text-primary, #fff);
+  color: var(--text-primary);
 }
 
 .label {
   font-size: 0.875rem;
-  color: var(--color-text-secondary, #888);
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }

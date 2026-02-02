@@ -13,7 +13,7 @@
   h1 {
     margin: 0;
     font-size: 2rem;
-    color: var(--color-text-primary, #fff);
+    color: var(--text-primary);
   }
 }
 
@@ -68,7 +68,7 @@
   h2 {
     margin: 0 0 1rem;
     font-size: 1.25rem;
-    color: var(--color-text-primary, #fff);
+    color: var(--text-primary);
   }
 }
 
@@ -78,8 +78,8 @@
   gap: 1rem;
   margin: 0;
   padding: 1.5rem;
-  background: var(--color-surface, #1a1a1a);
-  border: 1px solid var(--color-border, #333);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
   border-radius: 8px;
 }
 
@@ -90,7 +90,7 @@
 
   dt {
     font-size: 0.75rem;
-    color: var(--color-text-secondary, #888);
+    color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
@@ -99,27 +99,27 @@
     margin: 0;
     font-size: 1rem;
     font-family: 'JetBrains Mono', monospace;
-    color: var(--color-text-primary, #fff);
+    color: var(--text-primary);
   }
 }
 
 .tracesSection {
-  background: var(--color-surface, #1a1a2e);
+  background: var(--bg-surface);
   border-radius: 8px;
   padding: 1.5rem;
   margin-bottom: 2rem;
-  border: 1px solid var(--color-border, #333);
+  border: 1px solid var(--border-default);
 
   h2 {
     margin: 0 0 0.75rem;
     font-size: 1.25rem;
-    color: var(--color-text-primary, #fff);
+    color: var(--text-primary);
   }
 }
 
 .tracesDescription {
   margin: 0 0 1rem;
-  color: var(--color-text-secondary, #888);
+  color: var(--text-secondary);
   font-size: 0.9rem;
 }
 
@@ -128,7 +128,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  background: var(--color-primary, #6366f1);
+  background: var(--primary-default);
   color: #fff;
   border-radius: 6px;
   text-decoration: none;
@@ -138,7 +138,7 @@
     transform 0.1s;
 
   &:hover {
-    background: var(--color-primary-hover, #4f46e5);
+    background: var(--primary-hover);
     transform: translateX(4px);
   }
 }
