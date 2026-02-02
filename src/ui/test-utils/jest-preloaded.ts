@@ -49,6 +49,20 @@ console.warn = (...args: unknown[]) => {
 // This MUST be called before any tests run
 setupAxiosFetchAdapter();
 
+// Global mocks for ESM-only markdown packages
+// These packages don't work well with Jest's module system, so we mock them globally
+jest.mock('remark-gfm', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+
+jest.mock('react-markdown', () => ({
+  __esModule: true,
+  default: (props: any) => {
+    return require('react').createElement('div', null, props.children);
+  },
+}));
+
 // MSW Server Setup
 // Start server before all tests
 beforeAll(() => {

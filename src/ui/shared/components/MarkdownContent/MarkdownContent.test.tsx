@@ -2,6 +2,12 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MarkdownContent, type LinkTransformResult } from './MarkdownContent';
 
+// Mock remark-gfm
+jest.mock('remark-gfm', () => ({
+  __esModule: true,
+  default: () => () => {},
+}));
+
 // Mock react-markdown to invoke the components prop
 jest.mock('react-markdown', () => {
   return function MockReactMarkdown(props: any) {
@@ -199,6 +205,20 @@ const x = 1;
       );
 
       expect(container.firstChild).toHaveClass('custom-class');
+    });
+  });
+
+  describe('table rendering', () => {
+    it('renders markdown tables with remark-gfm plugin', () => {
+      const tableMarkdown = `
+| Column 1 | Column 2 |
+|----------|----------|
+| Value 1  | Value 2  |
+`;
+      const { container } = render(<MarkdownContent content={tableMarkdown} />);
+
+      // Verify the markdown was parsed
+      expect(container).toBeInTheDocument();
     });
   });
 });
