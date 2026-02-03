@@ -76,3 +76,6 @@ dependency-graph*
 .claude/settings.local.json
 # Skills generated from .github/prompts/ (run: npm run sync:claude-skills)
 .claude/skills/
+
+architecture/plans
+.claude/settings.local.json

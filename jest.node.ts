@@ -27,6 +27,7 @@ module.exports = {
     '!src/server/**/index.ts', // Barrel files
     '!**/node_modules/**',
     '!**/dist/**',
+    '!**/events.ts', // EDA - Not all events will be used, but we want to keep them defined
   ],
   coverageReporters: ['html', 'text', 'text-summary', 'cobertura'],
   coverageThreshold: {

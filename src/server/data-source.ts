@@ -6,6 +6,7 @@ import { User } from './shared/modules/auth/user.entity';
 import { RequestTrace } from './modules/traces/trace.entity';
 import { AlertHistory } from './modules/traces/alert-history.entity';
 import { RateLimitEntry } from './modules/rate-limit/rate-limit.entity';
+import { CaseStudy } from './modules/case-studies/case-study.entity';
 
 /**
  * TypeORM CLI Data Source Configuration
@@ -33,6 +34,7 @@ export const AppDataSource = new DataSource({
     RequestTrace,
     AlertHistory,
     RateLimitEntry,
+    CaseStudy,
   ],
   migrations: ['dist/src/server/migrations/*.js'],
   synchronize: false,
