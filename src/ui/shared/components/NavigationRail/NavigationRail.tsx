@@ -15,6 +15,7 @@ import {
   Moon,
   Activity,
   GitBranch,
+  FileText,
 } from 'lucide-react';
 
 const navItems = [
@@ -22,6 +23,7 @@ const navItems = [
   { name: 'Blog', path: '/blog', Icon: Book },
   { name: 'Experience', path: '/experience', Icon: Briefcase },
   { name: 'Projects', path: '/projects', Icon: Layers },
+  { name: 'Case Studies', path: '/case-studies', Icon: FileText },
   { name: 'Status', path: '/status', Icon: Activity },
   { name: 'Architecture', path: '/architecture', Icon: GitBranch },
 ];

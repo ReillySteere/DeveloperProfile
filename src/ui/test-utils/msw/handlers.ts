@@ -19,6 +19,7 @@ import type {
   BlogPost,
   AdrListItem,
   ComponentDocSummary,
+  CaseStudy,
 } from 'shared/types';
 
 // ============================================================================
@@ -516,6 +517,122 @@ export function createAuthHandlers(
 }
 
 // ============================================================================
+// Case Study Handlers
+// ============================================================================
+
+export const mockCaseStudies: CaseStudy[] = [
+  {
+    id: '1',
+    slug: 'test-case-study',
+    projectId: '1',
+    project: mockProjects[0],
+    problemContext: '# The Problem\n\nLegacy system issues.',
+    challenges: ['Technical debt', 'Scalability concerns'],
+    approach: '# Our Approach\n\nModernization strategy.',
+    phases: [
+      {
+        name: 'Discovery',
+        description: 'Research and analysis',
+        duration: '2 weeks',
+      },
+      { name: 'Implementation', description: 'Build and test' },
+    ],
+    keyDecisions: ['Adopted TypeScript', 'Event-driven architecture'],
+    outcomeSummary: '# The Results\n\nSignificant improvements.',
+    metrics: [
+      { label: 'Test Coverage', before: '60%', after: '95%' },
+      { label: 'Build Time', after: '30s', description: 'Down from 5 minutes' },
+    ],
+    learnings: ['Testing investment pays off', 'Documentation matters'],
+    published: true,
+  },
+];
+
+/**
+ * Creates case study API handlers.
+ */
+export function createCaseStudyHandlers(
+  overrides: {
+    caseStudies?: CaseStudy[];
+    singleCaseStudy?: CaseStudy | null;
+    delayMs?: number;
+  } = {},
+) {
+  const caseStudies = overrides.caseStudies ?? mockCaseStudies;
+  const delayMs = overrides.delayMs ?? 0;
+
+  return [
+    http.get('/api/case-studies', async () => {
+      if (delayMs) await delay(delayMs);
+      const published = caseStudies.filter((cs) => cs.published);
+      return HttpResponse.json(published);
+    }),
+
+    http.get('/api/case-studies/project/:projectId', async ({ params }) => {
+      if (delayMs) await delay(delayMs);
+      const caseStudy = caseStudies.find(
+        (cs) => cs.projectId === params.projectId,
+      );
+      if (!caseStudy) {
+        return new HttpResponse(null, { status: 404 });
+      }
+      return HttpResponse.json(caseStudy);
+    }),
+
+    http.get('/api/case-studies/:slug', async ({ params }) => {
+      if (delayMs) await delay(delayMs);
+      const caseStudy =
+        overrides.singleCaseStudy ??
+        caseStudies.find((cs) => cs.slug === params.slug);
+      if (!caseStudy) {
+        return new HttpResponse(null, { status: 404 });
+      }
+      return HttpResponse.json(caseStudy);
+    }),
+
+    http.post('/api/case-studies', async ({ request }) => {
+      if (delayMs) await delay(delayMs);
+      const body = (await request.json()) as Partial<CaseStudy>;
+      const newCaseStudy: CaseStudy = {
+        id: String(caseStudies.length + 1),
+        slug: body.slug ?? 'new-case-study',
+        projectId: body.projectId ?? '1',
+        project: mockProjects[0],
+        problemContext: body.problemContext ?? '',
+        challenges: body.challenges ?? [],
+        approach: body.approach ?? '',
+        phases: body.phases ?? [],
+        keyDecisions: body.keyDecisions ?? [],
+        outcomeSummary: body.outcomeSummary ?? '',
+        metrics: body.metrics ?? [],
+        learnings: body.learnings ?? [],
+        published: body.published ?? false,
+      };
+      return HttpResponse.json(newCaseStudy, { status: 201 });
+    }),
+
+    http.put('/api/case-studies/:id', async ({ params, request }) => {
+      if (delayMs) await delay(delayMs);
+      const body = (await request.json()) as Partial<CaseStudy>;
+      const existingCaseStudy = caseStudies.find((cs) => cs.id === params.id);
+      if (!existingCaseStudy) {
+        return new HttpResponse(null, { status: 404 });
+      }
+      const updatedCaseStudy = { ...existingCaseStudy, ...body };
+      return HttpResponse.json(updatedCaseStudy);
+    }),
+
+    http.delete('/api/case-studies/:id', ({ params }) => {
+      const exists = caseStudies.some((cs) => cs.id === params.id);
+      if (!exists) {
+        return new HttpResponse(null, { status: 404 });
+      }
+      return new HttpResponse(null, { status: 204 });
+    }),
+  ];
+}
+
+// ============================================================================
 // Default Handlers
 // ============================================================================
 
@@ -528,6 +645,7 @@ export const handlers = [
   ...createExperienceHandlers(),
   ...createProjectHandlers(),
   ...createBlogHandlers(),
+  ...createCaseStudyHandlers(),
   ...createAboutHandlers(),
   ...createArchitectureHandlers(),
   ...createAuthHandlers(),

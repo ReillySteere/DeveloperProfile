@@ -90,3 +90,16 @@
 .techBadge {
   font-size: var(--font-size-xs);
 }
+
+.caseStudyLink {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--primary-default);
+  text-decoration: none;
+  transition: var(--transition-base);
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

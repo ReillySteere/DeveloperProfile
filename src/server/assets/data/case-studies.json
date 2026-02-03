@@ -1,0 +1,221 @@
+[
+  {
+    "projectTitle": "Checkout Submission Migration",
+    "slug": "checkout-submission-migration",
+    "problemContext": "## Legacy System Constraints\n\nThe existing checkout submission system had evolved organically over fifteen years, accumulating technical debt that impacted both reliability and developer velocity. The system processed several million dollars in daily revenue, making any changes high-stakes.\n\n### Technical Challenges\n\nThe codebase suffered from high cyclomatic complexity, with critical paths spanning multiple partial design pattern implementations. Error handling was inconsistent, leading to customer-facing issues that were often detected through support tickets rather than monitoring.",
+    "challenges": [
+      "High cyclomatic complexity making changes risky and time-consuming",
+      "Inconsistent error handling causing silent failures",
+      "Legacy platform dependencies blocking modern tooling adoption",
+      "Multiple partial design pattern implementations creating confusion",
+      "Insufficient test coverage preventing confident refactoring"
+    ],
+    "approach": "## Modernization Strategy\n\nRather than a risky big-bang rewrite, we adopted an incremental strangler fig pattern. This allowed us to modernize components while maintaining business continuity.\n\n### Key Architectural Decisions\n\nWe introduced event-driven architecture using NestJS, allowing us to decouple submission processing from the request-response cycle. This significantly reduced perceived latency for customers while enabling better observability.",
+    "phases": [
+      {
+        "name": "Discovery & Documentation",
+        "description": "Mapped all existing workflows, documented undocumented business rules, and established baseline metrics.",
+        "duration": "4 weeks"
+      },
+      {
+        "name": "Foundation",
+        "description": "Established new architectural patterns, created builder abstractions, and implemented comprehensive logging.",
+        "duration": "6 weeks"
+      },
+      {
+        "name": "Incremental Migration",
+        "description": "Migrated submission types one at a time, with feature flags enabling instant rollback.",
+        "duration": "12 weeks"
+      },
+      {
+        "name": "Legacy Decommission",
+        "description": "Removed deprecated code paths, updated documentation, and transferred knowledge to team.",
+        "duration": "4 weeks"
+      }
+    ],
+    "keyDecisions": [
+      "Adopted event-driven architecture for async processing, reducing request latency",
+      "Implemented builder pattern for consistent submission construction",
+      "Introduced architectural fitness functions via ESLint rules and Jest tests",
+      "Created stand-alone equivalency testing microservice for safe parallel running",
+      "Established ADRs and component documentation for long-term maintainability"
+    ],
+    "outcomeSummary": "## Impact\n\nThe migration delivered measurable improvements across all key metrics while maintaining zero customer-facing incidents during the transition. The new architecture positions the system well for future enhancements including whitelabeling and additional site integrations.",
+    "metrics": [
+      {
+        "label": "Test Coverage",
+        "before": "60%",
+        "after": "95%+",
+        "description": "Comprehensive unit, integration, and E2E tests"
+      },
+      {
+        "label": "Incident Detection",
+        "before": "Manual",
+        "after": "Automated",
+        "description": "All issues detected via monitoring, not customer reports"
+      },
+      {
+        "label": "Cognitive Complexity",
+        "before": "High",
+        "after": "Low",
+        "description": "Consistent patterns easily understood by all team members"
+      },
+      {
+        "label": "Change Confidence",
+        "before": "Low",
+        "after": "High",
+        "description": "Engineers can confidently make changes with test coverage"
+      }
+    ],
+    "learnings": [
+      "Architectural fitness functions (linting + tests) prevent pattern drift",
+      "Investment in documentation pays dividends during knowledge transfer",
+      "Event-driven architecture enables better observability without complexity",
+      "Incremental migration with feature flags reduces risk significantly",
+      "Builder patterns with copilot instructions accelerate developer onboarding"
+    ],
+    "published": true
+  },
+  {
+    "projectTitle": "Checkout UI Migration",
+    "slug": "checkout-ui-migration",
+    "problemContext": "## PCI Compliance Deadline\n\nLegacy AngularJS pages handling payment flows needed to be replaced to maintain PCI compliance. The existing implementation had grown organically across multiple product lines, creating a fragmented user experience and maintenance burden.\n\n### Business Context\n\nWith a hard compliance deadline and critical revenue dependency, the migration required careful orchestration to avoid customer impact while ensuring all security requirements were met.",
+    "challenges": [
+      "Hard PCI compliance deadline with no room for delay",
+      "Fragmented codebase spanning 15 years of organic growth",
+      "Multiple product types with varying payment flows",
+      "International market differences in payment handling",
+      "Limited observability into existing error patterns"
+    ],
+    "approach": "## Unified Framework Approach\n\nWe developed a standardized payment framework that consolidated all payment methods into a single, well-tested architecture. This enabled both the migration and future payment method additions.\n\n### Team Coordination\n\nLed a team of 2-6 engineers with varying experience levels, balancing mentorship responsibilities with project delivery. Close collaboration with security and operations teams ensured compliance requirements were met without sacrificing velocity.",
+    "phases": [
+      {
+        "name": "Framework Design",
+        "description": "Designed unified payment framework supporting all existing payment methods and flows.",
+        "duration": "3 weeks"
+      },
+      {
+        "name": "Core Implementation",
+        "description": "Built React/TypeScript foundation with TanStack Query for state management.",
+        "duration": "8 weeks"
+      },
+      {
+        "name": "Payment Integration",
+        "description": "Migrated each payment method with comprehensive testing and rollback capability.",
+        "duration": "10 weeks"
+      },
+      {
+        "name": "Validation & Cutover",
+        "description": "Parallel running with legacy, progressive rollout, and final decommission.",
+        "duration": "4 weeks"
+      }
+    ],
+    "keyDecisions": [
+      "TypeScript-first approach with strict typing for payment data",
+      "TanStack Query for server state, eliminating complex Redux boilerplate",
+      "Component-driven development enabling parallel work streams",
+      "SLO/error budget framework for data-driven reliability prioritization",
+      "Phased rollout with instant rollback capability"
+    ],
+    "outcomeSummary": "## Successful Migration\n\nCompleted the migration ahead of the compliance deadline with minimal customer impact. The new framework significantly improved both developer experience and end-user performance.",
+    "metrics": [
+      {
+        "label": "Compliance",
+        "after": "100%",
+        "description": "All PCI requirements met before deadline"
+      },
+      {
+        "label": "Customer Impact",
+        "after": "Minimal",
+        "description": "No significant revenue impact during migration"
+      },
+      {
+        "label": "Support Efficiency",
+        "before": "Low",
+        "after": "High",
+        "description": "Improved tooling for customer support teams"
+      }
+    ],
+    "learnings": [
+      "Early security team involvement prevents last-minute compliance issues",
+      "SLOs and error budgets enable objective prioritization discussions",
+      "Unified frameworks reduce long-term maintenance burden significantly",
+      "TypeScript strict mode catches payment-related bugs at compile time",
+      "Mentorship during high-pressure projects builds team resilience"
+    ],
+    "published": true
+  },
+  {
+    "projectTitle": "AI Image Generation by Getty Images",
+    "slug": "ai-image-generation-getty",
+    "problemContext": "## New Product Category\n\nGetty Images needed to enter the AI-generated image market with a fully licensed, commercially-safe product. This required building an entirely new product experience from scratch while meeting aggressive timeline pressures.\n\n### Technical Novelty\n\nThe product required unprecedented state complexity for our frontend applications, managing generation parameters, preview states, licensing options, and purchase flows in a cohesive experience.",
+    "challenges": [
+      "Aggressive timeline for new product category entry",
+      "Complex state management beyond existing patterns",
+      "First NestJS/React-only codebase in the organization",
+      "Multiple cross-functional dependencies with AI, licensing, and commerce teams",
+      "Need to establish patterns for future AI product development"
+    ],
+    "approach": "## Modern Stack Foundation\n\nPioneered a TypeScript-only approach with NestJS Backend-For-Frontend and React frontend. This set the architectural direction for future AI product offerings.\n\n### State Management Innovation\n\nDeveloped sophisticated state management solutions combining TanStack Query for server state and Zustand for complex client state, handling generation parameters, image previews, and multi-step purchase flows.",
+    "phases": [
+      {
+        "name": "Architecture Design",
+        "description": "Established NestJS BFF pattern and frontend state architecture.",
+        "duration": "2 weeks"
+      },
+      {
+        "name": "Core Platform",
+        "description": "Built generation interface, preview system, and initial purchase flow.",
+        "duration": "6 weeks"
+      },
+      {
+        "name": "Feature Expansion",
+        "description": "Added advanced generation options, licensing variations, and commerce integrations.",
+        "duration": "8 weeks"
+      },
+      {
+        "name": "Launch & Handoff",
+        "description": "Production launch, team training, and leadership transition for future development.",
+        "duration": "4 weeks"
+      }
+    ],
+    "keyDecisions": [
+      "NestJS/React TypeScript-only stack for type safety end-to-end",
+      "Zustand for complex client state with minimal boilerplate",
+      "TanStack Query for all server communication with built-in caching",
+      "Modular architecture enabling parallel feature development",
+      "Comprehensive onboarding documentation for team scaling"
+    ],
+    "outcomeSummary": "## Market Success\n\nLaunched on time with strong business alignment. The product now generates several million dollars in annual revenue and established patterns used across subsequent AI product initiatives.",
+    "metrics": [
+      {
+        "label": "Launch Timeline",
+        "after": "On Schedule",
+        "description": "Delivered within aggressive timeline constraints"
+      },
+      {
+        "label": "Annual Revenue",
+        "after": "$M+",
+        "description": "Several million dollars in annual revenue"
+      },
+      {
+        "label": "Team Scale",
+        "after": "10 devs",
+        "description": "Successfully led team through launch and transition"
+      },
+      {
+        "label": "Pattern Adoption",
+        "after": "Org-wide",
+        "description": "Established patterns for future AI products"
+      }
+    ],
+    "learnings": [
+      "TypeScript-only stacks dramatically reduce integration bugs",
+      "Zustand + TanStack Query is a powerful combination for complex UIs",
+      "Absorbing PM responsibilities can accelerate delivery when needed",
+      "Clear architecture documentation enables effective team scaling",
+      "Building for handoff from day one ensures sustainable velocity"
+    ],
+    "published": true
+  }
+]

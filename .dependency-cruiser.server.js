@@ -77,6 +77,7 @@ module.exports = {
         path: '^src/server/modules/([^/]+)',
         pathNot: [
           '^src/server/modules/$1', // Allow internal imports
+          '\\.entity\\.ts$', // Allow entity imports for TypeORM foreign key relationships
         ],
       },
     },

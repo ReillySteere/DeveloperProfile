@@ -59,6 +59,21 @@ jest.mock('lucide-react', () => {
 
     RefreshCw: () =>
       React.createElement('span', { 'data-testid': 'refresh-icon' }),
+
+    FileText: () =>
+      React.createElement('span', { 'data-testid': 'file-text-icon' }),
+  };
+});
+
+// Mock TanStack Router
+jest.mock('@tanstack/react-router', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const React = require('react');
+  const actual = jest.requireActual('@tanstack/react-router');
+  return {
+    ...actual,
+    Link: (props: any) =>
+      React.createElement('a', { ...props, href: props.to }, props.children),
   };
 });
 
@@ -111,7 +126,10 @@ describe('Projects Container', () => {
   });
 
   it('renders error state and handles retry', async () => {
-    mockedAxios.get.mockRejectedValueOnce(new Error('Failed'));
+    // First call (projects) fails, second call (case studies) succeeds
+    mockedAxios.get
+      .mockRejectedValueOnce(new Error('Failed'))
+      .mockResolvedValueOnce({ data: [] }); // case studies
 
     render(<ProjectsContainer />);
 
@@ -119,7 +137,10 @@ describe('Projects Container', () => {
       expect(screen.getByText(/Something went wrong/i)).toBeInTheDocument();
     });
 
-    mockedAxios.get.mockResolvedValueOnce({ data: mockProjects });
+    // After retry: projects succeed, case studies already loaded
+    mockedAxios.get
+      .mockResolvedValueOnce({ data: mockProjects })
+      .mockResolvedValueOnce({ data: [] });
 
     const retryButton = screen.getByRole('button', { name: /Try Again/i });
 
@@ -128,12 +149,13 @@ describe('Projects Container', () => {
     await waitFor(() => {
       expect(screen.getByText('Project One')).toBeInTheDocument();
     });
-
-    expect(mockedAxios.get).toHaveBeenCalledTimes(2);
   });
 
   it('renders projects list successfully and covers hook internals', async () => {
-    mockedAxios.get.mockResolvedValueOnce({ data: mockProjects });
+    // Mock both projects and case studies API calls
+    mockedAxios.get
+      .mockResolvedValueOnce({ data: mockProjects })
+      .mockResolvedValueOnce({ data: [] }); // case studies
 
     render(<ProjectsContainer />);
 
@@ -155,5 +177,44 @@ describe('Projects Container', () => {
     expect(screen.getByText(/Jan 2024/)).toBeInTheDocument();
     expect(screen.getByText(/Present/)).toBeInTheDocument();
     expect(screen.getByText('Result 2')).toBeInTheDocument();
+  });
+
+  it('shows case study link when case study exists for project', async () => {
+    const mockCaseStudies = [
+      {
+        id: 'cs-1',
+        slug: 'project-one-case-study',
+        projectId: '1',
+        published: true,
+      },
+    ];
+
+    mockedAxios.get
+      .mockResolvedValueOnce({ data: mockProjects })
+      .mockResolvedValueOnce({ data: mockCaseStudies });
+
+    render(<ProjectsContainer />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Project One')).toBeInTheDocument();
+    });
+
+    // Should show case study link for Project One
+    expect(screen.getByText('View Case Study')).toBeInTheDocument();
+  });
+
+  it('does not show case study link when no case study exists', async () => {
+    mockedAxios.get
+      .mockResolvedValueOnce({ data: mockProjects })
+      .mockResolvedValueOnce({ data: [] }); // no case studies
+
+    render(<ProjectsContainer />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Project One')).toBeInTheDocument();
+    });
+
+    // Should not show case study link
+    expect(screen.queryByText('View Case Study')).not.toBeInTheDocument();
   });
 });
