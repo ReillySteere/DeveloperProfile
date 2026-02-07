@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/ReillySteere/DeveloperProfile/compare/v2.0.0...v2.1.0) (2026-02-07)
+
+
+### Features
+
+* add Performance Observatory with real-time Web Vitals monitoring ([#74](https://github.com/ReillySteere/DeveloperProfile/issues/74)) ([ddaaa0f](https://github.com/ReillySteere/DeveloperProfile/commit/ddaaa0fcac738d061dce65e6b94d25e76f1a18c1))
+
 ## [2.0.0](https://github.com/ReillySteere/DeveloperProfile/compare/v1.5.0...v2.0.0) (2026-02-07)
 
 
