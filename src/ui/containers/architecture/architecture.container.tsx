@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from '@tanstack/react-router';
-import { Frame, Button } from 'ui/shared/components';
-import { QueryState } from 'ui/shared/components/QueryState/QueryState';
+import { Frame, Button, QueryState } from 'ui/shared/components';
 import { useAdrs, useComponentDocs } from './hooks/useArchitecture';
 import { useAdrFilter } from './hooks/useAdrFilter';
 import { AdrCard, AdrFilters, ComponentCard } from './components';

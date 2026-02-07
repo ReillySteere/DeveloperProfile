@@ -160,6 +160,52 @@ module.exports = {
         ],
       },
     },
+
+    /* Cross-Module Entity Reference Rules (ADR-023) */
+    {
+      name: 'entity-no-bidirectional',
+      severity: 'error',
+      comment:
+        'Entity files should not create bidirectional relationships. Only the dependent entity imports the referenced entity. See ADR-023.',
+      from: {
+        path: '^src/server/modules/(projects|blog|experience)/.*\\.entity\\.ts$',
+      },
+      to: {
+        path: '^src/server/modules/(case-studies|performance)/.*\\.entity\\.ts$',
+      },
+    },
+    {
+      name: 'cross-module-entity-only',
+      severity: 'error',
+      comment:
+        'Cross-module imports are only allowed for entity files. Use events or shared types for other cross-module communication.',
+      from: {
+        path: '^src/server/modules/([^/]+)',
+        pathNot: ['\\.entity\\.ts$', '\\.module\\.ts$'],
+      },
+      to: {
+        path: '^src/server/modules/([^/]+)',
+        pathNot: [
+          '^src/server/modules/$1', // Allow internal imports
+          '\\.entity\\.ts$', // Allow entity imports (ADR-023)
+        ],
+      },
+    },
+
+    /* Repository Encapsulation */
+    {
+      name: 'repository-internal-only',
+      severity: 'error',
+      comment:
+        'Repositories are internal to their module. Other modules should not directly access them.',
+      from: {
+        path: '^src/server/modules/([^/]+)',
+      },
+      to: {
+        path: '^src/server/modules/([^/]+)/.*\\.repository\\.ts$',
+        pathNot: ['^src/server/modules/$1/'],
+      },
+    },
   ],
   options: {
     doNotFollow: {

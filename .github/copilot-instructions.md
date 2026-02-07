@@ -94,7 +94,7 @@
     - `hooks/`: Feature-specific hooks (e.g., `useExperience.ts`).
     - `*.container.tsx`: Main feature container.
   - **Shared:** `src/ui/shared/` containing:
-    - `components/`: Reusable UI components (Button, Card, etc.). **ALWAYS** import from `ui/shared/components` (barrel file).
+    - `components/`: Reusable UI components (Button, Card, etc.). **ALWAYS** import from `ui/shared/components` (barrel file). Direct imports are blocked by dependency-cruiser (`shared-components-use-barrel` rule).
     - `hooks/`: Shared hooks including Zustand stores (`useAuthStore`, `useNavStore`).
     - `routes/`: Route definitions (TanStack Router).
   - **Test Utils:** `src/ui/test-utils/`.
@@ -140,10 +140,10 @@
   - Use `jest.mock` with `__esModule: true`.
   - Prefix mock variables with `mock` (e.g., `mockUpdate`).
   - Remember Jest hoists `jest.mock()` calls.
-  - **ESM Modules:** Libraries like `react-markdown` and `mermaid` require specific mocking strategies (see `src/ui/containers/blog/blog.container.test.tsx`).
+  - **Global Mocks (ESM):** Libraries like `react-markdown`, `mermaid`, `react-syntax-highlighter`, and `web-vitals` are **globally mocked** in `jest-preloaded.ts`. No per-test mocking needed.
 - **Test Helpers:**
   - **SSE Streams:** Use `MockEventSource` from `ui/test-utils/mockEventSource` to test Server-Sent Events.
-  - **Recharts:** Use `mockRecharts` from `ui/test-utils/mockRecharts` to mock chart components.
+  - **Recharts:** Globally mocked; use `mockRecharts` from `ui/test-utils/mockRecharts` for custom behavior.
   - **Cron Jobs:** Use `cronTestUtils` from `server/test-utils/cronTestUtils` to test scheduled tasks.
   - **MSW Handlers:** Use handler factories from `ui/test-utils/msw` for API mocking.
   - See `architecture/features/observability/visualization.md` for testing patterns.

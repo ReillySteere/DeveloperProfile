@@ -189,13 +189,37 @@ src/ui/test-utils/
 ├── index.ts                    # Re-exports render, screen, etc.
 ├── test-utils.tsx              # Custom render with QueryClient
 ├── jest-polyfills.ts           # Pre-environment setup
-├── jest-preloaded.ts           # Post-environment setup (MSW server)
+├── jest-preloaded.ts           # Post-environment setup (MSW, global mocks)
+├── axios-fetch-adapter.ts      # Axios→fetch for MSW compatibility (ADR-021)
 ├── mockEventSource.ts          # SSE testing utility
 ├── mockRecharts.tsx            # Chart mocking utility
+├── mockMarkdown.tsx            # Markdown/syntax highlighter mocks
+├── mockWebVitals.ts            # Web Vitals API mock
 └── msw/
     ├── handlers.ts             # Handler factories
     ├── server.ts               # MSW server setup
     └── index.ts                # Barrel exports
+```
+
+### Global Mocks
+
+ESM-only libraries and browser APIs are mocked globally in `jest-preloaded.ts`:
+
+| Mock Module        | Library                                                               | Reason                           |
+| ------------------ | --------------------------------------------------------------------- | -------------------------------- |
+| `mockMarkdown.tsx` | `react-markdown`, `remark-gfm`, `mermaid`, `react-syntax-highlighter` | ESM-only, complex dependencies   |
+| `mockWebVitals.ts` | `web-vitals`                                                          | Requires browser Performance API |
+| `mockRecharts.tsx` | `recharts`                                                            | SVG rendering in jsdom           |
+
+This enables all shared components to be exported via barrel file without test failures:
+
+```typescript
+// All components available through barrel - mocks handle ESM issues
+import {
+  MarkdownContent,
+  Mermaid,
+  PerformanceBadge,
+} from 'ui/shared/components';
 ```
 
 ### Usage Patterns

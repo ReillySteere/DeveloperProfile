@@ -1,0 +1,246 @@
+.container {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: var(--space-6);
+}
+
+.header {
+  margin-bottom: var(--space-8);
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-2);
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+/* Score card */
+.scoreCard {
+  text-align: center;
+}
+
+.scoreCircle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 4px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-3);
+}
+
+.scoreValue {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.scoreLabel {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-4);
+}
+
+.scoreBreakdown {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-6);
+}
+
+.scoreItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+
+  span:last-child {
+    font-weight: 600;
+    font-size: 1rem;
+  }
+}
+
+/* Grid layouts */
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+/* Vitals */
+.vitalsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-4);
+}
+
+.collecting {
+  text-align: center;
+  padding: var(--space-8);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+/* Gauge */
+.gaugeContainer {
+  text-align: center;
+  position: relative;
+}
+
+.gaugeLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: calc(-1 * var(--space-4));
+}
+
+.gaugeValue {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.gaugeUnit {
+  font-size: 0.625rem;
+  color: var(--text-secondary);
+  margin-left: var(--space-1);
+}
+
+.gaugeName {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Metric card */
+.metricCard {
+  text-align: center;
+}
+
+.metricLabel {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-1);
+}
+
+.metricValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.metricUnit {
+  font-size: 0.75rem;
+  font-weight: 400;
+  margin-left: var(--space-1);
+}
+
+.metricRating {
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: var(--space-1);
+}
+
+/* Bundle stats */
+.bundleStats {
+  display: flex;
+  gap: var(--space-6);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-4);
+}
+
+/* Memory stats */
+.memoryStats {
+  display: flex;
+  gap: var(--space-6);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-3);
+}
+
+/* Legend */
+.legendRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* Benchmark source */
+.benchmarkSource {
+  text-align: right;
+  font-size: 0.625rem;
+  color: var(--text-tertiary);
+  margin-top: var(--space-2);
+  font-style: italic;
+}
+
+/* Not supported message */
+.notSupported {
+  text-align: center;
+  padding: var(--space-12);
+  color: var(--text-secondary);
+}
+
+/* Footer badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-default);
+  background: var(--bg-surface);
+  cursor: pointer;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  transition: var(--transition-base);
+
+  &:hover {
+    border-color: var(--border-hover);
+    background: var(--bg-surface-hover);
+  }
+}
+
+.badgeScore {
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+
+.badgeDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}

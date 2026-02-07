@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParams, Link } from '@tanstack/react-router';
-import { Frame, Button } from 'ui/shared/components';
-import { QueryState } from 'ui/shared/components/QueryState/QueryState';
+import { Frame, Button, QueryState } from 'ui/shared/components';
 import { useAdr } from './hooks/useArchitecture';
 import { ArchitectureContent } from './components';
 import styles from './architecture.module.scss';

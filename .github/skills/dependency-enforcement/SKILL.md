@@ -40,6 +40,10 @@ When reviewing or modifying dependency rules, **always check all three files**.
 - **Hexagonal Architecture (ADR-005):**
   - `shared-module-encapsulation`: Business modules must use adapters, not shared module internals
   - `ports-no-implementation-deps`: Ports cannot import modules or adapters
+- **Cross-Module Entity Rules (ADR-023):**
+  - `entity-no-bidirectional`: Core entities cannot reference dependent entities
+  - `cross-module-entity-only`: Only entity files can cross module boundaries
+  - `repository-internal-only`: Repositories are private to their module
 
 ### UI Rules (`.dependency-cruiser.ui.js`)
 
@@ -48,6 +52,12 @@ When reviewing or modifying dependency rules, **always check all three files**.
 - `view-isolation`: Views cannot import other views
 - `shared-no-features`: Shared UI cannot import feature containers
 - `only-containers-access-views`: Only containers can import from `/views/`
+- `services-no-react`: Services must be framework-agnostic (no React imports)
+- `shared-hooks-only-shared-services`: Shared hooks cannot import from feature containers
+- `shared-components-no-feature-services`: Shared components cannot use feature hooks/services
+- `feature-services-stay-local` (warn): Promotes moving reusable code to shared
+- `feature-components-internal-only`: Feature components private to their feature
+- `shared-components-use-barrel`: Import shared components via barrel file (`ui/shared/components`)
 
 ## 3. Running Checks
 
@@ -79,12 +89,14 @@ npm run depcruise:graph:ui
 
 ## 4. Common Violations
 
-| Violation                                            | Fix                                 |
-| ---------------------------------------------------- | ----------------------------------- |
-| Importing a DTO from `src/server` into `src/ui`      | Move type to `src/shared/types`     |
-| Importing from `shared/modules/auth/auth.service.ts` | Use adapter: `shared/adapters/auth` |
-| Feature A importing Feature B                        | Extract to `shared/` or duplicate   |
-| View importing another view                          | Refactor to component or hook       |
+| Violation                                            | Fix                                                    |
+| ---------------------------------------------------- | ------------------------------------------------------ |
+| Importing a DTO from `src/server` into `src/ui`      | Move type to `src/shared/types`                        |
+| Importing from `shared/modules/auth/auth.service.ts` | Use adapter: `shared/adapters/auth`                    |
+| Feature A importing Feature B                        | Extract to `shared/` or duplicate                      |
+| View importing another view                          | Refactor to component or hook                          |
+| Importing shared component directly                  | Use barrel: `import { X } from 'ui/shared/components'` |
+| Feature hook used by shared component                | Move hook to `shared/hooks` or redesign                |
 
 ## 5. Adding New Rules
 

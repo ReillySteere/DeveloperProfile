@@ -1,8 +1,6 @@
 import React from 'react';
 import { Link } from '@tanstack/react-router';
-import { Frame } from 'ui/shared/components';
-import { Button } from 'ui/shared/components/Button/Button';
-import { QueryState } from 'ui/shared/components/QueryState/QueryState';
+import { Frame, Button, QueryState } from 'ui/shared/components';
 import { useBlogPosts } from './hooks/useBlog';
 import { BlogList } from './views/BlogList';
 import { useAuthStore } from 'ui/shared/hooks/useAuthStore';

@@ -103,6 +103,36 @@ export class CaseStudyService {
 2. **Shared types**: API responses use `shared/types` interfaces, not entities directly
 3. **Migration coordination**: Entity changes require cross-module review
 
+### Dependency-Cruiser Enforcement
+
+The following rules in `.dependency-cruiser.server.js` enforce these constraints:
+
+```javascript
+// Prevents core entities from referencing dependent entities (no bidirectional)
+{
+  name: 'entity-no-bidirectional',
+  severity: 'error',
+  from: { path: '^src/server/modules/(projects|blog|experience)/.*\\.entity\\.ts$' },
+  to: { path: '^src/server/modules/(case-studies|performance)/.*\\.entity\\.ts$' },
+}
+
+// Cross-module imports (excluding entities and modules) are forbidden
+{
+  name: 'cross-module-entity-only',
+  severity: 'error',
+  from: { path: '^src/server/modules/([^/]+)', pathNot: ['\\.entity\\.ts$', '\\.module\\.ts$'] },
+  to: { path: '^src/server/modules/([^/]+)', pathNot: ['^src/server/modules/$1', '\\.entity\\.ts$'] },
+}
+
+// Repositories are private to their module
+{
+  name: 'repository-internal-only',
+  severity: 'error',
+  from: { path: '^src/server/modules/([^/]+)' },
+  to: { path: '^src/server/modules/([^/]+)/.*\\.repository\\.ts$', pathNot: ['^src/server/modules/$1/'] },
+}
+```
+
 ## Alternatives Considered
 
 ### 1. Separate Query + DTO Assembly

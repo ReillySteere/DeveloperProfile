@@ -106,6 +106,20 @@ module.exports = {
       },
     },
     {
+      name: 'shared-components-use-barrel',
+      severity: 'error',
+      comment:
+        'Import shared components via barrel file (ui/shared/components), not direct paths.',
+      from: {
+        pathNot: [
+          '^src/ui/shared/components/', // Barrel file itself needs direct imports
+        ],
+      },
+      to: {
+        path: '^src/ui/shared/components/[^/]+/[^/]+\\.tsx?$',
+      },
+    },
+    {
       name: 'only-containers-access-views',
       severity: 'error',
       comment:
@@ -115,6 +129,70 @@ module.exports = {
       },
       to: {
         path: '/views/',
+      },
+    },
+
+    /* Shared Services Layer Rules */
+    {
+      name: 'services-no-react',
+      severity: 'error',
+      comment:
+        'Services must be framework-agnostic. Use hooks to bridge services to React components.',
+      from: {
+        path: '^src/ui/shared/services/',
+      },
+      to: {
+        path: '^react$|^@tanstack/react',
+      },
+    },
+    {
+      name: 'shared-hooks-only-shared-services',
+      severity: 'error',
+      comment:
+        'Shared hooks can only import services from shared/services, not from feature containers.',
+      from: {
+        path: '^src/ui/shared/hooks/',
+      },
+      to: {
+        path: '^src/ui/containers/',
+      },
+    },
+    {
+      name: 'shared-components-no-feature-services',
+      severity: 'error',
+      comment:
+        'Shared components may use shared/hooks and shared/services, but not feature-specific code.',
+      from: {
+        path: '^src/ui/shared/components/',
+      },
+      to: {
+        path: '^src/ui/containers/.*/(hooks|services)/',
+      },
+    },
+    {
+      name: 'feature-services-stay-local',
+      severity: 'warn',
+      comment:
+        'Feature-local services should not be imported by other features. Promote to shared/services if reuse is needed.',
+      from: {
+        path: '^src/ui/containers/([^/]+)',
+      },
+      to: {
+        path: '^src/ui/containers/([^/]+)/services/',
+        pathNot: ['^src/ui/containers/$1/services/'],
+      },
+    },
+    {
+      name: 'feature-components-internal-only',
+      severity: 'error',
+      comment:
+        'Feature-specific components (in containers/*/components) should not be imported by other features. Use shared/components for reusable UI.',
+      from: {
+        path: '^src/ui/containers/([^/]+)',
+      },
+      to: {
+        path: '^src/ui/containers/([^/]+)/components/',
+        pathNot: ['^src/ui/containers/$1/components/'],
       },
     },
   ],

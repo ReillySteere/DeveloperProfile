@@ -2,7 +2,7 @@ import React from 'react';
 import {
   MarkdownContent,
   type LinkTransformResult,
-} from 'ui/shared/components/MarkdownContent/MarkdownContent';
+} from 'ui/shared/components';
 
 export interface ArchitectureContentProps {
   /** The markdown content to render */

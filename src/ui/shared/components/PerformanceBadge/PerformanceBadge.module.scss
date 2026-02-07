@@ -1,0 +1,35 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-default);
+  background: var(--bg-surface);
+  cursor: pointer;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  transition: var(--transition-base);
+  text-decoration: none;
+
+  &:hover {
+    border-color: var(--border-hover);
+    background: var(--bg-surface-hover);
+  }
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.score {
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+
+.label {
+  color: var(--text-tertiary);
+}

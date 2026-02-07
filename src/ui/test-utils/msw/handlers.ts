@@ -20,6 +20,8 @@ import type {
   AdrListItem,
   ComponentDocSummary,
   CaseStudy,
+  AggregatedMetrics,
+  Benchmark,
 } from 'shared/types';
 
 // ============================================================================
@@ -633,6 +635,135 @@ export function createCaseStudyHandlers(
 }
 
 // ============================================================================
+// Performance Handlers
+// ============================================================================
+
+export const mockPerformanceMetrics: AggregatedMetrics = {
+  totalReports: 50,
+  averageLcp: 2200,
+  averageFcp: 1500,
+  averageCls: 0.05,
+  averageTtfb: 600,
+  p75Lcp: 2500,
+  p75Fcp: 1800,
+  p75Cls: 0.1,
+  p75Ttfb: 800,
+};
+
+export const mockBenchmarks: Benchmark[] = [
+  {
+    metric: 'lcp',
+    p50: 2100,
+    p75: 2500,
+    p90: 4200,
+    source: 'Chrome UX Report',
+    industry: 'Portfolio',
+    lastUpdated: '2025-01-01',
+  },
+  {
+    metric: 'fcp',
+    p50: 1400,
+    p75: 1800,
+    p90: 3200,
+    source: 'Chrome UX Report',
+    industry: 'Portfolio',
+    lastUpdated: '2025-01-01',
+  },
+  {
+    metric: 'cls',
+    p50: 0.04,
+    p75: 0.1,
+    p90: 0.25,
+    source: 'Chrome UX Report',
+    industry: 'Portfolio',
+    lastUpdated: '2025-01-01',
+  },
+];
+
+export type PerformanceScenario = 'success' | 'error' | 'empty' | 'with-bundle';
+
+export function createPerformanceHandlers(
+  overrides: {
+    scenario?: PerformanceScenario;
+    delayMs?: number;
+  } = {},
+) {
+  const scenario = overrides.scenario ?? 'success';
+  const delayMs = overrides.delayMs ?? 0;
+
+  return [
+    http.get('/api/performance/metrics', async () => {
+      if (delayMs) await delay(delayMs);
+
+      switch (scenario) {
+        case 'error':
+          return HttpResponse.json(
+            { message: 'Server error' },
+            { status: 500 },
+          );
+        case 'empty':
+          return HttpResponse.json({
+            totalReports: 0,
+            averageLcp: 0,
+            averageFcp: 0,
+            averageCls: 0,
+            averageTtfb: 0,
+            p75Lcp: 0,
+            p75Fcp: 0,
+            p75Cls: 0,
+            p75Ttfb: 0,
+          });
+        default:
+          return HttpResponse.json(mockPerformanceMetrics);
+      }
+    }),
+
+    http.get('/api/performance/benchmarks', async () => {
+      if (delayMs) await delay(delayMs);
+      return HttpResponse.json(mockBenchmarks);
+    }),
+
+    http.get('/api/performance/bundle', async () => {
+      if (delayMs) await delay(delayMs);
+
+      if (scenario === 'with-bundle') {
+        return HttpResponse.json({
+          totalSize: 500000,
+          gzippedSize: 150000,
+          modules: [
+            {
+              name: 'main.js',
+              path: 'dist/main.js',
+              size: 300000,
+              gzippedSize: 90000,
+              isInitial: true,
+            },
+            {
+              name: 'vendor.js',
+              path: 'dist/vendor.js',
+              size: 200000,
+              gzippedSize: 60000,
+              isInitial: true,
+            },
+          ],
+          generatedAt: '2025-01-01T00:00:00Z',
+        });
+      }
+
+      return HttpResponse.json(null);
+    }),
+
+    http.post('/api/performance/report', async () => {
+      if (delayMs) await delay(delayMs);
+      return HttpResponse.json(
+        { id: 'mock-report-id', sessionId: 'test' },
+        { status: 201 },
+      );
+    }),
+  ];
+}
+
+// ============================================================================
 // Default Handlers
 // ============================================================================
 
@@ -649,4 +780,5 @@ export const handlers = [
   ...createAboutHandlers(),
   ...createArchitectureHandlers(),
   ...createAuthHandlers(),
+  ...createPerformanceHandlers(),
 ];

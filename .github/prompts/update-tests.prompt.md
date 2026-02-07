@@ -43,8 +43,9 @@ describe('myFunction()', () => {
 3. **Write Integration Tests**
    - Prioritize integration tests for feature containers (`src/ui/containers/*`) over unit tests for internal hooks/components.
    - Create integration tests for component interactions or API endpoints.
-   - Never make real network calls, instead use `jest.mock('axios')` to simulate API responses.
-   - Reference existing tests (e.g., `blog.container.test.tsx`) for patterns.
+   - Never make real network calls. Use MSW handlers from `ui/test-utils/msw` for API mocking (preferred approach).
+   - Reference existing tests (e.g., `blog.container.test.tsx`) for MSW patterns. See ADR-021 for details.
+   - Note: Legacy tests using `jest.mock('axios')` exist but should not be used as patterns for new tests.
 
 4. **Refer to Existing Test Suite for Style**
    - If an existing unit or integration test suite is available, use it as your style guide. Follow its file naming conventions (e.g., `componentName.test.js`), and coding patterns (imports, setup/teardown).

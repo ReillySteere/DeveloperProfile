@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from 'ui/shared/components/Button/Button';
-import { MarkdownContent } from 'ui/shared/components/MarkdownContent/MarkdownContent';
+import { Button, MarkdownContent } from 'ui/shared/components';
 import { CaseStudy, CaseStudyPhase, CaseStudyMetric } from 'shared/types';
 import styles from '../case-studies.module.scss';
 

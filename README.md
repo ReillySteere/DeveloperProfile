@@ -233,7 +233,9 @@ Detailed architectural documentation for each feature can be found here:
 - [Auth Feature](architecture/components/auth.md)
 - [Blog Feature](architecture/components/blog.md)
 - [Experience Feature](architecture/components/experience.md)
+- [Performance Feature](architecture/components/performance.md)
 - [Projects Feature](architecture/components/projects.md)
+- [Case Studies Feature](architecture/components/case-studies.md)
 - [Shared UI](architecture/components/shared-ui.md)
 - [Status (Mission Control)](architecture/components/status.md)
 - [Traces (Request Observability)](architecture/components/traces.md)
@@ -259,8 +261,12 @@ Detailed architectural documentation for each feature can be found here:
 - [ADR-017: Frontend State Management](architecture/decisions/ADR-017-frontend-state-management.md)
 - [ADR-018: Container-Component Pattern](architecture/decisions/ADR-018-container-component-pattern.md)
 - [ADR-019: Styling Architecture](architecture/decisions/ADR-019-styling-architecture.md)
-- [ADR-020: Frontend Authentication Architecture](architecture/decisions/ADR-020-frontend-authentication-architecture.md)
+- [ADR-020: Frontend Authentication](architecture/decisions/ADR-020-frontend-authentication.md)
 - [ADR-021: Axios Fetch Adapter for MSW Compatibility](architecture/decisions/ADR-021-axios-fetch-adapter-for-msw.md)
+- [ADR-022: Case Study Content Architecture](architecture/decisions/ADR-022-case-study-content-architecture.md)
+- [ADR-023: TypeORM Cross-Module Entity References](architecture/decisions/ADR-023-typeorm-cross-module-entity-references.md)
+- [ADR-024: Performance Monitoring Architecture](architecture/decisions/ADR-024-performance-monitoring-architecture.md)
+- [ADR-025: Bundle Analysis Integration](architecture/decisions/ADR-025-bundle-analysis-integration.md)
 
 ## AI Tooling & Claude Support
 

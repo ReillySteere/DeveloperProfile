@@ -1,5 +1,5 @@
 import React from 'react';
-import { MarkdownContent } from 'ui/shared/components/MarkdownContent/MarkdownContent';
+import { MarkdownContent } from 'ui/shared/components';
 import styles from '../blog.module.scss';
 
 interface BlogContentProps {

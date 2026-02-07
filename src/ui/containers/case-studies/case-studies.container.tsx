@@ -1,9 +1,6 @@
 import React from 'react';
 import { Link } from '@tanstack/react-router';
-import { Frame } from 'ui/shared/components';
-import { QueryState } from 'ui/shared/components/QueryState/QueryState';
-import { Badge } from 'ui/shared/components/Badge/Badge';
-import { Button } from 'ui/shared/components/Button/Button';
+import { Frame, QueryState, Badge, Button } from 'ui/shared/components';
 import { useCaseStudies } from './hooks/useCaseStudies';
 import { useAuthStore } from 'ui/shared/hooks/useAuthStore';
 import { CaseStudy } from 'shared/types';
