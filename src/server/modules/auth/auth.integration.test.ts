@@ -1,6 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UnauthorizedException, ConflictException } from '@nestjs/common';
+import {
+  UnauthorizedException,
+  ConflictException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 // Only import from public module API and adapters - no internal visibility
@@ -40,6 +44,8 @@ describe('Auth Module (Consumer API)', () => {
 
   beforeAll(async () => {
     process.env.JWT_AUTH_SECRET = 'test-secret';
+    // Enable registration for tests that need to create users
+    process.env.REGISTRATION_ENABLED = 'true';
 
     // Dynamically import User entity to get TypeORM working
     // This is acceptable in tests - we need the entity for the in-memory DB
@@ -82,6 +88,7 @@ describe('Auth Module (Consumer API)', () => {
 
   afterAll(async () => {
     await module.close();
+    delete process.env.REGISTRATION_ENABLED;
   });
 
   afterEach(() => {
@@ -90,6 +97,22 @@ describe('Auth Module (Consumer API)', () => {
 
   describe('AuthController (Business Layer)', () => {
     describe('POST /api/auth/register', () => {
+      it('should reject registration when REGISTRATION_ENABLED is not set', async () => {
+        const originalValue = process.env.REGISTRATION_ENABLED;
+        delete process.env.REGISTRATION_ENABLED;
+
+        const registerDto = {
+          username: 'blockeduser',
+          password: 'password123',
+        };
+
+        await expect(authController.register(registerDto)).rejects.toThrow(
+          ForbiddenException,
+        );
+
+        process.env.REGISTRATION_ENABLED = originalValue;
+      });
+
       it('should register a new user and return sanitized response', async () => {
         const registerDto = { username: 'newuser', password: 'password123' };
 

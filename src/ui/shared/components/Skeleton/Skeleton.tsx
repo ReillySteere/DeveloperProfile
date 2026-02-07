@@ -5,14 +5,19 @@ interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
   height?: string | number;
 }
 
-export const Skeleton = ({ height, ...props }: SkeletonProps) => {
+export const Skeleton = ({
+  height,
+  'aria-label': ariaLabel = 'Loading',
+  ...props
+}: SkeletonProps) => {
   return (
     <div
       data-testid="skeleton"
       className={styles.skeleton}
-      style={{
-        height,
-      }}
+      role="status"
+      aria-busy="true"
+      aria-label={ariaLabel}
+      style={{ height }}
       {...props}
     />
   );
