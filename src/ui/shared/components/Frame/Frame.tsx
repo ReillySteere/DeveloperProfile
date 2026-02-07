@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import styles from './Frame.module.scss';
 import { useNavStore } from 'ui/shared/hooks/useNavStore';
 
-interface FrameProps extends React.HTMLProps<HTMLDivElement> {
+interface FrameProps extends React.HTMLProps<HTMLElement> {
   children?: React.ReactNode;
   id: string;
 }
@@ -14,9 +14,14 @@ const Frame: React.FC<FrameProps> = ({ children, id, ...props }) => {
     setActiveSection(id);
   }, [id]);
   return (
-    <section id={id} {...props} className={styles.frame}>
+    <main
+      id="main-content"
+      data-section={id}
+      {...props}
+      className={styles.frame}
+    >
       {children}
-    </section>
+    </main>
   );
 };
 

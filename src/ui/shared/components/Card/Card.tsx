@@ -1,16 +1,23 @@
 import React from 'react';
 import styles from './Card.module.scss';
 
-export const Card = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, children, ...props }, ref) => {
-  return (
-    <div ref={ref} className={`${styles.card} ${className || ''}`} {...props}>
-      {children}
-    </div>
-  );
-});
+interface CardProps extends React.HTMLAttributes<HTMLElement> {
+  as?: 'div' | 'article';
+}
+
+export const Card = React.forwardRef<HTMLElement, CardProps>(
+  ({ className, children, as: Component = 'div', ...props }, ref) => {
+    return (
+      <Component
+        ref={ref as React.Ref<HTMLDivElement>}
+        className={`${styles.card} ${className || ''}`}
+        {...props}
+      >
+        {children}
+      </Component>
+    );
+  },
+);
 Card.displayName = 'Card';
 
 export const CardHeader = ({

@@ -8,6 +8,9 @@ import { NavigationRail } from 'ui/shared/components';
 export const Route = createRootRoute({
   component: () => (
     <div className={styles.container}>
+      <a href="#main-content" className={styles.skipLink}>
+        Skip to main content
+      </a>
       <NavigationRail />
       <Outlet />
       <ReactQueryDevtools initialIsOpen={false} />

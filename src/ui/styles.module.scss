@@ -7,3 +7,20 @@
   color: var(--text-primary);
 }
 
+.skipLink {
+  position: absolute;
+  left: -9999px;
+  top: var(--space-2);
+  z-index: 1000;
+  padding: var(--space-2) var(--space-4);
+  background: var(--primary-default);
+  color: var(--text-inverse);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  font-weight: var(--font-weight-medium);
+
+  &:focus {
+    left: var(--space-2);
+  }
+}
+
