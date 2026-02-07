@@ -22,6 +22,7 @@
     "scaffold": "node .github/skills/feature-scaffold/scaffold-feature.js",
     "generate-routes": "tsr generate",
     "type-check": "tsc --noEmit",
+    "verify:migrations": "node scripts/verify-migrations.mjs",
     "depcruise:verify": "npm run depcruise:server && npm run depcruise:ui",
     "depcruise:server": "depcruise src/server --config .dependency-cruiser.server.js",
     "depcruise:ui": "depcruise src/ui --config .dependency-cruiser.ui.js",

@@ -23,6 +23,7 @@
 - **Format:** `npm run format` (runs `format:server` and `format:ui`).
 - **Type Check:** `npm run type-check` (runs `tsc --noEmit`).
 - **Dependency Check:** `npm run depcruise:verify` (validates architectural boundaries).
+- **Migration Check:** `npm run verify:migrations` (ensures migrations are idempotent).
 - **Build:** `npm run build` (runs `build:server` and `build:ui`).
 - **Docker:**
   - Build: `docker build -t profile-app .`
@@ -85,6 +86,21 @@
   - Alert channels implement `IAlertChannel` interface in traces module.
   - Add new channels in `src/server/modules/traces/channels/`.
   - See `architecture/features/observability/alerting.md` for extension guide.
+- **Migrations:**
+  - All migrations **MUST be idempotent** (safe to run multiple times).
+  - `CREATE TABLE`/`CREATE INDEX`: Use `IF NOT EXISTS`.
+  - `ALTER TABLE ADD COLUMN`: Use `PRAGMA table_info()` check before adding.
+  - Pattern for adding columns:
+    ```typescript
+    const columns = await queryRunner.query(`PRAGMA table_info(table_name)`);
+    const columnNames = columns.map((c: { name: string }) => c.name);
+    if (!columnNames.includes('new_column')) {
+      await queryRunner.query(
+        `ALTER TABLE "table_name" ADD COLUMN "new_column" TEXT`,
+      );
+    }
+    ```
+  - CI enforces idempotency via `npm run verify:migrations`.
 
 ## Frontend Patterns (`src/ui`)
 

@@ -39,7 +39,6 @@ module.exports = {
     '!src/ui/shared/routes/*.tsx',
     '!src/ui/**/*.types.ts',
     '!src/ui/shared/components/index.ts', // Barrel file
-    '!src/ui/shared/services/performanceObserver.ts', // Browser API singleton, always mocked
     '!**/node_modules/**',
     '!**/dist/**',
   ],
