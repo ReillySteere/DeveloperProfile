@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.2.0](https://github.com/ReillySteere/DeveloperProfile/compare/v2.1.0...v2.2.0) (2026-02-07)
+
+
+### Features
+
+* WCAG 2.1 AA accessibility enhancements for shared components ([#81](https://github.com/ReillySteere/DeveloperProfile/issues/81)) ([8e7beff](https://github.com/ReillySteere/DeveloperProfile/commit/8e7beff19986dc3860f505ab48f0c3da1a0fed91))
+
+
+### Bug Fixes
+
+* add missing performance tables migration and prevent future regressions ([#77](https://github.com/ReillySteere/DeveloperProfile/issues/77)) ([45f2cfb](https://github.com/ReillySteere/DeveloperProfile/commit/45f2cfb30fbb4707122670fd4e70a3e0343e378b))
+* circular import causing issues ([#80](https://github.com/ReillySteere/DeveloperProfile/issues/80)) ([f46ad4c](https://github.com/ReillySteere/DeveloperProfile/commit/f46ad4cfcb8ae8dae94a6dc81c8bea875cfd0690))
+* make migrations idempotent and add CI enforcement ([#79](https://github.com/ReillySteere/DeveloperProfile/issues/79)) ([f029f11](https://github.com/ReillySteere/DeveloperProfile/commit/f029f112d8aa5ac75bba32c1e70efe16ec4017b4))
+
 ## [2.1.0](https://github.com/ReillySteere/DeveloperProfile/compare/v2.0.0...v2.1.0) (2026-02-07)
 
 
