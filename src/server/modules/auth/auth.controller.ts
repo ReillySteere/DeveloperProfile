@@ -3,6 +3,7 @@ import {
   Post,
   Body,
   UnauthorizedException,
+  ForbiddenException,
   Inject,
 } from '@nestjs/common';
 import { ApiBody, ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -62,8 +63,15 @@ export class AuthController {
     description: 'User registered successfully',
     type: UserDto,
   })
+  @ApiResponse({ status: 403, description: 'Registration is disabled' })
   @ApiResponse({ status: 409, description: 'Username already exists' })
   async register(@Body() registerDto: AuthCredentialsDto) {
+    // Registration is disabled by default for security
+    // Set REGISTRATION_ENABLED=true in environment to enable
+    if (process.env.REGISTRATION_ENABLED !== 'true') {
+      throw new ForbiddenException('Registration is disabled');
+    }
+
     const result = await this.auth.createAccount(
       registerDto.username,
       registerDto.password,

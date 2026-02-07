@@ -5,6 +5,8 @@ import { Experience } from '../experience/experience.entity';
 import { Project } from '../projects/project.entity';
 import { BlogPost } from '../blog/blog.entity';
 import { CaseStudy } from '../case-studies/case-study.entity';
+import { User } from '../../shared/modules/auth/user.entity';
+import * as bcrypt from 'bcrypt';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { randomUUID } from 'crypto';
@@ -21,6 +23,8 @@ export class SeedingService implements OnApplicationBootstrap {
 
   readonly #caseStudyRepo: Repository<CaseStudy>;
 
+  readonly #userRepo: Repository<User>;
+
   constructor(
     @InjectRepository(Experience) experienceRepo: Repository<Experience>,
 
@@ -29,6 +33,8 @@ export class SeedingService implements OnApplicationBootstrap {
     @InjectRepository(BlogPost) blogRepo: Repository<BlogPost>,
 
     @InjectRepository(CaseStudy) caseStudyRepo: Repository<CaseStudy>,
+
+    @InjectRepository(User) userRepo: Repository<User>,
   ) {
     this.#experienceRepo = experienceRepo;
 
@@ -37,9 +43,13 @@ export class SeedingService implements OnApplicationBootstrap {
     this.#blogRepo = blogRepo;
 
     this.#caseStudyRepo = caseStudyRepo;
+
+    this.#userRepo = userRepo;
   }
 
   async onApplicationBootstrap() {
+    await this.seedAdminUser();
+
     await this.seedExperience();
 
     await this.seedProjects();
@@ -47,6 +57,48 @@ export class SeedingService implements OnApplicationBootstrap {
     await this.seedBlogPosts();
 
     await this.seedCaseStudies();
+  }
+
+  /**
+   * Seeds an admin user from environment variables.
+   * This allows secure user creation without exposing credentials in the repository.
+   *
+   * Set ADMIN_USERNAME and ADMIN_PASSWORD in your environment (e.g., Heroku config vars).
+   */
+  private async seedAdminUser() {
+    const adminUsername = process.env.ADMIN_USERNAME;
+    const adminPassword = process.env.ADMIN_PASSWORD;
+
+    if (!adminUsername || !adminPassword) {
+      this.#logger.log(
+        'ADMIN_USERNAME or ADMIN_PASSWORD not set. Skipping admin user seed.',
+      );
+      return;
+    }
+
+    try {
+      const existingUser = await this.#userRepo.findOne({
+        where: { username: adminUsername },
+      });
+
+      if (existingUser) {
+        this.#logger.log(
+          `Admin user '${adminUsername}' already exists. Skipping seed.`,
+        );
+        return;
+      }
+
+      const hashedPassword = await bcrypt.hash(adminPassword, 10);
+      const adminUser = this.#userRepo.create({
+        username: adminUsername,
+        password: hashedPassword,
+      });
+
+      await this.#userRepo.save(adminUser);
+      this.#logger.log(`Admin user '${adminUsername}' created successfully.`);
+    } catch (error) {
+      this.#logger.error('Failed to seed admin user', error);
+    }
   }
 
   private async seedExperience() {
