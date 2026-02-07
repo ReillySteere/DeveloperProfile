@@ -60,6 +60,9 @@ jobs:
       - name: 🕸️ Verify Architecture
         run: npm run depcruise:verify
 
+      - name: 🔄 Verify Migration Idempotency
+        run: npm run verify:migrations
+
   unit-tests:
     name: Unit Tests
     runs-on: ubuntu-latest

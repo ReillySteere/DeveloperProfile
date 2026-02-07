@@ -3,20 +3,33 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 /**
  * Adds resolvedAt and notes columns to alert_history table.
  * These columns were added to the entity but missing from the original migration.
+ *
+ * This migration is idempotent - it checks if columns exist before adding them.
  */
 export class AddAlertHistoryResolvedAtColumn1769489440469 implements MigrationInterface {
   name = 'AddAlertHistoryResolvedAtColumn1769489440469';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
+    // Check if columns already exist (SQLite doesn't support ADD COLUMN IF NOT EXISTS)
+    const tableInfo = (await queryRunner.query(
+      `PRAGMA table_info(alert_history)`,
+    )) as { name: string }[];
+
+    const columnNames = tableInfo.map((col) => col.name);
+
     // Add resolvedAt column for tracking when an alert was resolved
-    await queryRunner.query(`
-      ALTER TABLE "alert_history" ADD COLUMN "resolvedAt" datetime
-    `);
+    if (!columnNames.includes('resolvedAt')) {
+      await queryRunner.query(`
+        ALTER TABLE "alert_history" ADD COLUMN "resolvedAt" datetime
+      `);
+    }
 
     // Add notes column for resolution notes
-    await queryRunner.query(`
-      ALTER TABLE "alert_history" ADD COLUMN "notes" text
-    `);
+    if (!columnNames.includes('notes')) {
+      await queryRunner.query(`
+        ALTER TABLE "alert_history" ADD COLUMN "notes" text
+      `);
+    }
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
