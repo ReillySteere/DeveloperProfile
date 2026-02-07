@@ -49,6 +49,26 @@ export default [
       'security/detect-possible-timing-attacks': 'warn',
     },
   },
+  // Enforce Entity decorator only in *.entity.ts files
+  {
+    files: ['src/server/**/*.ts'],
+    ignores: ['**/*.entity.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: 'typeorm',
+              importNames: ['Entity'],
+              message:
+                'The @Entity decorator can only be used in *.entity.ts files. Create a properly named entity file to ensure migration tests discover it.',
+            },
+          ],
+        },
+      ],
+    },
+  },
   {
     files: [
       '**/*.spec.ts',
