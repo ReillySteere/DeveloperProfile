@@ -80,7 +80,7 @@ describe('PerformanceBadge', () => {
     render(<PerformanceBadge />);
 
     expect(screen.getByTestId('performance-badge')).toBeInTheDocument();
-    expect(screen.getByText('Perf')).toBeInTheDocument();
+    expect(screen.getByText('100')).toBeInTheDocument();
   });
 
   it('renders with partial vitals (only LCP)', () => {
