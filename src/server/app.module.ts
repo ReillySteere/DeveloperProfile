@@ -20,6 +20,7 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
 import { RateLimitModule, RateLimiterGuard } from './modules/rate-limit';
 import { PerformanceModule } from './modules/performance/performance.module';
 import { ALL_ENTITIES } from './data-source';
+import { ALL_MIGRATIONS } from './migrations';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -30,7 +31,7 @@ const isProduction = process.env.NODE_ENV === 'production';
       type: 'better-sqlite3',
       database: 'data/database.sqlite',
       entities: ALL_ENTITIES,
-      migrations: ['dist/src/server/migrations/*.js'],
+      migrations: ALL_MIGRATIONS,
       migrationsRun: isProduction, // Auto-run migrations in production
       synchronize: !isProduction, // Only auto-sync in development
     }),
