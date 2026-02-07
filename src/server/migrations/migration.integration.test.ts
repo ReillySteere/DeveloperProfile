@@ -1,63 +1,25 @@
 import { DataSource } from 'typeorm';
-import { Experience } from '../modules/experience/experience.entity';
-import { Project } from '../modules/projects/project.entity';
-import { BlogPost } from '../modules/blog/blog.entity';
-import { User } from '../shared/modules/auth/user.entity';
-import { RequestTrace } from '../modules/traces/trace.entity';
-import { AlertHistory } from '../modules/traces/alert-history.entity';
-import { RateLimitEntry } from '../modules/rate-limit/rate-limit.entity';
-import { CaseStudy } from '../modules/case-studies/case-study.entity';
-
-// Import migrations
-import { InitialSchema1769265232408 } from '../migrations/1769265232408-InitialSchema';
-import { FixProjectsTableName1769267844749 } from '../migrations/1769267844749-FixProjectsTableName';
-import { CreateRequestTraceTable1769293753892 } from '../migrations/1769293753892-CreateRequestTraceTable';
-import { CreateAlertHistoryTable1769489440468 } from '../migrations/1769489440468-CreateAlertHistoryTable';
-import { CreateRateLimitTable1769489275619 } from '../migrations/1769489275619-CreateRateLimitTable';
-import { AddAlertHistoryResolvedAtColumn1769489440469 } from '../migrations/1769489440469-AddAlertHistoryResolvedAtColumn';
-import { CreateCaseStudiesTable1769489440470 } from '../migrations/1769489440470-CreateCaseStudiesTable';
+import { glob } from 'glob';
+import path from 'path';
+import { ALL_ENTITIES } from '../data-source';
+import { ALL_MIGRATIONS } from './index';
 
 /**
  * Integration test that verifies migrations create all required tables.
  *
  * This test catches the scenario where:
- * 1. A new entity is added to the codebase
+ * 1. A new entity is added to data-source.ts (ALL_ENTITIES)
  * 2. No migration is created for it
  * 3. Integration tests pass because they use synchronize: true
  * 4. Production fails because it relies on migrations
+ *
+ * The test imports entities from data-source.ts and migrations from index.ts,
+ * ensuring we test against the ACTUAL registered entities, not a duplicate list.
  *
  * @see ADR-002: SQLite TypeORM for persistence
  */
 describe('Migration Integration', () => {
   let dataSource: DataSource;
-
-  /**
-   * All entities that should have corresponding tables after migrations run.
-   * When adding a new entity, add it here to ensure a migration exists.
-   */
-  const ALL_ENTITIES = [
-    Experience,
-    Project,
-    BlogPost,
-    User,
-    RequestTrace,
-    AlertHistory,
-    RateLimitEntry,
-    CaseStudy,
-  ];
-
-  /**
-   * All migrations in order. When creating a new migration, add it here.
-   */
-  const ALL_MIGRATIONS = [
-    InitialSchema1769265232408,
-    FixProjectsTableName1769267844749,
-    CreateRequestTraceTable1769293753892,
-    CreateAlertHistoryTable1769489440468,
-    CreateRateLimitTable1769489275619,
-    AddAlertHistoryResolvedAtColumn1769489440469,
-    CreateCaseStudiesTable1769489440470,
-  ];
 
   beforeAll(async () => {
     // Create a fresh in-memory database WITHOUT synchronize
@@ -240,5 +202,60 @@ describe('Migration Integration', () => {
     } finally {
       await queryRunner.release();
     }
+  });
+});
+
+/**
+ * Test that ensures all entity files in the codebase are registered in ALL_ENTITIES.
+ *
+ * This catches the scenario where:
+ * 1. A developer creates a new *.entity.ts file
+ * 2. Forgets to add it to ALL_ENTITIES in data-source.ts
+ * 3. Dev mode works because synchronize:true creates the table
+ * 4. Production fails because TypeORM doesn't know about the entity
+ */
+describe('Entity Registration', () => {
+  it('should have all entity files registered in ALL_ENTITIES', async () => {
+    // Find all *.entity.ts files in the server directory
+    const serverDir = path.resolve(__dirname, '..');
+    const entityFiles = await glob('**/*.entity.ts', {
+      cwd: serverDir,
+      ignore: ['**/*.test.ts', '**/node_modules/**'],
+    });
+
+    // Get the names of all registered entities
+    const registeredEntityNames = new Set(
+      ALL_ENTITIES.map((entity) => entity.name),
+    );
+
+    // Extract entity class names from file paths
+    // e.g., "modules/blog/blog.entity.ts" -> expect "BlogPost" or similar
+    const unregisteredFiles: string[] = [];
+
+    for (const file of entityFiles) {
+      // Import the entity file dynamically to get exported classes
+      const filePath = path.join(serverDir, file);
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const module = require(filePath);
+
+      // Check each export - if it's a class with @Entity decorator, it should be registered
+      let hasRegisteredEntity = false;
+      for (const exportName of Object.keys(module)) {
+        const exported = module[exportName];
+        if (
+          typeof exported === 'function' &&
+          registeredEntityNames.has(exported.name)
+        ) {
+          hasRegisteredEntity = true;
+        }
+      }
+
+      // If no exports from this file are in ALL_ENTITIES, flag it
+      if (!hasRegisteredEntity) {
+        unregisteredFiles.push(file);
+      }
+    }
+
+    expect(unregisteredFiles).toEqual([]);
   });
 });

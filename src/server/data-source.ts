@@ -13,6 +13,28 @@ import {
 } from './modules/performance/performance.entity';
 
 /**
+ * All entities registered with TypeORM.
+ * This is the SINGLE SOURCE OF TRUTH for entity registration.
+ *
+ * When adding a new entity:
+ * 1. Add it to this array
+ * 2. Create a migration for the new table
+ * 3. The migration test will automatically verify the migration exists
+ */
+export const ALL_ENTITIES = [
+  Experience,
+  Project,
+  BlogPost,
+  User,
+  RequestTrace,
+  AlertHistory,
+  RateLimitEntry,
+  CaseStudy,
+  PerformanceReport,
+  BundleSnapshot,
+];
+
+/**
  * TypeORM CLI Data Source Configuration
  *
  * This file is used by the TypeORM CLI for migration commands:
@@ -30,18 +52,7 @@ import {
 export const AppDataSource = new DataSource({
   type: 'better-sqlite3',
   database: 'data/database.sqlite',
-  entities: [
-    Experience,
-    Project,
-    BlogPost,
-    User,
-    RequestTrace,
-    AlertHistory,
-    RateLimitEntry,
-    CaseStudy,
-    PerformanceReport,
-    BundleSnapshot,
-  ],
+  entities: ALL_ENTITIES,
   migrations: ['dist/src/server/migrations/*.js'],
   synchronize: false,
   logging: false,
