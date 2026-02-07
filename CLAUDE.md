@@ -73,13 +73,14 @@ npm run migration:revert
 
 - **Styling**: SCSS Modules with CSS variables from `shared/styles/tokens.css`. Never hardcode colors/spacing.
 - **Auth**: Handled globally via `AuthInterceptor`. Do not manually add Authorization headers.
-- **Components**: Import shared components from `ui/shared/components` barrel file.
+- **Components**: Import shared components from `ui/shared/components` barrel file. Direct imports are blocked by dependency-cruiser.
 - **Testing**: Integration tests at container level. Mock network layer, not internal hooks.
 
 ## Test Utilities
 
 - **UI**: `src/ui/test-utils/` - includes `render` wrapper, `MockEventSource` (SSE), `mockRecharts`
 - **Server**: `src/server/test-utils/cronTestUtils.ts` - testing scheduled tasks
+- **Global Mocks**: ESM libraries (`react-markdown`, `mermaid`, `web-vitals`) are mocked globally in `jest-preloaded.ts` - no per-test mocking needed
 
 ## API Documentation
 

@@ -50,18 +50,57 @@ console.warn = (...args: unknown[]) => {
 setupAxiosFetchAdapter();
 
 // Global mocks for ESM-only markdown packages
-// These packages don't work well with Jest's module system, so we mock them globally
-jest.mock('remark-gfm', () => ({
-  __esModule: true,
-  default: jest.fn(),
-}));
+// These packages don't work well with Jest's module system, so we mock them globally.
+// See mockMarkdown.tsx for the mock implementations.
+jest.mock(
+  'react-markdown',
+  () => require('test-utils/mockMarkdown').mockReactMarkdownModule,
+);
+jest.mock(
+  'remark-gfm',
+  () => require('test-utils/mockMarkdown').mockRemarkGfmModule,
+);
+jest.mock(
+  'mermaid',
+  () => require('test-utils/mockMarkdown').mockMermaidModule,
+);
 
-jest.mock('react-markdown', () => ({
-  __esModule: true,
-  default: (props: any) => {
-    return require('react').createElement('div', null, props.children);
-  },
-}));
+// Mock react-syntax-highlighter (has ESM dependencies like refractor)
+jest.mock(
+  'react-syntax-highlighter',
+  () => require('test-utils/mockMarkdown').mockSyntaxHighlighterModule,
+);
+jest.mock(
+  'react-syntax-highlighter/dist/cjs/prism-light',
+  () => require('test-utils/mockMarkdown').mockSyntaxHighlighterModule,
+);
+jest.mock(
+  'react-syntax-highlighter/dist/cjs/styles/prism',
+  () => require('test-utils/mockMarkdown').mockSyntaxHighlighterStylesModule,
+);
+jest.mock(
+  'react-syntax-highlighter/dist/cjs/languages/prism/typescript',
+  () => require('test-utils/mockMarkdown').mockLanguageModule,
+);
+jest.mock(
+  'react-syntax-highlighter/dist/cjs/languages/prism/bash',
+  () => require('test-utils/mockMarkdown').mockLanguageModule,
+);
+jest.mock(
+  'react-syntax-highlighter/dist/cjs/languages/prism/json',
+  () => require('test-utils/mockMarkdown').mockLanguageModule,
+);
+jest.mock(
+  'react-syntax-highlighter/dist/cjs/languages/prism/markdown',
+  () => require('test-utils/mockMarkdown').mockLanguageModule,
+);
+
+// Global mock for web-vitals (requires browser Performance API not in jsdom)
+// See mockWebVitals.ts for the mock implementation.
+jest.mock(
+  'web-vitals',
+  () => require('test-utils/mockWebVitals').mockWebVitals,
+);
 
 // MSW Server Setup
 // Start server before all tests

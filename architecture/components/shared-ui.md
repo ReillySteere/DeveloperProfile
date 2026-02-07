@@ -18,6 +18,7 @@ src/ui/shared/
 │   ├── MarkdownContent/
 │   ├── Mermaid/
 │   ├── NavigationRail/
+│   ├── PerformanceBadge/
 │   ├── QueryState/
 │   ├── SignIn/
 │   ├── Skeleton/
@@ -27,6 +28,7 @@ src/ui/shared/
 │   ├── useAuthStore.ts   # Zustand store for auth state
 │   ├── useDateFormatter.ts
 │   └── useNavStore.ts    # Zustand store for nav state
+├── services/        # Shared services
 └── routes/          # TanStack Router route definitions
 ```
 
@@ -96,16 +98,18 @@ import { SignIn } from 'ui/shared/components/SignIn/SignIn';
 
 These components use ESM-only dependencies (`react-markdown`, `mermaid`) that require special Jest mocking. They are excluded from the barrel export to prevent test configuration issues:
 
-| Component         | Purpose                                   | Usage                     |
-| ----------------- | ----------------------------------------- | ------------------------- |
-| `MarkdownContent` | Renders Markdown with syntax highlighting | Blog posts, documentation |
-| `Mermaid`         | Renders Mermaid diagrams                  | Architecture diagrams     |
+| Component          | Purpose                                   | Usage                       |
+| ------------------ | ----------------------------------------- | --------------------------- |
+| `MarkdownContent`  | Renders Markdown with syntax highlighting | Blog posts, documentation   |
+| `Mermaid`          | Renders Mermaid diagrams                  | Architecture diagrams       |
+| `PerformanceBadge` | Displays Web Vitals performance metrics   | Performance feature section |
 
 **Import directly:**
 
 ```typescript
 import { MarkdownContent } from 'ui/shared/components/MarkdownContent/MarkdownContent';
 import { Mermaid } from 'ui/shared/components/Mermaid/Mermaid';
+import { PerformanceBadge } from 'ui/shared/components/PerformanceBadge/PerformanceBadge';
 ```
 
 **Testing Note:** When testing components that use `MarkdownContent` or `Mermaid`, you must mock them. See `src/ui/containers/blog/blog.container.test.tsx` for examples.

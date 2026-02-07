@@ -286,11 +286,8 @@ import { http, HttpResponse } from 'msw';
 import { useAuthStore } from 'ui/shared/hooks/useAuthStore';
 import { BlogContainer } from './blog.container';
 
-// Mock ESM libraries that cause issues
-jest.mock('react-markdown', () => ({
-  __esModule: true,
-  default: ({ children }: { children: string }) => <div>{children}</div>,
-}));
+// NOTE: ESM libraries (react-markdown, mermaid, web-vitals, etc.) are globally
+// mocked in jest-preloaded.ts - no per-test mocking needed!
 
 describe('BlogContainer', () => {
   beforeEach(() => {
@@ -388,6 +385,18 @@ it('should create a new post when form is submitted', async () => {
 - Provides wrapped `render` function with `QueryClientProvider`
 - Import as: `import { render, screen } from 'ui/test-utils';`
 
+#### Global Mocks (Automatic)
+
+ESM-only libraries and browser APIs are **automatically mocked** in `jest-preloaded.ts`. You don't need to add per-test mocks for these:
+
+| Mock File          | Libraries Mocked                                                        |
+| ------------------ | ----------------------------------------------------------------------- |
+| `mockMarkdown.tsx` | `react-markdown`, `remark-gfm`, `mermaid`, `react-syntax-highlighter/*` |
+| `mockWebVitals.ts` | `web-vitals`                                                            |
+| `mockRecharts.tsx` | `recharts`                                                              |
+
+**Why global?** These libraries use ESM and/or browser-only APIs. Since all shared components are exported via barrel file, the mocks must load before any import.
+
 #### MockEventSource
 
 For testing Server-Sent Events (SSE) streams:
@@ -417,12 +426,13 @@ it('should display streamed data', async () => {
 
 #### mockRecharts
 
-For testing components that use Recharts:
+**Note:** Recharts is globally mocked (see table above). You typically don't need to add manual mocks. The example below shows advanced usage if you need custom behavior:
 
 ```typescript
+// Only if you need custom chart mock behavior (rare)
 import { mockRecharts } from 'ui/test-utils/mockRecharts';
 
-jest.mock('recharts', () => mockRecharts);
+jest.mock('recharts', () => mockRecharts());
 
 it('should render chart with data', async () => {
   render(<TraceTrends />);

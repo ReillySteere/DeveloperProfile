@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { useParams, Link } from '@tanstack/react-router';
-import { Frame } from 'ui/shared/components';
-import { QueryState } from 'ui/shared/components/QueryState/QueryState';
-import { Badge } from 'ui/shared/components/Badge/Badge';
-import { Button } from 'ui/shared/components/Button/Button';
+import {
+  Frame,
+  QueryState,
+  Badge,
+  Button,
+  MarkdownContent,
+} from 'ui/shared/components';
 import { useCaseStudy, useUpdateCaseStudy } from './hooks/useCaseStudies';
 import { useAuthStore } from 'ui/shared/hooks/useAuthStore';
 import { CaseStudy, CaseStudyPhase, CaseStudyMetric } from 'shared/types';
-import { MarkdownContent } from 'ui/shared/components/MarkdownContent/MarkdownContent';
 import { DiagramViewer, CodeComparisonViewer } from './components';
 import { CaseStudyEditor } from './views/CaseStudyEditor';
 import styles from './case-studies.module.scss';

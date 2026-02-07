@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mermaid } from 'ui/shared/components/Mermaid';
+import { Mermaid } from 'ui/shared/components';
 import { CaseStudyDiagram } from 'shared/types';
 import styles from '../case-studies.module.scss';
 

@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from '@tanstack/react-router';
-import { Frame } from 'ui/shared/components';
-import { QueryState } from 'ui/shared/components/QueryState/QueryState';
+import { Frame, QueryState, Badge, Button } from 'ui/shared/components';
 import { useBlogPost, useUpdateBlogPost } from './hooks/useBlog';
-import { Badge } from 'ui/shared/components/Badge/Badge';
-import { Button } from 'ui/shared/components/Button/Button';
 import { useAuth } from 'ui/shared/hooks/useAuth';
 import styles from './blog.module.scss';
 import { BlogPost as BlogPostType } from 'shared/types';

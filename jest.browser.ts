@@ -2,7 +2,7 @@ module.exports = {
   testRegex: ['./src/ui/.*test\\.[jt]s[x]*$'],
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   transform: {
-    '^.+\\.(t|j)sx?$': [
+    '^.+\\.m?[tj]sx?$': [
       '@swc/jest',
       // Load config from .swcrc
     ],
@@ -15,6 +15,7 @@ module.exports = {
   moduleNameMapper: {
     '^ui/(.*)$': '<rootDir>/src/ui/$1',
     '^shared/(.*)$': '<rootDir>/src/shared/$1',
+    '^test-utils/(.*)$': '<rootDir>/src/ui/test-utils/$1',
     '\\.(css|scss)$': 'identity-obj-proxy',
   },
   modulePaths: ['<rootDir>/node_modules'],
@@ -38,6 +39,7 @@ module.exports = {
     '!src/ui/shared/routes/*.tsx',
     '!src/ui/**/*.types.ts',
     '!src/ui/shared/components/index.ts', // Barrel file
+    '!src/ui/shared/services/performanceObserver.ts', // Browser API singleton, always mocked
     '!**/node_modules/**',
     '!**/dist/**',
   ],

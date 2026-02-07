@@ -103,7 +103,7 @@
   padding: var(--space-2);
   border-radius: var(--radius-md);
   transition: var(--transition-base);
-  margin-top: auto; /* Push to bottom */
+  margin-top: var(--space-2);
   align-self: center;
 
   &:hover {
@@ -112,3 +112,9 @@
   }
 }
 
+.performanceBadgeWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: auto;
+  padding: var(--space-2) 0;
+}

@@ -300,19 +300,19 @@ streamComments(): Observable<MessageEvent> {
 }
 ```
 
-### Using the Logger Service
+### Using the Logger Adapter
 
-**NEVER use `console.log/warn/error`** in server code. Instead, inject `LoggerService`:
+**NEVER use `console.log/warn/error`** in server code. Instead, inject the `LoggingAdapter`:
 
 ```typescript
 // src/server/modules/comments/comments.service.ts
-import { LoggerService } from '../../shared/adapters/logger';
+import { LoggingAdapter } from '../../shared/adapters/logger';
 
 @Injectable()
 export class CommentsService {
-  readonly #logger: LoggerService;
+  readonly #logger: LoggingAdapter;
 
-  constructor(logger: LoggerService) {
+  constructor(logger: LoggingAdapter) {
     this.#logger = logger;
     this.#logger.setContext(CommentsService.name);
   }

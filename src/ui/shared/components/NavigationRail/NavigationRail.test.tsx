@@ -13,8 +13,11 @@ jest.mock('@tanstack/react-router', () => {
         {children}
       </a>
     ),
+    useLocation: jest.fn(() => ({ pathname: '/about' })),
   };
 });
+
+const { useLocation } = jest.requireMock('@tanstack/react-router');
 
 // Mock framer-motion to avoid animation issues
 jest.mock('framer-motion', () => {
@@ -133,5 +136,24 @@ describe('NavigationRail', () => {
     });
 
     expect(useNavStore.getState().isExpanded).toBe(true);
+  });
+
+  it('shows PerformanceBadge wrapper when not on performance page', () => {
+    useLocation.mockReturnValue({ pathname: '/about' });
+    const { container } = render(<NavigationRail />);
+
+    // The wrapper should be present (badge content depends on web vitals data)
+    expect(
+      container.querySelector('.performanceBadgeWrapper'),
+    ).toBeInTheDocument();
+  });
+
+  it('hides PerformanceBadge wrapper when on performance page', () => {
+    useLocation.mockReturnValue({ pathname: '/performance' });
+    const { container } = render(<NavigationRail />);
+
+    expect(
+      container.querySelector('.performanceBadgeWrapper'),
+    ).not.toBeInTheDocument();
   });
 });

@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { Mermaid } from 'ui/shared/components/Mermaid/Mermaid';
+import { Mermaid } from 'ui/shared/components';
 import type { DependencyGraph as DependencyGraphType } from 'shared/types';
 import { toMermaidGraph } from '../utils/toMermaidGraph';
 import styles from './DependencyGraph.module.scss';

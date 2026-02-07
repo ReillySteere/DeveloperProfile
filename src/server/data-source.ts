@@ -7,6 +7,10 @@ import { RequestTrace } from './modules/traces/trace.entity';
 import { AlertHistory } from './modules/traces/alert-history.entity';
 import { RateLimitEntry } from './modules/rate-limit/rate-limit.entity';
 import { CaseStudy } from './modules/case-studies/case-study.entity';
+import {
+  PerformanceReport,
+  BundleSnapshot,
+} from './modules/performance/performance.entity';
 
 /**
  * TypeORM CLI Data Source Configuration
@@ -35,6 +39,8 @@ export const AppDataSource = new DataSource({
     AlertHistory,
     RateLimitEntry,
     CaseStudy,
+    PerformanceReport,
+    BundleSnapshot,
   ],
   migrations: ['dist/src/server/migrations/*.js'],
   synchronize: false,

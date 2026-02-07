@@ -244,6 +244,62 @@ Container (orchestration)
 | Prop drilling          | Explicit data flow > implicit context magic |
 | Hook duplication       | Feature isolation > DRY optimization        |
 
+## Dependency-Cruiser Enforcement
+
+The following rules in `.dependency-cruiser.ui.js` enforce the container/component pattern:
+
+```javascript
+// Feature components are private to their feature
+{
+  name: 'feature-components-internal-only',
+  severity: 'error',
+  comment: 'Feature-specific components should not be imported by other features.',
+  from: { path: '^src/ui/containers/([^/]+)' },
+  to: { path: '^src/ui/containers/([^/]+)/components/', pathNot: ['^src/ui/containers/$1/components/'] },
+}
+
+// Shared components must use barrel imports
+{
+  name: 'shared-components-use-barrel',
+  severity: 'error',
+  comment: 'Import shared components via barrel file (ui/shared/components).',
+  from: { pathNot: ['^src/ui/shared/components/'] },
+  to: { path: '^src/ui/shared/components/[^/]+/[^/]+\\.tsx?$' },
+}
+
+// Shared components cannot import from feature containers
+{
+  name: 'shared-components-no-feature-services',
+  severity: 'error',
+  from: { path: '^src/ui/shared/components/' },
+  to: { path: '^src/ui/containers/.*/(hooks|services)/' },
+}
+
+// Services must be framework-agnostic (no React imports)
+{
+  name: 'services-no-react',
+  severity: 'error',
+  from: { path: '^src/ui/shared/services/' },
+  to: { path: '^react$|^@tanstack/react' },
+}
+
+// Shared hooks can only use shared services
+{
+  name: 'shared-hooks-only-shared-services',
+  severity: 'error',
+  from: { path: '^src/ui/shared/hooks/' },
+  to: { path: '^src/ui/containers/' },
+}
+
+// Feature services should stay local (warn to promote to shared if reuse needed)
+{
+  name: 'feature-services-stay-local',
+  severity: 'warn',
+  from: { path: '^src/ui/containers/([^/]+)' },
+  to: { path: '^src/ui/containers/([^/]+)/services/', pathNot: ['^src/ui/containers/$1/services/'] },
+}
+```
+
 ## Related Documentation
 
 - [ADR-017: Frontend State Management](ADR-017-frontend-state-management.md)

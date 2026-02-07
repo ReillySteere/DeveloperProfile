@@ -1,8 +1,9 @@
 ﻿import React, { useEffect } from 'react';
-import { Link } from '@tanstack/react-router';
+import { Link, useLocation } from '@tanstack/react-router';
 import { motion } from 'framer-motion';
 import { useNavStore } from 'ui/shared/hooks/useNavStore';
 import { SignInButton } from '../SignIn/SignInButton';
+import { PerformanceBadge } from '../PerformanceBadge/PerformanceBadge';
 import styles from './NavigationRail.module.scss';
 import {
   User,
@@ -16,6 +17,7 @@ import {
   Activity,
   GitBranch,
   FileText,
+  Gauge,
 } from 'lucide-react';
 
 const navItems = [
@@ -25,6 +27,7 @@ const navItems = [
   { name: 'Projects', path: '/projects', Icon: Layers },
   { name: 'Case Studies', path: '/case-studies', Icon: FileText },
   { name: 'Status', path: '/status', Icon: Activity },
+  { name: 'Performance', path: '/performance', Icon: Gauge },
   { name: 'Architecture', path: '/architecture', Icon: GitBranch },
 ];
 
@@ -35,6 +38,8 @@ export const NavigationRail: React.FC = () => {
   const theme = useNavStore((s) => s.theme);
   const toggleTheme = useNavStore((s) => s.toggleTheme);
   const activeSection = useNavStore((s) => s.activeSection);
+  const location = useLocation();
+  const isOnPerformancePage = location.pathname === '/performance';
 
   useEffect(() => {
     const handleResize = () => {
@@ -84,6 +89,12 @@ export const NavigationRail: React.FC = () => {
             </li>
           ))}
         </ul>
+
+        {!isOnPerformancePage && (
+          <div className={styles.performanceBadgeWrapper}>
+            <PerformanceBadge />
+          </div>
+        )}
 
         <button
           onClick={toggleTheme}

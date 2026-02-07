@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from '@tanstack/react-router';
-import { Frame, Button } from 'ui/shared/components';
-import { QueryState } from 'ui/shared/components/QueryState/QueryState';
+import { Frame, Button, QueryState } from 'ui/shared/components';
 import {
   useDependencyGraphs,
   useDependencyGraph,

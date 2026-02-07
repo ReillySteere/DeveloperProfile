@@ -30,6 +30,11 @@ import {
   RateLimiterGuard,
   RateLimitEntry,
 } from './modules/rate-limit';
+import { PerformanceModule } from './modules/performance/performance.module';
+import {
+  PerformanceReport,
+  BundleSnapshot,
+} from './modules/performance/performance.entity';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -48,6 +53,8 @@ const isProduction = process.env.NODE_ENV === 'production';
         RequestTrace,
         AlertHistory,
         RateLimitEntry,
+        PerformanceReport,
+        BundleSnapshot,
       ],
       migrations: ['dist/src/server/migrations/*.js'],
       migrationsRun: isProduction, // Auto-run migrations in production
@@ -73,6 +80,7 @@ const isProduction = process.env.NODE_ENV === 'production';
     SeedingModule,
     HealthModule,
     ArchitectureModule,
+    PerformanceModule,
   ],
   providers: [
     {

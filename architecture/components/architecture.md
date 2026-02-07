@@ -81,43 +81,45 @@ Since dependency graphs only change when code changes, they are generated at **b
 
 ### Data Pipeline
 
-1. **Build Script:** `npm run build:dependency-graphs` generates JSON files.
-2. **Output Location:** `public/data/dependency-graph-{scope}.json`
+1. **Build Script:** `npm run generate:deps` generates JSON files.
+2. **Output Location:** `public/data/dependency-graphs.json` (combined file with all scopes)
 3. **API Endpoint:** Serves pre-generated static JSON files.
 4. **Mermaid Conversion:** Frontend utility converts graph JSON to Mermaid flowchart syntax.
 5. **Rendering:** Existing `Mermaid` component renders the flowchart as interactive SVG.
 
 ### Build Script
 
-**File:** `scripts/generate-dependency-graphs.js`
+**File:** `scripts/generate-dependency-graph.mjs`
 
 ```javascript
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+import { execSync } from 'child_process';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const scopes = [
-  {
-    name: 'server',
-    path: 'src/server',
-    config: '.dependency-cruiser.server.js',
-  },
-  { name: 'ui', path: 'src/ui', config: '.dependency-cruiser.ui.js' },
+  { name: 'server', path: 'src/server' },
+  { name: 'ui', path: 'src/ui' },
+  { name: 'shared', path: 'src/shared' },
 ];
 
 const outputDir = path.join(__dirname, '..', 'public', 'data');
 fs.mkdirSync(outputDir, { recursive: true });
 
+const results = {};
 for (const scope of scopes) {
-  const cmd = `npx depcruise ${scope.path} --config ${scope.config} --output-type json`;
+  const cmd = `npx depcruise ${scope.path} --config .dependency-cruiser.js --output-type json`;
   const raw = JSON.parse(execSync(cmd, { encoding: 'utf-8' }));
-  const transformed = transformDepcruiseOutput(raw, scope.name);
-  fs.writeFileSync(
-    path.join(outputDir, `dependency-graph-${scope.name}.json`),
-    JSON.stringify(transformed, null, 2),
-  );
-  console.log(`Generated: dependency-graph-${scope.name}.json`);
+  results[scope.name] = transformDepcruiseOutput(raw, scope.name);
 }
+
+fs.writeFileSync(
+  path.join(outputDir, 'dependency-graphs.json'),
+  JSON.stringify(results, null, 2),
+);
+console.log('Generated: dependency-graphs.json');
 ```
 
 ### npm Scripts
@@ -125,8 +127,8 @@ for (const scope of scopes) {
 ```json
 {
   "scripts": {
-    "build:dependency-graphs": "node scripts/generate-dependency-graphs.js",
-    "build": "npm run build:dependency-graphs && npm run build:server && npm run build:ui"
+    "generate:deps": "node scripts/generate-dependency-graph.mjs",
+    "build": "npm run generate:deps && npm run build:server && npm run build:ui"
   }
 }
 ```

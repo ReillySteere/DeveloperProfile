@@ -159,6 +159,7 @@
     "rxjs": "^7.8.1",
     "swagger-ui-express": "^5.0.1",
     "typeorm": "^0.3.22",
+    "web-vitals": "^5.1.0",
     "zustand": "^5.0.11"
   },
   "overrides": {

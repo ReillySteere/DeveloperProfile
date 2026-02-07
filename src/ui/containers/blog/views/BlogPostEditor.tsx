@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BlogContent } from '../components/BlogContent';
 import styles from '../blog.module.scss';
 import { BlogPost as BlogPostType } from 'shared/types';
-import { Button } from 'ui/shared/components/Button/Button';
+import { Button } from 'ui/shared/components';
 
 interface BlogPostEditorProps {
   post?: Partial<BlogPostType>;
