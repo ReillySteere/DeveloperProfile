@@ -1,5 +1,43 @@
 # Changelog
 
+## [2.0.0](https://github.com/ReillySteere/DeveloperProfile/compare/v1.5.0...v2.0.0) (2026-02-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* Swagger documentation now requires JWT authentication
+
+### Features
+
+* add interactive case study system ([#72](https://github.com/ReillySteere/DeveloperProfile/issues/72)) ([25b7655](https://github.com/ReillySteere/DeveloperProfile/commit/25b76558f0eafa6e6863cb4c54d4e64ee9c4641c))
+* Rate Limiting and Alerting (Phase 2 Observability) ([#52](https://github.com/ReillySteere/DeveloperProfile/issues/52)) ([c72fc71](https://github.com/ReillySteere/DeveloperProfile/commit/c72fc71523603e921f6b7707d2e3dd13e34cb0b3))
+
+
+### Bug Fixes
+
+* add API root endpoint to resolve 404 on /api ([#60](https://github.com/ReillySteere/DeveloperProfile/issues/60)) ([c9efed2](https://github.com/ReillySteere/DeveloperProfile/commit/c9efed2611e1057731da2937912291cf845a0933))
+* add missing AlertHistory columns and MSW testing infrastructure ([#56](https://github.com/ReillySteere/DeveloperProfile/issues/56)) ([056ddf8](https://github.com/ReillySteere/DeveloperProfile/commit/056ddf85697d7090218bbf1d23ee81e6c6dcef08))
+* add missing database migrations for rate_limit_entries and alert_history ([#55](https://github.com/ReillySteere/DeveloperProfile/issues/55)) ([388e7aa](https://github.com/ReillySteere/DeveloperProfile/commit/388e7aa1a5e257112f4d0a544b44ab5caa1280b1))
+* **architecture:** improve link navigation and handle unavailable content ([#69](https://github.com/ReillySteere/DeveloperProfile/issues/69)) ([37eb654](https://github.com/ReillySteere/DeveloperProfile/commit/37eb6547587a17332b9cb3e8449eadeeb5996a67))
+* enable markdown table rendering with remark-gfm plugin ([#67](https://github.com/ReillySteere/DeveloperProfile/issues/67)) ([b7119a2](https://github.com/ReillySteere/DeveloperProfile/commit/b7119a2b50a711e39f9ad50a399eee07d4e8ec47))
+* protect Swagger documentation with JWT authentication ([#61](https://github.com/ReillySteere/DeveloperProfile/issues/61)) ([3d3194b](https://github.com/ReillySteere/DeveloperProfile/commit/3d3194be8265ff37c3fcd9aaff357424e5be34e5))
+* remove duplicate title and status in ADR detail view ([#68](https://github.com/ReillySteere/DeveloperProfile/issues/68)) ([01992a7](https://github.com/ReillySteere/DeveloperProfile/commit/01992a7730c7df2a4a45385542e2c96baf3e55d6))
+* remove Swagger UI authentication blocking ([#62](https://github.com/ReillySteere/DeveloperProfile/issues/62)) ([dbcbdc1](https://github.com/ReillySteere/DeveloperProfile/commit/dbcbdc132bdeb7a26f08023fa8c508dd862ecbab))
+* suppress no-orphans warnings for migration files ([#65](https://github.com/ReillySteere/DeveloperProfile/issues/65)) ([7ea10be](https://github.com/ReillySteere/DeveloperProfile/commit/7ea10be9192d5a6e8479d7706f3f5b76a55545f6))
+* **ui:** correct theme token usage in status page components ([#66](https://github.com/ReillySteere/DeveloperProfile/issues/66)) ([511c882](https://github.com/ReillySteere/DeveloperProfile/commit/511c882523041651f3a911d2b65ef6b8e7a5f055))
+* use correct design tokens in DependencyGraph styles ([#70](https://github.com/ReillySteere/DeveloperProfile/issues/70)) ([0825fc7](https://github.com/ReillySteere/DeveloperProfile/commit/0825fc75fed7d9bcb7b8eb395fa8af04fa839e3e))
+
+
+### Code Refactoring
+
+* achieve 100% test coverage across UI and server ([#64](https://github.com/ReillySteere/DeveloperProfile/issues/64)) ([0ad5c0a](https://github.com/ReillySteere/DeveloperProfile/commit/0ad5c0a443ecc6ac8e9e1ad037bd7a5128de127f))
+* add trace event constants and update documentation ([#57](https://github.com/ReillySteere/DeveloperProfile/issues/57)) ([1ecd614](https://github.com/ReillySteere/DeveloperProfile/commit/1ecd614008a76124f85a78713b3208659f24accb))
+
+
+### Documentation
+
+* complete MSW integration and update documentation ([#63](https://github.com/ReillySteere/DeveloperProfile/issues/63)) ([170c09b](https://github.com/ReillySteere/DeveloperProfile/commit/170c09b43def600d89c7a1d29feddc6c5e477af7))
+
 ## [1.5.0](https://github.com/ReillySteere/DeveloperProfile/compare/v1.4.0...v1.5.0) (2026-01-25)
 
 
