@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar } from 'lucide-react';
+import { Link } from '@tanstack/react-router';
+import { Calendar, FileText } from 'lucide-react';
 import { Project } from 'shared/types';
 import {
   Card,
@@ -15,6 +16,7 @@ import { useDateFormatter } from 'ui/shared/hooks/useDateFormatter';
 interface ProjectCardProps {
   project: Project;
   index: number;
+  caseStudySlug?: string;
 }
 
 const variants = {
@@ -22,7 +24,11 @@ const variants = {
   visible: { opacity: 1, y: 0 },
 };
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
+const ProjectCard: React.FC<ProjectCardProps> = ({
+  project,
+  index,
+  caseStudySlug,
+}) => {
   const { formatMonthYear } = useDateFormatter();
 
   const projectStartDate = useMemo(() => {
@@ -56,6 +62,16 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
                 {projectStartDate} - {projectEndDate}
               </span>
             </div>
+            {caseStudySlug && (
+              <Link
+                to="/case-studies/$slug"
+                params={{ slug: caseStudySlug }}
+                className={styles.caseStudyLink}
+              >
+                <FileText size={14} />
+                <span>View Case Study</span>
+              </Link>
+            )}
           </div>
         </CardHeader>
         <CardContent className={styles.content}>

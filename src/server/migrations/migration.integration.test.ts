@@ -6,6 +6,7 @@ import { User } from '../shared/modules/auth/user.entity';
 import { RequestTrace } from '../modules/traces/trace.entity';
 import { AlertHistory } from '../modules/traces/alert-history.entity';
 import { RateLimitEntry } from '../modules/rate-limit/rate-limit.entity';
+import { CaseStudy } from '../modules/case-studies/case-study.entity';
 
 // Import migrations
 import { InitialSchema1769265232408 } from '../migrations/1769265232408-InitialSchema';
@@ -14,6 +15,7 @@ import { CreateRequestTraceTable1769293753892 } from '../migrations/176929375389
 import { CreateAlertHistoryTable1769489440468 } from '../migrations/1769489440468-CreateAlertHistoryTable';
 import { CreateRateLimitTable1769489275619 } from '../migrations/1769489275619-CreateRateLimitTable';
 import { AddAlertHistoryResolvedAtColumn1769489440469 } from '../migrations/1769489440469-AddAlertHistoryResolvedAtColumn';
+import { CreateCaseStudiesTable1769489440470 } from '../migrations/1769489440470-CreateCaseStudiesTable';
 
 /**
  * Integration test that verifies migrations create all required tables.
@@ -41,6 +43,7 @@ describe('Migration Integration', () => {
     RequestTrace,
     AlertHistory,
     RateLimitEntry,
+    CaseStudy,
   ];
 
   /**
@@ -53,6 +56,7 @@ describe('Migration Integration', () => {
     CreateAlertHistoryTable1769489440468,
     CreateRateLimitTable1769489275619,
     AddAlertHistoryResolvedAtColumn1769489440469,
+    CreateCaseStudiesTable1769489440470,
   ];
 
   beforeAll(async () => {
@@ -178,6 +182,61 @@ describe('Migration Integration', () => {
       // Columns added in follow-up migration
       expect(columnNames).toContain('resolvedAt');
       expect(columnNames).toContain('notes');
+    } finally {
+      await queryRunner.release();
+    }
+  });
+
+  it('should have correct schema for case_studies table', async () => {
+    const queryRunner = dataSource.createQueryRunner();
+
+    try {
+      const columns = await queryRunner.query(`
+        PRAGMA table_info(case_studies)
+      `);
+
+      const columnNames = columns.map((c: { name: string }) => c.name);
+
+      expect(columnNames).toContain('id');
+      expect(columnNames).toContain('slug');
+      expect(columnNames).toContain('projectId');
+      expect(columnNames).toContain('problemContext');
+      expect(columnNames).toContain('challenges');
+      expect(columnNames).toContain('approach');
+      expect(columnNames).toContain('phases');
+      expect(columnNames).toContain('keyDecisions');
+      expect(columnNames).toContain('outcomeSummary');
+      expect(columnNames).toContain('metrics');
+      expect(columnNames).toContain('learnings');
+      expect(columnNames).toContain('diagrams');
+      expect(columnNames).toContain('codeComparisons');
+      expect(columnNames).toContain('published');
+      expect(columnNames).toContain('createdAt');
+      expect(columnNames).toContain('updatedAt');
+    } finally {
+      await queryRunner.release();
+    }
+  });
+
+  it('should have indexes on case_studies table', async () => {
+    const queryRunner = dataSource.createQueryRunner();
+
+    try {
+      const indexes = await queryRunner.query(`
+        SELECT name FROM sqlite_master
+        WHERE type='index' AND tbl_name='case_studies'
+      `);
+
+      const indexNames = indexes.map((i: { name: string }) => i.name);
+      expect(indexNames.some((name: string) => name.includes('slug'))).toBe(
+        true,
+      );
+      expect(
+        indexNames.some((name: string) => name.includes('projectId')),
+      ).toBe(true);
+      expect(
+        indexNames.some((name: string) => name.includes('published')),
+      ).toBe(true);
     } finally {
       await queryRunner.release();
     }

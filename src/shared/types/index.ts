@@ -1,6 +1,7 @@
 export * from './about.types';
 export * from './architecture.types';
 export * from './blog.types';
+export * from './case-study.types';
 export * from './experience.types';
 export * from './projects.types';
 export * from './telemetry.types';

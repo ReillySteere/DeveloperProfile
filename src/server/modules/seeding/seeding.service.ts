@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Experience } from '../experience/experience.entity';
 import { Project } from '../projects/project.entity';
 import { BlogPost } from '../blog/blog.entity';
+import { CaseStudy } from '../case-studies/case-study.entity';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { randomUUID } from 'crypto';
@@ -18,18 +19,24 @@ export class SeedingService implements OnApplicationBootstrap {
 
   readonly #blogRepo: Repository<BlogPost>;
 
+  readonly #caseStudyRepo: Repository<CaseStudy>;
+
   constructor(
     @InjectRepository(Experience) experienceRepo: Repository<Experience>,
 
     @InjectRepository(Project) projectRepo: Repository<Project>,
 
     @InjectRepository(BlogPost) blogRepo: Repository<BlogPost>,
+
+    @InjectRepository(CaseStudy) caseStudyRepo: Repository<CaseStudy>,
   ) {
     this.#experienceRepo = experienceRepo;
 
     this.#projectRepo = projectRepo;
 
     this.#blogRepo = blogRepo;
+
+    this.#caseStudyRepo = caseStudyRepo;
   }
 
   async onApplicationBootstrap() {
@@ -38,6 +45,8 @@ export class SeedingService implements OnApplicationBootstrap {
     await this.seedProjects();
 
     await this.seedBlogPosts();
+
+    await this.seedCaseStudies();
   }
 
   private async seedExperience() {
@@ -139,6 +148,58 @@ export class SeedingService implements OnApplicationBootstrap {
       this.#logger.log(`Seeded ${data.length} blog posts.`);
     } catch (error) {
       this.#logger.error('Failed to seed blog posts', error);
+    }
+  }
+
+  private async seedCaseStudies() {
+    const dataPath = path.join(
+      __dirname,
+      '../../assets/data/case-studies.json',
+    );
+
+    try {
+      const count = await this.#caseStudyRepo.count();
+
+      if (count > 0) {
+        this.#logger.log('Case studies data already exists. Skipping seed.');
+
+        return;
+      }
+
+      const fileContent = await fs.readFile(dataPath, 'utf-8');
+
+      const data = JSON.parse(fileContent);
+
+      // Build a lookup map of project title -> project ID
+      const projects = await this.#projectRepo.find();
+      const projectMap = new Map(projects.map((p) => [p.title, p.id]));
+
+      await this.#caseStudyRepo.clear();
+
+      for (const item of data) {
+        const projectId = projectMap.get(item.projectTitle);
+
+        if (!projectId) {
+          this.#logger.warn(
+            `No project found with title "${item.projectTitle}" for case study "${item.slug}"`,
+          );
+          continue;
+        }
+
+        // Remove projectTitle from the item since it's not a column
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { projectTitle, ...caseStudyData } = item;
+
+        await this.#caseStudyRepo.save({
+          ...caseStudyData,
+          id: randomUUID(),
+          projectId,
+        });
+      }
+
+      this.#logger.log(`Seeded ${data.length} case studies.`);
+    } catch (error) {
+      this.#logger.error('Failed to seed case studies', error);
     }
   }
 }

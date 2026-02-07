@@ -11,6 +11,8 @@ import { Project } from './modules/projects/project.entity';
 import { ProjectModule } from './modules/projects/project.module';
 import { BlogModule } from './modules/blog/blog.module';
 import { BlogPost } from './modules/blog/blog.entity';
+import { CaseStudyModule } from './modules/case-studies/case-study.module';
+import { CaseStudy } from './modules/case-studies/case-study.entity';
 import { AuthModule } from './modules/auth/auth.module';
 // Entity import allowed for TypeORM registration per ADR-005
 import { User } from 'server/shared/modules/auth/user.entity';
@@ -41,6 +43,7 @@ const isProduction = process.env.NODE_ENV === 'production';
         Experience,
         Project,
         BlogPost,
+        CaseStudy,
         User,
         RequestTrace,
         AlertHistory,
@@ -65,6 +68,7 @@ const isProduction = process.env.NODE_ENV === 'production';
     AboutModule,
     ProjectModule,
     BlogModule,
+    CaseStudyModule,
     AuthModule,
     SeedingModule,
     HealthModule,

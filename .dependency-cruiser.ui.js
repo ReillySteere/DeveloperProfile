@@ -54,6 +54,7 @@ module.exports = {
         path: '^src/ui/containers/([^/]+)',
         pathNot: [
           '^src/ui/containers/$1', // Allow internal imports
+          '/hooks/', // Allow importing hooks for cross-feature data integration
         ],
       },
     },
