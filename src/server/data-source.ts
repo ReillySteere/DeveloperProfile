@@ -11,6 +11,7 @@ import {
   PerformanceReport,
   BundleSnapshot,
 } from './modules/performance/performance.entity';
+import { ALL_MIGRATIONS } from './migrations';
 
 /**
  * All entities registered with TypeORM.
@@ -53,7 +54,7 @@ export const AppDataSource = new DataSource({
   type: 'better-sqlite3',
   database: 'data/database.sqlite',
   entities: ALL_ENTITIES,
-  migrations: ['dist/src/server/migrations/*.js'],
+  migrations: ALL_MIGRATIONS,
   synchronize: false,
   logging: false,
 });
