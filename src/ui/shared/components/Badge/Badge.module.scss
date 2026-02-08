@@ -20,16 +20,16 @@
 }
 
 .success {
-  background-color: #ecfdf5;
-  color: var(--color-success);
+  background-color: var(--status-success-bg);
+  color: var(--status-success-text);
 }
 
 .warning {
-  background-color: #fffbeb;
-  color: var(--color-warning);
+  background-color: var(--status-warning-bg);
+  color: var(--status-warning-text);
 }
 
 .danger {
-  background-color: #fef2f2;
-  color: var(--color-danger);
+  background-color: var(--status-error-bg);
+  color: var(--status-error-text);
 }

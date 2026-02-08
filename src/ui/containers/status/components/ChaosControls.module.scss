@@ -40,9 +40,9 @@
   }
 
   &[data-active='true'] {
-    border-color: #ff6b6b;
-    background: rgba(255, 107, 107, 0.1);
-    color: #ff6b6b;
+    border-color: var(--viz-error);
+    background: var(--status-error-bg);
+    color: var(--viz-error);
   }
 
   &:focus-visible {
@@ -55,7 +55,7 @@
   margin: 1rem 0 0;
   text-align: center;
   font-size: 0.875rem;
-  color: #ffe66d;
+  color: var(--viz-degraded);
   animation: pulse 1s ease-in-out infinite;
 }
 

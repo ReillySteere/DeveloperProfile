@@ -1,11 +1,13 @@
 .frame {
   display: block;
   min-height: 80vh;
-  width: 70%;
+  width: 100%;
   border-radius: 4px;
   padding: 16px;
+  padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
 
-  @media screen and (max-width: 768px) {
-    width: 100%;
+  @media screen and (min-width: 768px) {
+    width: 70%;
+    padding-bottom: 16px;
   }
 }

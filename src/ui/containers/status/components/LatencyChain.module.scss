@@ -38,15 +38,15 @@
   min-width: 80px;
 
   &[data-health='good'] {
-    --connection-color: #00ff88;
+    --connection-color: var(--viz-healthy);
   }
 
   &[data-health='warning'] {
-    --connection-color: #ffe66d;
+    --connection-color: var(--viz-degraded);
   }
 
   &[data-health='critical'] {
-    --connection-color: #ff6b6b;
+    --connection-color: var(--viz-error);
   }
 }
 
