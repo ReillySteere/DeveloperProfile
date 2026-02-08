@@ -102,6 +102,19 @@ jest.mock(
   () => require('test-utils/mockWebVitals').mockWebVitals,
 );
 
+// Global mock for axe-core (requires full browser DOM not available in jsdom)
+jest.mock('axe-core', () => ({
+  default: {
+    run: jest.fn().mockResolvedValue({
+      violations: [],
+      passes: [],
+      incomplete: [],
+      inapplicable: [],
+    }),
+  },
+  __esModule: true,
+}));
+
 // MSW Server Setup
 // Start server before all tests
 beforeAll(() => {

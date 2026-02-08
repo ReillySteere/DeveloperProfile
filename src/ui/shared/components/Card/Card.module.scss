@@ -5,6 +5,7 @@
   box-shadow: var(--shadow-sm);
   overflow: hidden;
   transition: var(--transition-base);
+  max-width: 100%;
 }
 
 .hoverable:hover {
@@ -14,11 +15,15 @@
 }
 
 .header {
-  padding: var(--space-4) var(--space-6);
+  padding: var(--space-3) var(--space-4);
   border-bottom: 1px solid var(--border-default);
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  @media (min-width: 768px) {
+    padding: var(--space-4) var(--space-6);
+  }
 }
 
 .title {
@@ -28,11 +33,19 @@
 }
 
 .content {
-  padding: var(--space-6);
+  padding: var(--space-4);
+
+  @media (min-width: 768px) {
+    padding: var(--space-6);
+  }
 }
 
 .footer {
-  padding: var(--space-4) var(--space-6);
+  padding: var(--space-3) var(--space-4);
   background-color: var(--bg-surface);
   border-top: 1px solid var(--border-default);
+
+  @media (min-width: 768px) {
+    padding: var(--space-4) var(--space-6);
+  }
 }

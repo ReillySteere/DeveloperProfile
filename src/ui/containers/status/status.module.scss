@@ -25,16 +25,16 @@
   font-family: 'JetBrains Mono', monospace;
 
   &[data-state='connected'] {
-    color: #00ff88;
+    color: var(--viz-healthy);
   }
 
   &[data-state='connecting'] {
-    color: #ffe66d;
+    color: var(--viz-degraded);
   }
 
   &[data-state='error'],
   &[data-state='disconnected'] {
-    color: #ff6b6b;
+    color: var(--viz-error);
   }
 }
 
@@ -49,7 +49,7 @@
   transition: background 0.2s;
 
   &:hover {
-    background: rgba(255, 107, 107, 0.1);
+    background: var(--status-error-bg);
   }
 }
 
@@ -129,7 +129,7 @@
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
   background: var(--primary-default);
-  color: #fff;
+  color: var(--text-inverse);
   border-radius: 6px;
   text-decoration: none;
   font-weight: 500;

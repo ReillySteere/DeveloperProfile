@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React from 'react';
-import { render, screen, fireEvent, act } from 'ui/test-utils';
+import { render, screen, fireEvent, act, within } from 'ui/test-utils';
 import { NavigationRail } from './NavigationRail';
 import { useNavStore } from 'ui/shared/hooks/useNavStore';
 
@@ -8,8 +8,13 @@ jest.mock('@tanstack/react-router', () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const React = require('react');
   return {
-    Link: ({ children, to, className }: any) => (
-      <a href={to} className={className} data-testid={`nav-link-${to}`}>
+    Link: ({ children, to, className, onClick }: any) => (
+      <a
+        href={to}
+        className={className}
+        data-testid={`nav-link-${to}`}
+        onClick={onClick}
+      >
         {children}
       </a>
     ),
@@ -31,6 +36,7 @@ jest.mock('framer-motion', () => {
         </div>
       ),
     },
+    AnimatePresence: ({ children }: any) => <>{children}</>,
   };
 });
 
@@ -46,13 +52,36 @@ describe('NavigationRail', () => {
     global.dispatchEvent(new Event('resize'));
   });
 
-  it('renders all navigation items', () => {
+  // Helper to get the desktop nav container
+  const getDesktopNav = () =>
+    screen.getByLabelText('Main navigation') as HTMLElement;
+
+  // Helper to get the mobile nav container
+  const getMobileNav = () =>
+    screen.getByLabelText('Mobile navigation') as HTMLElement;
+
+  it('renders all navigation items in desktop nav', () => {
     render(<NavigationRail />);
 
-    expect(screen.getByText('About')).toBeInTheDocument();
-    expect(screen.getByText('Blog')).toBeInTheDocument();
-    expect(screen.getByText('Experience')).toBeInTheDocument();
-    expect(screen.getByText('Projects')).toBeInTheDocument();
+    const desktopNav = getDesktopNav();
+    expect(within(desktopNav).getByText('About')).toBeInTheDocument();
+    expect(within(desktopNav).getByText('Blog')).toBeInTheDocument();
+    expect(within(desktopNav).getByText('Experience')).toBeInTheDocument();
+    expect(within(desktopNav).getByText('Projects')).toBeInTheDocument();
+    expect(within(desktopNav).getByText('Accessibility')).toBeInTheDocument();
+  });
+
+  it('renders primary items in mobile bottom nav', () => {
+    render(<NavigationRail />);
+
+    const mobileNav = getMobileNav();
+    // Primary items (first 4)
+    expect(within(mobileNav).getByText('About')).toBeInTheDocument();
+    expect(within(mobileNav).getByText('Blog')).toBeInTheDocument();
+    expect(within(mobileNav).getByText('Experience')).toBeInTheDocument();
+    expect(within(mobileNav).getByText('Projects')).toBeInTheDocument();
+    // More button for secondary items
+    expect(within(mobileNav).getByText('More')).toBeInTheDocument();
   });
 
   it('renders in expanded state correctly', () => {
@@ -60,7 +89,8 @@ describe('NavigationRail', () => {
 
     const toggleButton = screen.getByLabelText('Collapse navigation');
     expect(toggleButton).toBeInTheDocument();
-    expect(screen.getByText('About')).toBeVisible();
+    const desktopNav = getDesktopNav();
+    expect(within(desktopNav).getByText('About')).toBeVisible();
   });
 
   it('renders in collapsed state correctly', () => {
@@ -72,8 +102,9 @@ describe('NavigationRail', () => {
 
     const toggleButton = screen.getByLabelText('Expand navigation');
     expect(toggleButton).toBeInTheDocument();
-    // Labels should not be rendered when collapsed
-    expect(screen.queryByText('About')).not.toBeInTheDocument();
+    // Labels should not be rendered in desktop nav when collapsed
+    const desktopNav = getDesktopNav();
+    expect(within(desktopNav).queryByText('About')).not.toBeInTheDocument();
   });
 
   it('toggles expansion when toggle button is clicked', () => {
@@ -100,18 +131,80 @@ describe('NavigationRail', () => {
     expect(useNavStore.getState().theme).toBe('light');
   });
 
-  it('highlights the active section', () => {
+  it('highlights the active section in desktop nav', () => {
     act(() => {
       useNavStore.setState({ activeSection: 'experience' });
     });
 
     render(<NavigationRail />);
 
-    const experienceLink = screen.getByTestId('nav-link-/experience');
+    const desktopNav = getDesktopNav();
+    const experienceLink = within(desktopNav).getByTestId(
+      'nav-link-/experience',
+    );
     expect(experienceLink.className).toContain('activeLink');
 
-    const aboutLink = screen.getByTestId('nav-link-/about');
+    const aboutLink = within(desktopNav).getByTestId('nav-link-/about');
     expect(aboutLink.className).not.toContain('activeLink');
+  });
+
+  it('highlights the active section in mobile nav', () => {
+    act(() => {
+      useNavStore.setState({ activeSection: 'experience' });
+    });
+
+    render(<NavigationRail />);
+
+    const mobileNav = getMobileNav();
+    const experienceLink = within(mobileNav).getByTestId(
+      'nav-link-/experience',
+    );
+    expect(experienceLink.className).toContain('bottomNavActive');
+
+    const aboutLink = within(mobileNav).getByTestId('nav-link-/about');
+    expect(aboutLink.className).not.toContain('bottomNavActive');
+  });
+
+  it('opens more menu when More button is clicked', () => {
+    render(<NavigationRail />);
+
+    const mobileNav = getMobileNav();
+    const moreButton = within(mobileNav).getByLabelText(
+      'More navigation options',
+    );
+
+    fireEvent.click(moreButton);
+
+    // Get the more menu - it's rendered outside the mobile nav
+    const moreMenu = document.querySelector('.moreMenu') as HTMLElement;
+    expect(moreMenu).toBeInTheDocument();
+
+    // Secondary items should be visible in more menu
+    expect(within(moreMenu).getByText('Case Studies')).toBeInTheDocument();
+    expect(within(moreMenu).getByText('Status')).toBeInTheDocument();
+    expect(within(moreMenu).getByText('Performance')).toBeInTheDocument();
+    expect(within(moreMenu).getByText('Architecture')).toBeInTheDocument();
+    // Theme toggle in more menu
+    expect(within(moreMenu).getByText('Dark Mode')).toBeInTheDocument();
+  });
+
+  it('closes more menu when clicking outside', () => {
+    render(<NavigationRail />);
+
+    const mobileNav = getMobileNav();
+    const moreButton = within(mobileNav).getByLabelText(
+      'More navigation options',
+    );
+
+    fireEvent.click(moreButton);
+    const moreMenu = document.querySelector('.moreMenu') as HTMLElement;
+    expect(within(moreMenu).getByText('Case Studies')).toBeInTheDocument();
+
+    // Click overlay to close
+    const overlay = document.querySelector('.moreOverlay');
+    fireEvent.click(overlay!);
+
+    expect(document.querySelector('.moreMenu')).not.toBeInTheDocument();
   });
 
   it('collapses on window resize if width < 768px', () => {
@@ -155,5 +248,92 @@ describe('NavigationRail', () => {
     expect(
       container.querySelector('.performanceBadgeWrapper'),
     ).not.toBeInTheDocument();
+  });
+
+  it('toggles theme via more menu', () => {
+    render(<NavigationRail />);
+
+    const mobileNav = getMobileNav();
+    const moreButton = within(mobileNav).getByLabelText(
+      'More navigation options',
+    );
+
+    fireEvent.click(moreButton);
+
+    const themeMenuItem = screen.getByText('Dark Mode');
+    fireEvent.click(themeMenuItem);
+
+    expect(useNavStore.getState().theme).toBe('dark');
+    // More menu should close after clicking
+    expect(screen.queryByText('Dark Mode')).not.toBeInTheDocument();
+  });
+
+  it('highlights More button when secondary item is active', () => {
+    act(() => {
+      useNavStore.setState({ activeSection: 'status' }); // Status is a secondary item
+    });
+
+    render(<NavigationRail />);
+
+    const mobileNav = getMobileNav();
+    const moreButton = within(mobileNav).getByLabelText(
+      'More navigation options',
+    );
+    expect(moreButton.className).toContain('bottomNavActive');
+  });
+
+  it('closes more menu when clicking a secondary nav item', () => {
+    render(<NavigationRail />);
+
+    const mobileNav = getMobileNav();
+    const moreButton = within(mobileNav).getByLabelText(
+      'More navigation options',
+    );
+
+    fireEvent.click(moreButton);
+
+    const moreMenu = document.querySelector('.moreMenu') as HTMLElement;
+    const caseStudiesLink = within(moreMenu).getByText('Case Studies');
+    fireEvent.click(caseStudiesLink);
+
+    // More menu should close after clicking a link
+    expect(document.querySelector('.moreMenu')).not.toBeInTheDocument();
+  });
+
+  it('highlights active secondary item in more menu', () => {
+    act(() => {
+      useNavStore.setState({ activeSection: 'status' });
+    });
+
+    render(<NavigationRail />);
+
+    const mobileNav = getMobileNav();
+    const moreButton = within(mobileNav).getByLabelText(
+      'More navigation options',
+    );
+
+    fireEvent.click(moreButton);
+
+    const moreMenu = document.querySelector('.moreMenu') as HTMLElement;
+    const statusLink = within(moreMenu).getByTestId('nav-link-/status');
+    expect(statusLink.className).toContain('moreMenuActive');
+  });
+
+  it('shows Light Mode text in more menu when theme is dark', () => {
+    act(() => {
+      useNavStore.setState({ theme: 'dark' });
+    });
+
+    render(<NavigationRail />);
+
+    const mobileNav = getMobileNav();
+    const moreButton = within(mobileNav).getByLabelText(
+      'More navigation options',
+    );
+
+    fireEvent.click(moreButton);
+
+    const moreMenu = document.querySelector('.moreMenu') as HTMLElement;
+    expect(within(moreMenu).getByText('Light Mode')).toBeInTheDocument();
   });
 });

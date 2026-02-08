@@ -29,28 +29,28 @@
 }
 
 .methodGET {
-  background-color: rgba(34, 197, 94, 0.15);
-  color: #22c55e;
+  background-color: var(--status-success-bg);
+  color: var(--http-get);
 }
 
 .methodPOST {
-  background-color: rgba(59, 130, 246, 0.15);
-  color: #3b82f6;
+  background-color: var(--status-info-bg);
+  color: var(--http-post);
 }
 
 .methodPUT {
-  background-color: rgba(249, 115, 22, 0.15);
-  color: #f97316;
+  background-color: var(--status-serious-bg);
+  color: var(--http-put);
 }
 
 .methodPATCH {
-  background-color: rgba(168, 85, 247, 0.15);
-  color: #a855f7;
+  background-color: var(--color-purple-100);
+  color: var(--http-patch);
 }
 
 .methodDELETE {
-  background-color: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
+  background-color: var(--status-error-bg);
+  color: var(--http-delete);
 }
 
 .path {
@@ -70,19 +70,19 @@
 }
 
 .status2xx {
-  color: #22c55e;
+  color: var(--http-get);
 }
 
 .status3xx {
-  color: #3b82f6;
+  color: var(--http-post);
 }
 
 .status4xx {
-  color: #f97316;
+  color: var(--http-put);
 }
 
 .status5xx {
-  color: #ef4444;
+  color: var(--http-delete);
 }
 
 .status1xx {
