@@ -49,6 +49,8 @@ module.exports = {
         'Feature containers should be isolated. They should not import from other feature containers.',
       from: {
         path: '^src/ui/containers/([^/]+)',
+        // Playground container showcases feature components from other containers (ADR-029)
+        pathNot: ['^src/ui/containers/playground'],
       },
       to: {
         path: '^src/ui/containers/([^/]+)',
@@ -189,6 +191,8 @@ module.exports = {
         'Feature-specific components (in containers/*/components) should not be imported by other features. Use shared/components for reusable UI.',
       from: {
         path: '^src/ui/containers/([^/]+)',
+        // Playground container showcases feature components from other containers (ADR-029)
+        pathNot: ['^src/ui/containers/playground'],
       },
       to: {
         path: '^src/ui/containers/([^/]+)/components/',

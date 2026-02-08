@@ -8,3 +8,4 @@ export * from './telemetry.types';
 export * from './trace.types';
 export * from './rate-limit.types';
 export * from './performance.types';
+export * from './playground.types';

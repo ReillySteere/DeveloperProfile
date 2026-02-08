@@ -1,0 +1,108 @@
+[
+  {
+    "id": "performance-dashboard",
+    "name": "Performance Dashboard",
+    "description": "Combined view of Web Vitals gauges and bundle size analysis",
+    "layout": "grid-2x2",
+    "slots": [
+      {
+        "id": "vital-lcp",
+        "componentName": "VitalGauge",
+        "label": "LCP Gauge",
+        "props": {
+          "name": "LCP",
+          "value": 2200,
+          "rating": "needs-improvement",
+          "unit": "ms",
+          "thresholds": { "good": 2500, "poor": 4000 }
+        }
+      },
+      {
+        "id": "vitals-display",
+        "componentName": "WebVitalsDisplay",
+        "label": "Web Vitals Overview",
+        "props": {
+          "vitals": { "lcp": 2200, "fcp": 1500, "cls": 0.05, "ttfb": 600 }
+        }
+      },
+      {
+        "id": "bundle-treemap",
+        "componentName": "BundleSizeTreemap",
+        "label": "Bundle Analysis",
+        "props": {
+          "modules": [
+            {
+              "name": "main.js",
+              "path": "dist/main.js",
+              "size": 300000,
+              "gzippedSize": 90000,
+              "isInitial": true
+            },
+            {
+              "name": "vendor.js",
+              "path": "dist/vendor.js",
+              "size": 200000,
+              "gzippedSize": 60000,
+              "isInitial": true
+            }
+          ],
+          "totalSize": 500000,
+          "gzippedSize": 150000
+        }
+      }
+    ],
+    "codeTemplate": "import { VitalGauge } from 'ui/containers/performance/components/VitalGauge';\nimport { WebVitalsDisplay } from 'ui/containers/performance/components/WebVitalsDisplay';\nimport { BundleSizeTreemap } from 'ui/containers/performance/components/BundleSizeTreemap';\n\nfunction PerformanceDashboard() {\n  return (\n    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>\n      <VitalGauge name=\"LCP\" value={2200} rating=\"needs-improvement\" unit=\"ms\" thresholds={{ good: 2500, poor: 4000 }} />\n      <WebVitalsDisplay vitals={{ lcp: 2200, fcp: 1500, cls: 0.05, ttfb: 600 }} />\n      <BundleSizeTreemap modules={modules} totalSize={500000} gzippedSize={150000} />\n    </div>\n  );\n}"
+  },
+  {
+    "id": "accessibility-audit",
+    "name": "Accessibility Audit",
+    "description": "Combined accessibility audit and contrast checking panel",
+    "layout": "grid-1x2",
+    "slots": [
+      {
+        "id": "axe-panel",
+        "componentName": "AxeAuditPanel",
+        "label": "Axe Audit",
+        "props": {}
+      },
+      {
+        "id": "contrast-checker",
+        "componentName": "ContrastChecker",
+        "label": "Contrast Checker",
+        "props": {}
+      }
+    ],
+    "codeTemplate": "import { AxeAuditPanel } from 'ui/containers/accessibility/components/AxeAuditPanel';\nimport { ContrastChecker } from 'ui/containers/accessibility/components/ContrastChecker';\n\nfunction AccessibilityAudit() {\n  return (\n    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>\n      <AxeAuditPanel />\n      <ContrastChecker />\n    </div>\n  );\n}"
+  },
+  {
+    "id": "code-review",
+    "name": "Code Review",
+    "description": "Full-width code comparison viewer for before/after analysis",
+    "layout": "full",
+    "slots": [
+      {
+        "id": "code-viewer",
+        "componentName": "CodeComparisonViewer",
+        "label": "Code Comparison",
+        "props": {
+          "comparisons": [
+            {
+              "title": "ES Modules Migration",
+              "before": {
+                "code": "const express = require('express');\nconst router = express.Router();",
+                "label": "CommonJS",
+                "language": "typescript"
+              },
+              "after": {
+                "code": "import express from 'express';\nconst router = express.Router();",
+                "label": "ES Modules",
+                "language": "typescript"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "codeTemplate": "import { CodeComparisonViewer } from 'ui/containers/case-studies/components/CodeComparisonViewer';\n\nfunction CodeReview() {\n  return <CodeComparisonViewer comparisons={comparisons} />;\n}"
+  }
+]

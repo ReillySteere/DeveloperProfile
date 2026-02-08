@@ -19,6 +19,7 @@ import {
   FileText,
   Gauge,
   Accessibility,
+  Puzzle,
   MoreHorizontal,
 } from 'lucide-react';
 
@@ -32,6 +33,7 @@ const navItems = [
   { name: 'Performance', path: '/performance', Icon: Gauge },
   { name: 'Accessibility', path: '/accessibility', Icon: Accessibility },
   { name: 'Architecture', path: '/architecture', Icon: GitBranch },
+  { name: 'Playground', path: '/playground', Icon: Puzzle },
 ];
 
 // Primary items for bottom nav (most important)

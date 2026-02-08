@@ -12,6 +12,11 @@
       "Bash(npm test)",
       "Bash(npx tsr:*)",
       "Bash(npm ls:*)",
+      "Bash(npx jest:*)",
+      "Bash(ls:*)",
+      "Bash(npm run type-check:*)",
+      "Bash(npm run test:server:*)",
+      "Bash(npm run build:*)"
       "Bash(npx tsc:*)",
       "Bash(npm run test:ui:*)",
       "Bash(npm run lint:*)",

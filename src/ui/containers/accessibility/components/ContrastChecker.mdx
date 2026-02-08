@@ -1,0 +1,120 @@
+# ContrastChecker
+
+A color contrast verification table showing WCAG compliance levels for the design system's color pairings.
+
+## Overview
+
+`ContrastChecker` displays a pre-defined set of foreground/background color pairs from the design system, calculates their contrast ratios, and indicates WCAG 2.1 compliance levels for both normal and large text.
+
+## Usage
+
+```tsx
+import { ContrastChecker } from 'ui/containers/accessibility/components/ContrastChecker';
+
+// Self-contained - no props required
+<ContrastChecker />;
+```
+
+## Props
+
+This component is **self-contained** and accepts no props. The color pairs are defined internally based on the design system's token values.
+
+## Features
+
+### Contrast Ratio Calculation
+
+Uses the WCAG relative luminance formula to calculate contrast ratios:
+
+```tsx
+import {
+  contrastRatio,
+  getWCAGLevel,
+} from 'ui/shared/services/contrastCalculator';
+
+const ratio = contrastRatio(foreground, background);
+const normalLevel = getWCAGLevel(ratio, false); // For normal text
+const largeLevel = getWCAGLevel(ratio, true); // For large text
+```
+
+### WCAG Compliance Levels
+
+Each color pair shows compliance for two text size categories:
+
+| Level | Normal Text | Large Text |
+| ----- | ----------- | ---------- |
+| AAA   | ≥ 7.0:1     | ≥ 4.5:1    |
+| AA    | ≥ 4.5:1     | ≥ 3.0:1    |
+| Fail  | < 4.5:1     | < 3.0:1    |
+
+**Large text** is defined as:
+
+- 18pt (24px) or larger for normal weight
+- 14pt (18.5px) or larger for bold weight
+
+### Visual Preview
+
+Each row includes a color swatch showing the actual foreground and background colors, making it easy to visually identify which pair is being evaluated.
+
+## Color Pairs
+
+The component evaluates these design system color pairings:
+
+| Pair              | Foreground | Background | Usage                          |
+| ----------------- | ---------- | ---------- | ------------------------------ |
+| Primary Text      | `#0f172a`  | `#f8fafc`  | Body text on light background  |
+| Secondary Text    | `#475569`  | `#f8fafc`  | Subtitle and secondary content |
+| Inverse Text      | `#ffffff`  | `#4f46e5`  | Text on primary buttons        |
+| Dark Primary Text | `#f8fafc`  | `#020617`  | Body text on dark background   |
+| Dark Secondary    | `#94a3b8`  | `#020617`  | Subtitle text in dark mode     |
+| Link on Light     | `#4f46e5`  | `#f8fafc`  | Interactive links              |
+
+## Accessibility
+
+- **Table semantics**: Uses proper `<table>`, `<thead>`, `<tbody>` structure
+- **ARIA label**: Table has `aria-label="Color contrast ratios"`
+- **Color + text**: Compliance levels shown as text badges, not just color-coded
+
+## Design Rationale
+
+### Static Color Pairs
+
+Rather than providing a color picker, this component verifies the design system's pre-defined pairs. This ensures:
+
+1. Designers know exactly which combinations are approved
+2. Changes to the design system trigger visual regression alerts
+3. Documentation stays in sync with actual token values
+
+### Threshold-Based Badges
+
+Compliance badges provide at-a-glance verification:
+
+- **AAA**: Exceeds WCAG requirements (ideal)
+- **AA**: Meets WCAG 2.1 Level AA (required for this project)
+- **Fail**: Does not meet requirements (must be fixed)
+
+## Dependencies
+
+- **contrastCalculator**: Service for WCAG contrast math
+- **Shared UI**: `Card`, `CardHeader`, `CardTitle`, `CardContent`
+- **accessibility.types**: `ContrastPair` interface
+
+## Related Components
+
+- `AxeAuditPanel`: Runtime accessibility auditing
+- `LandmarkVisualizer`: Page structure visualization
+
+## Extending Color Pairs
+
+To add new color pairs for evaluation, update the `COLOR_PAIRS` array:
+
+```tsx
+const COLOR_PAIRS: ContrastPair[] = [
+  // Existing pairs...
+  {
+    name: 'New Pair Name',
+    foreground: '#hexcolor',
+    background: '#hexcolor',
+    usage: 'Description of where this pair is used',
+  },
+];
+```

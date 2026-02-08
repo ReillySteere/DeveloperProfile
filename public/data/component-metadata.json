@@ -1,0 +1,381 @@
+[
+  {
+    "name": "Button",
+    "description": "Accessible button with primary/secondary variants and optional icon",
+    "category": "Inputs",
+    "renderMode": "direct",
+    "props": [
+      {
+        "name": "variant",
+        "type": "'primary' | 'secondary'",
+        "controlType": "select",
+        "required": false,
+        "defaultValue": "primary",
+        "options": [
+          { "label": "primary", "value": "primary" },
+          { "label": "secondary", "value": "secondary" }
+        ]
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "controlType": "boolean",
+        "required": false,
+        "defaultValue": "false"
+      },
+      {
+        "name": "children",
+        "type": "React.ReactNode",
+        "controlType": "string",
+        "required": false,
+        "description": "Content to render inside the component",
+        "defaultValue": "Button"
+      }
+    ],
+    "examples": [
+      {
+        "name": "Default",
+        "props": {
+          "variant": "primary",
+          "disabled": false,
+          "children": "Button"
+        }
+      }
+    ],
+    "importPath": "ui/shared/components"
+  },
+  {
+    "name": "Badge",
+    "description": "Small label for status or category display",
+    "category": "Data Display",
+    "renderMode": "direct",
+    "props": [
+      {
+        "name": "variant",
+        "type": "'primary'",
+        "controlType": "select",
+        "required": true,
+        "defaultValue": "primary",
+        "options": [{ "label": "primary", "value": "primary" }]
+      },
+      {
+        "name": "children",
+        "type": "React.ReactNode",
+        "controlType": "string",
+        "required": false,
+        "description": "Content to render inside the component",
+        "defaultValue": "Badge"
+      }
+    ],
+    "examples": [
+      {
+        "name": "Default",
+        "props": { "variant": "primary", "children": "Badge" }
+      }
+    ],
+    "importPath": "ui/shared/components"
+  },
+  {
+    "name": "Card",
+    "description": "Container card component with optional article semantics",
+    "category": "Layout",
+    "renderMode": "direct",
+    "props": [
+      {
+        "name": "as",
+        "type": "'div' | 'article'",
+        "controlType": "select",
+        "required": false,
+        "defaultValue": "div",
+        "options": [
+          { "label": "div", "value": "div" },
+          { "label": "article", "value": "article" }
+        ]
+      },
+      {
+        "name": "children",
+        "type": "React.ReactNode",
+        "controlType": "string",
+        "required": false,
+        "description": "Content to render inside the component",
+        "defaultValue": "Card"
+      }
+    ],
+    "examples": [
+      {
+        "name": "Default",
+        "props": { "as": "div", "children": "Card content" }
+      }
+    ],
+    "importPath": "ui/shared/components"
+  },
+  {
+    "name": "Skeleton",
+    "description": "Loading placeholder with animation",
+    "category": "Feedback",
+    "renderMode": "direct",
+    "props": [
+      {
+        "name": "height",
+        "type": "string | number",
+        "controlType": "number",
+        "required": false,
+        "defaultValue": "100"
+      }
+    ],
+    "examples": [{ "name": "Default", "props": { "height": 100 } }],
+    "importPath": "ui/shared/components"
+  },
+  {
+    "name": "LinkButton",
+    "description": "Anchor element styled as a button",
+    "category": "Navigation",
+    "renderMode": "direct",
+    "props": [
+      {
+        "name": "variant",
+        "type": "'primary' | 'secondary'",
+        "controlType": "select",
+        "required": true,
+        "options": [
+          { "label": "primary", "value": "primary" },
+          { "label": "secondary", "value": "secondary" }
+        ]
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "controlType": "boolean",
+        "required": false,
+        "defaultValue": "false"
+      },
+      {
+        "name": "href",
+        "type": "string",
+        "controlType": "string",
+        "required": false,
+        "defaultValue": "#"
+      },
+      {
+        "name": "children",
+        "type": "React.ReactNode",
+        "controlType": "string",
+        "required": false,
+        "description": "Content to render inside the component",
+        "defaultValue": "LinkButton"
+      }
+    ],
+    "examples": [
+      {
+        "name": "Default",
+        "props": {
+          "variant": "primary",
+          "disabled": false,
+          "href": "#",
+          "children": "LinkButton"
+        }
+      }
+    ],
+    "importPath": "ui/shared/components"
+  },
+  {
+    "name": "VitalGauge",
+    "description": "Radial gauge displaying a single Web Vital metric with color-coded rating",
+    "category": "Data Display",
+    "renderMode": "direct",
+    "mdxPath": "ui/containers/performance/components/VitalGauge.mdx",
+    "props": [
+      {
+        "name": "name",
+        "type": "string",
+        "controlType": "string",
+        "required": true,
+        "defaultValue": "LCP"
+      },
+      {
+        "name": "value",
+        "type": "number",
+        "controlType": "number",
+        "required": true,
+        "defaultValue": "2200"
+      },
+      {
+        "name": "rating",
+        "type": "'good' | 'needs-improvement' | 'poor'",
+        "controlType": "select",
+        "required": true,
+        "defaultValue": "needs-improvement",
+        "options": [
+          { "label": "good", "value": "good" },
+          { "label": "needs-improvement", "value": "needs-improvement" },
+          { "label": "poor", "value": "poor" }
+        ]
+      },
+      {
+        "name": "unit",
+        "type": "string",
+        "controlType": "string",
+        "required": true,
+        "defaultValue": "ms"
+      },
+      {
+        "name": "thresholds",
+        "type": "{ good: number; poor: number }",
+        "controlType": "json",
+        "required": true
+      }
+    ],
+    "sampleData": {
+      "thresholds": { "good": 2500, "poor": 4000 }
+    },
+    "examples": [
+      {
+        "name": "Good LCP",
+        "props": {
+          "name": "LCP",
+          "value": 1800,
+          "rating": "good",
+          "unit": "ms",
+          "thresholds": { "good": 2500, "poor": 4000 }
+        }
+      }
+    ],
+    "importPath": "ui/containers/performance/components/VitalGauge"
+  },
+  {
+    "name": "WebVitalsDisplay",
+    "description": "Dashboard panel showing all Web Vitals metrics with gauges",
+    "category": "Data Display",
+    "renderMode": "direct",
+    "mdxPath": "ui/containers/performance/components/WebVitalsDisplay.mdx",
+    "props": [
+      {
+        "name": "vitals",
+        "type": "Partial<WebVitals>",
+        "controlType": "json",
+        "required": true
+      }
+    ],
+    "sampleData": {
+      "vitals": {
+        "lcp": 2200,
+        "fcp": 1500,
+        "cls": 0.05,
+        "ttfb": 600
+      }
+    },
+    "examples": [
+      {
+        "name": "Default",
+        "props": {
+          "vitals": { "lcp": 2200, "fcp": 1500, "cls": 0.05, "ttfb": 600 }
+        }
+      }
+    ],
+    "importPath": "ui/containers/performance/components/WebVitalsDisplay"
+  },
+  {
+    "name": "BundleSizeTreemap",
+    "description": "Treemap visualization of JavaScript bundle modules and their sizes",
+    "category": "Data Display",
+    "renderMode": "direct",
+    "mdxPath": "ui/containers/performance/components/BundleSizeTreemap.mdx",
+    "props": [
+      {
+        "name": "modules",
+        "type": "BundleModule[]",
+        "controlType": "json",
+        "required": true
+      },
+      {
+        "name": "totalSize",
+        "type": "number",
+        "controlType": "number",
+        "required": true,
+        "defaultValue": "500000"
+      },
+      {
+        "name": "gzippedSize",
+        "type": "number",
+        "controlType": "number",
+        "required": true,
+        "defaultValue": "150000"
+      }
+    ],
+    "sampleData": {
+      "modules": [
+        {
+          "name": "main.js",
+          "path": "dist/main.js",
+          "size": 300000,
+          "gzippedSize": 90000,
+          "isInitial": true
+        },
+        {
+          "name": "vendor.js",
+          "path": "dist/vendor.js",
+          "size": 200000,
+          "gzippedSize": 60000,
+          "isInitial": true
+        }
+      ]
+    },
+    "examples": [
+      {
+        "name": "Default",
+        "props": { "modules": [], "totalSize": 500000, "gzippedSize": 150000 }
+      }
+    ],
+    "importPath": "ui/containers/performance/components/BundleSizeTreemap"
+  },
+  {
+    "name": "CodeComparisonViewer",
+    "description": "Side-by-side or tabbed code comparison with syntax highlighting",
+    "category": "Data Display",
+    "renderMode": "direct",
+    "mdxPath": "ui/containers/case-studies/components/CodeComparisonViewer.mdx",
+    "props": [
+      {
+        "name": "comparisons",
+        "type": "CodeComparison[]",
+        "controlType": "json",
+        "required": true
+      }
+    ],
+    "sampleData": {
+      "comparisons": [
+        {
+          "title": "ES Modules Migration",
+          "description": "Converting CommonJS to ES module syntax",
+          "before": "const x = require('module');",
+          "after": "import x from 'module';",
+          "language": "typescript"
+        }
+      ]
+    },
+    "examples": [{ "name": "Default", "props": { "comparisons": [] } }],
+    "importPath": "ui/containers/case-studies/components/CodeComparisonViewer"
+  },
+  {
+    "name": "AxeAuditPanel",
+    "description": "Live accessibility audit panel powered by axe-core that scans the current page",
+    "category": "Feedback",
+    "renderMode": "direct",
+    "mdxPath": "ui/containers/accessibility/components/AxeAuditPanel.mdx",
+    "selfContained": true,
+    "props": [],
+    "examples": [{ "name": "Default", "props": {} }],
+    "importPath": "ui/containers/accessibility/components/AxeAuditPanel"
+  },
+  {
+    "name": "ContrastChecker",
+    "description": "WCAG contrast ratio checker for design system color pairs",
+    "category": "Feedback",
+    "renderMode": "direct",
+    "mdxPath": "ui/containers/accessibility/components/ContrastChecker.mdx",
+    "selfContained": true,
+    "props": [],
+    "examples": [{ "name": "Default", "props": {} }],
+    "importPath": "ui/containers/accessibility/components/ContrastChecker"
+  }
+]

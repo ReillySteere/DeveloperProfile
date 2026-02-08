@@ -1,0 +1,98 @@
+# AxeAuditPanel
+
+A self-contained accessibility auditing panel that runs axe-core against the current page and displays violations with remediation guidance.
+
+## Overview
+
+`AxeAuditPanel` provides real-time accessibility auditing directly in the browser. It executes the axe-core engine, calculates an accessibility score, and presents violations grouped by severity with actionable fix suggestions.
+
+## Usage
+
+```tsx
+import { AxeAuditPanel } from 'ui/containers/accessibility/components/AxeAuditPanel';
+
+// Self-contained - no props required
+<AxeAuditPanel />;
+```
+
+## Props
+
+This component is **self-contained** and accepts no props. It manages its own state and automatically audits the page when the "Run Audit" button is clicked.
+
+## Features
+
+### Accessibility Score
+
+Calculates a score from 0-100 based on the number of violations found:
+
+- **90-100**: Good (green) - Minimal violations
+- **50-89**: Moderate (yellow) - Some issues to address
+- **0-49**: Poor (red) - Significant accessibility barriers
+
+### Violation Display
+
+Each violation shows:
+
+- **Impact level**: Critical, serious, moderate, or minor
+- **Description**: What the issue is
+- **Affected elements**: DOM selectors and HTML snippets
+- **Fix guidance**: How to resolve the issue
+- **Help link**: Deque University reference for detailed documentation
+
+### Expandable Details
+
+Violations use an accordion pattern for progressive disclosure:
+
+- Summary view shows impact, description, and element count
+- Expanded view shows affected elements, HTML, and remediation steps
+
+## Accessibility
+
+The panel itself follows WCAG 2.1 AA guidelines:
+
+- **Keyboard accessible**: All interactive elements reachable via keyboard
+- **ARIA expanded**: Accordion toggles announce their state
+- **Focus management**: Focus remains predictable during interaction
+- **External links**: Open in new tabs with `rel="noopener noreferrer"`
+
+## Design Rationale
+
+### Self-Contained Architecture
+
+The panel is intentionally self-contained because:
+
+1. It audits the current page context, not arbitrary content
+2. Results are ephemeral - no need to persist between renders
+3. Simplifies integration - just drop in the component
+
+### Score Calculation
+
+The score is an approximation to give users a quick sense of overall accessibility health. It should not be considered a definitive compliance metric - manual testing is still required for full WCAG verification.
+
+### Deferred to Hook
+
+The actual axe-core execution is delegated to `useAxeAudit` hook, which:
+
+- Manages loading and error states
+- Handles axe-core initialization
+- Excludes the audit panel itself from audits (prevents recursive violations)
+
+## Dependencies
+
+- **axe-core**: Accessibility testing engine
+- **useAxeAudit**: Custom hook for audit execution
+- **Shared UI**: `Card`, `CardHeader`, `CardTitle`, `CardContent`
+
+## Related Components
+
+- `ContrastChecker`: Color contrast ratio verification
+- `LandmarkVisualizer`: Page structure visualization
+- `ScreenReaderSimulator`: AT announcement preview
+
+## Testing Notes
+
+When testing this component:
+
+1. The axe-core dependency is globally mocked in Jest
+2. Use MSW handlers if testing the audit results display
+3. Verify accordion expand/collapse with keyboard navigation

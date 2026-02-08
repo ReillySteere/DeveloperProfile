@@ -1,0 +1,566 @@
+@use 'ui/shared/styles/tokens.css' as *;
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.header {
+  margin-bottom: 2rem;
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+// Tab Bar
+.tabBar {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-default);
+  padding-bottom: 0;
+}
+
+.tab {
+  padding: 0.5rem 1rem;
+  border: none;
+  background: none;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+
+  &:hover {
+    color: var(--text-primary);
+  }
+}
+
+.tabActive {
+  color: var(--primary-default);
+  border-bottom-color: var(--primary-default);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 1.5rem;
+  min-height: 600px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sidebar {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  padding: 1rem;
+  overflow-y: auto;
+  max-height: calc(100vh - 200px);
+}
+
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.welcomeState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  background: var(--bg-surface);
+  border: 1px dashed var(--border-default);
+  border-radius: 8px;
+  min-height: 400px;
+
+  h2 {
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: var(--text-secondary);
+  }
+}
+
+// Component List
+.categorySection {
+  margin-bottom: 1rem;
+}
+
+.categoryHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-default);
+  cursor: pointer;
+  user-select: none;
+
+  &:hover {
+    color: var(--text-primary);
+  }
+}
+
+.categoryCount {
+  font-size: 0.7rem;
+  background: var(--bg-base);
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+}
+
+.componentLink {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  text-decoration: none;
+  color: var(--text-primary);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  transition: background 0.15s ease;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--bg-surface-hover, rgba(0, 0, 0, 0.05));
+  }
+}
+
+.componentLinkActive {
+  background: var(--primary-default);
+  color: var(--text-inverse);
+
+  &:hover {
+    background: var(--primary-default);
+  }
+}
+
+// Badges
+.featureBadge {
+  font-size: 0.625rem;
+  padding: 0.0625rem 0.375rem;
+  border-radius: 4px;
+  background: var(--primary-default);
+  color: var(--text-inverse);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.autoBadge {
+  font-size: 0.625rem;
+  padding: 0.0625rem 0.375rem;
+  border-radius: 4px;
+  background: var(--text-secondary);
+  color: var(--text-inverse);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+// Preview
+.previewSection {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.previewToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-default);
+
+  h3 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+}
+
+.previewToolbarActions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.previewContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  padding: 2rem;
+  position: relative;
+}
+
+.previewGrid {
+  background-image:
+    linear-gradient(var(--border-default) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border-default) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.previewIframe {
+  border: none;
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+}
+
+.directPreview {
+  overflow: auto;
+}
+
+// Self-contained note
+.selfContainedNote {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  padding: 1rem;
+
+  p {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin: 0;
+  }
+}
+
+// Prop Editor
+.propEditor {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.propEditorHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+
+  h3 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+}
+
+.propField {
+  margin-bottom: 0.75rem;
+}
+
+.propLabel {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.propInput {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border-default);
+  border-radius: 6px;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-family: inherit;
+  resize: vertical;
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary-default);
+  }
+}
+
+.propInputError {
+  border-color: var(--status-error-solid);
+
+  &:focus {
+    border-color: var(--status-error-solid);
+  }
+}
+
+.propError {
+  display: block;
+  color: var(--status-error-solid);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.propCheckbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  input {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+.propSelect {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border-default);
+  border-radius: 6px;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary-default);
+  }
+}
+
+// Code Output
+.codeOutput {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.codeHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-default);
+}
+
+.codeTabs {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.codeTab {
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  background: var(--bg-base);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--text-primary);
+  }
+}
+
+.codeTabActive {
+  background: var(--primary-default);
+  color: var(--text-inverse);
+  border-color: var(--primary-default);
+}
+
+.copyButton {
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  background: var(--bg-base);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+
+  &:hover {
+    color: var(--text-primary);
+  }
+}
+
+.codeContent {
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+.codeBlock {
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  color: var(--text-primary);
+}
+
+// Viewport Toggle
+.viewportToggle {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.viewportButton {
+  padding: 0.375rem;
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  background: var(--bg-base);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: var(--text-primary);
+    border-color: var(--border-hover, var(--border-default));
+  }
+}
+
+.viewportButtonActive {
+  background: var(--primary-default);
+  color: var(--text-inverse);
+  border-color: var(--primary-default);
+}
+
+// Detail layout
+.detailLayout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 1.5rem;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.detailSidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+// Composition Editor
+.compositionEditor {
+  padding: 1rem;
+}
+
+.compositionPreview {
+  display: grid;
+  gap: 1rem;
+
+  &[data-layout='grid-2x2'] {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  &[data-layout='grid-2x1'] {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+  }
+
+  &[data-layout='grid-1x2'] {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  &[data-layout='stack'] {
+    grid-template-columns: 1fr;
+  }
+
+  &[data-layout='full'] {
+    grid-template-columns: 1fr;
+  }
+}
+
+.compositionSlot {
+  border: 1px dashed var(--border-default);
+  border-radius: 8px;
+  padding: 1rem;
+  min-height: 150px;
+  overflow: hidden;
+}
+
+.slotHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.slotLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+// Slot Prop Editor
+.slotPropEditor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.slotPropToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  background: var(--bg-base);
+  color: var(--text-secondary);
+  font-size: 0.6875rem;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--text-primary);
+    border-color: var(--border-hover, var(--border-default));
+  }
+}
+
+.toggleIcon {
+  font-size: 0.5rem;
+}
+
+.slotPropControls {
+  padding: 0.5rem;
+  background: var(--bg-base);
+  border: 1px solid var(--border-default);
+  border-radius: 6px;
+}
+
+// MDX Doc Panel
+.mdxDocPanel {
+  padding: 1rem;
+}
+
+.noDocsMessage {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}

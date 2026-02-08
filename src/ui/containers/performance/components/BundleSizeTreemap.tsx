@@ -105,8 +105,9 @@ export function BundleSizeTreemap({
             >
               <Tooltip
                 contentStyle={{
-                  backgroundColor: 'var(--bg-surface)',
-                  border: '1px solid var(--border-default)',
+                  backgroundColor: 'var(--tooltip-bg)',
+                  border: '1px solid var(--tooltip-border)',
+                  color: 'var(--tooltip-text)',
                   borderRadius: 'var(--radius-md)',
                 }}
                 formatter={(value) => [formatSize(value as number), 'Size']}

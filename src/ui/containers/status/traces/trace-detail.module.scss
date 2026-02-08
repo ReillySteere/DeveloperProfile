@@ -13,7 +13,7 @@
   h1 {
     font-size: 1.5rem;
     font-weight: 600;
-    color: var(--color-text);
+    color: var(--text-primary);
     margin: 0;
   }
 }
@@ -25,7 +25,7 @@
 .loading {
   padding: 48px;
   text-align: center;
-  color: var(--color-text-muted);
+  color: var(--text-secondary);
 }
 
 .error {
@@ -53,7 +53,7 @@
   dt {
     font-size: 0.75rem;
     font-weight: 500;
-    color: var(--color-text-muted);
+    color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 4px;
@@ -61,7 +61,7 @@
 
   dd {
     font-size: 0.9375rem;
-    color: var(--color-text);
+    color: var(--text-primary);
     margin: 0;
   }
 }
@@ -133,7 +133,7 @@
   h2 {
     font-size: 1.125rem;
     font-weight: 600;
-    color: var(--color-text);
+    color: var(--text-primary);
     margin: 0 0 12px;
   }
 }
@@ -145,5 +145,5 @@
 .userAgent {
   word-break: break-word;
   font-size: 0.8125rem;
-  color: var(--color-text-muted);
+  color: var(--text-secondary);
 }

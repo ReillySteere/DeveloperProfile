@@ -2,6 +2,8 @@
 
 A full-stack developer profile application built with a modern React frontend and a robust NestJS backend.
 
+**Live Site:** [reillygoulding.ca](https://www.reillygoulding.ca)
+
 ## Core Technologies
 
 ### Frontend
@@ -229,13 +231,15 @@ graph LR
 Detailed architectural documentation for each feature can be found here:
 
 - [About Feature](architecture/components/about.md)
+- [Accessibility Showcase](architecture/components/accessibility.md)
 - [Architecture Feature](architecture/components/architecture.md)
 - [Auth Feature](architecture/components/auth.md)
 - [Blog Feature](architecture/components/blog.md)
+- [Case Studies Feature](architecture/components/case-studies.md)
+- [Component Playground](architecture/components/playground.md)
 - [Experience Feature](architecture/components/experience.md)
 - [Performance Feature](architecture/components/performance.md)
 - [Projects Feature](architecture/components/projects.md)
-- [Case Studies Feature](architecture/components/case-studies.md)
 - [Shared UI](architecture/components/shared-ui.md)
 - [Status (Mission Control)](architecture/components/status.md)
 - [Traces (Request Observability)](architecture/components/traces.md)
@@ -267,6 +271,11 @@ Detailed architectural documentation for each feature can be found here:
 - [ADR-023: TypeORM Cross-Module Entity References](architecture/decisions/ADR-023-typeorm-cross-module-entity-references.md)
 - [ADR-024: Performance Monitoring Architecture](architecture/decisions/ADR-024-performance-monitoring-architecture.md)
 - [ADR-025: Bundle Analysis Integration](architecture/decisions/ADR-025-bundle-analysis-integration.md)
+- [ADR-026: Accessibility Testing Architecture](architecture/decisions/ADR-026-accessibility-testing-architecture.md)
+- [ADR-027: ARIA Patterns Implementation](architecture/decisions/ADR-027-aria-patterns-implementation.md)
+- [ADR-028: Railway Deployment with Persistent SQLite](architecture/decisions/ADR-028-railway-deployment-with-persistent-sqlite.md)
+- [ADR-029: Feature Component Playground Strategy](architecture/decisions/ADR-029-feature-component-playground-strategy.md)
+- [ADR-030: Colocated MDX Component Documentation](architecture/decisions/ADR-030-colocated-mdx-component-documentation.md)
 
 ## AI Tooling & Claude Support
 
@@ -321,6 +330,8 @@ See [ADR-014](architecture/decisions/ADR-014-ai-tooling-architecture.md) for the
 - **Architecture Explorer:** ADR browser, component documentation, and interactive dependency graph visualization.
 - **Mission Control:** Real-time telemetry dashboard with event loop monitoring, memory metrics, and simulated chaos mode.
 - **Request Tracing:** Request-level observability with timing breakdown, real-time streaming, and historical queries.
+- **Accessibility Showcase:** WCAG 2.1 AA compliance demonstration with real-time axe-core auditing, contrast checking, and ARIA pattern examples.
+- **Component Playground:** Interactive component browser with live prop editing, code generation, and composition templates.
 - **Responsive Design:** Optimized for various screen sizes with a custom Navigation Rail.
 - **Dark/Light Mode:** Theming support via CSS variables.
 

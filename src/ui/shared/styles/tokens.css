@@ -146,6 +146,11 @@
   --status-serious-bg: var(--color-orange-200);
   --status-serious-text: var(--color-orange-800);
 
+  /* Tooltip Colors */
+  --tooltip-bg: var(--color-slate-800);
+  --tooltip-text: var(--color-slate-50);
+  --tooltip-border: var(--color-slate-700);
+
   /* HTTP Method Colors - semantic for API display */
   --http-get: var(--color-green-700);
   --http-post: var(--color-blue-700);
@@ -240,6 +245,11 @@
   --http-put: var(--color-orange-200);
   --http-patch: var(--color-purple-300);
   --http-delete: var(--color-red-300);
+
+  /* Tooltip Colors - Dark Mode */
+  --tooltip-bg: var(--color-slate-700);
+  --tooltip-text: var(--color-slate-50);
+  --tooltip-border: var(--color-slate-600);
 
   /* Visualization Status - Dark Mode (same vivid colors work well on dark) */
   --viz-unknown: var(--color-slate-400);

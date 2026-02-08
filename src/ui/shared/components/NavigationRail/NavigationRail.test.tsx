@@ -69,6 +69,7 @@ describe('NavigationRail', () => {
     expect(within(desktopNav).getByText('Experience')).toBeInTheDocument();
     expect(within(desktopNav).getByText('Projects')).toBeInTheDocument();
     expect(within(desktopNav).getByText('Accessibility')).toBeInTheDocument();
+    expect(within(desktopNav).getByText('Playground')).toBeInTheDocument();
   });
 
   it('renders primary items in mobile bottom nav', () => {
@@ -184,6 +185,7 @@ describe('NavigationRail', () => {
     expect(within(moreMenu).getByText('Status')).toBeInTheDocument();
     expect(within(moreMenu).getByText('Performance')).toBeInTheDocument();
     expect(within(moreMenu).getByText('Architecture')).toBeInTheDocument();
+    expect(within(moreMenu).getByText('Playground')).toBeInTheDocument();
     // Theme toggle in more menu
     expect(within(moreMenu).getByText('Dark Mode')).toBeInTheDocument();
   });
