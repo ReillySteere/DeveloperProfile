@@ -3,6 +3,7 @@
     "name": "Button",
     "description": "Accessible button with primary/secondary variants and optional icon",
     "category": "Inputs",
+    "renderMode": "direct",
     "props": [
       {
         "name": "variant",
@@ -47,6 +48,7 @@
     "name": "Badge",
     "description": "Small label for status or category display",
     "category": "Data Display",
+    "renderMode": "direct",
     "props": [
       {
         "name": "variant",
@@ -77,6 +79,7 @@
     "name": "Card",
     "description": "Container card component with optional article semantics",
     "category": "Layout",
+    "renderMode": "direct",
     "props": [
       {
         "name": "as",
@@ -110,6 +113,7 @@
     "name": "Skeleton",
     "description": "Loading placeholder with animation",
     "category": "Feedback",
+    "renderMode": "direct",
     "props": [
       {
         "name": "height",
@@ -126,6 +130,7 @@
     "name": "LinkButton",
     "description": "Anchor element styled as a button",
     "category": "Navigation",
+    "renderMode": "direct",
     "props": [
       {
         "name": "variant",
@@ -178,6 +183,7 @@
     "description": "Radial gauge displaying a single Web Vital metric with color-coded rating",
     "category": "Data Display",
     "renderMode": "direct",
+    "mdxPath": "ui/containers/performance/components/VitalGauge.mdx",
     "props": [
       {
         "name": "name",
@@ -241,6 +247,7 @@
     "description": "Dashboard panel showing all Web Vitals metrics with gauges",
     "category": "Data Display",
     "renderMode": "direct",
+    "mdxPath": "ui/containers/performance/components/WebVitalsDisplay.mdx",
     "props": [
       {
         "name": "vitals",
@@ -272,6 +279,7 @@
     "description": "Treemap visualization of JavaScript bundle modules and their sizes",
     "category": "Data Display",
     "renderMode": "direct",
+    "mdxPath": "ui/containers/performance/components/BundleSizeTreemap.mdx",
     "props": [
       {
         "name": "modules",
@@ -325,6 +333,7 @@
     "description": "Side-by-side or tabbed code comparison with syntax highlighting",
     "category": "Data Display",
     "renderMode": "direct",
+    "mdxPath": "ui/containers/case-studies/components/CodeComparisonViewer.mdx",
     "props": [
       {
         "name": "comparisons",
@@ -352,6 +361,7 @@
     "description": "Live accessibility audit panel powered by axe-core that scans the current page",
     "category": "Feedback",
     "renderMode": "direct",
+    "mdxPath": "ui/containers/accessibility/components/AxeAuditPanel.mdx",
     "selfContained": true,
     "props": [],
     "examples": [{ "name": "Default", "props": {} }],
@@ -362,6 +372,7 @@
     "description": "WCAG contrast ratio checker for design system color pairs",
     "category": "Feedback",
     "renderMode": "direct",
+    "mdxPath": "ui/containers/accessibility/components/ContrastChecker.mdx",
     "selfContained": true,
     "props": [],
     "examples": [{ "name": "Default", "props": {} }],

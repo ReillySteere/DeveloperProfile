@@ -502,11 +502,65 @@
   overflow: hidden;
 }
 
+.slotHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
 .slotLabel {
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--text-secondary);
-  margin-bottom: 0.5rem;
   text-transform: uppercase;
   letter-spacing: 0.03em;
+}
+
+// Slot Prop Editor
+.slotPropEditor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.slotPropToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  background: var(--bg-base);
+  color: var(--text-secondary);
+  font-size: 0.6875rem;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--text-primary);
+    border-color: var(--border-hover, var(--border-default));
+  }
+}
+
+.toggleIcon {
+  font-size: 0.5rem;
+}
+
+.slotPropControls {
+  padding: 0.5rem;
+  background: var(--bg-base);
+  border: 1px solid var(--border-default);
+  border-radius: 6px;
+}
+
+// MDX Doc Panel
+.mdxDocPanel {
+  padding: 1rem;
+}
+
+.noDocsMessage {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
 }

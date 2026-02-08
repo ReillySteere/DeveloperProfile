@@ -41,6 +41,21 @@ export class PlaygroundController {
     return component;
   }
 
+  @ApiOperation({ summary: 'Get component MDX documentation' })
+  @ApiParam({ name: 'name', example: 'VitalGauge' })
+  @ApiResponse({ status: 200, description: 'Component documentation content' })
+  @ApiResponse({ status: 404, description: 'Documentation not found' })
+  @Get('components/:name/docs')
+  async getComponentDocs(
+    @Param('name') name: string,
+  ): Promise<{ content: string }> {
+    const docs = await this.playgroundService.getComponentDocs(name);
+    if (!docs) {
+      throw new NotFoundException(`Documentation for "${name}" not found`);
+    }
+    return docs;
+  }
+
   @ApiOperation({ summary: 'List all composition templates' })
   @ApiResponse({
     status: 200,

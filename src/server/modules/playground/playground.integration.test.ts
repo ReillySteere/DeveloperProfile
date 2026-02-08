@@ -70,4 +70,18 @@ describe('Playground Integration', () => {
       expect(Array.isArray(response.body)).toBe(true);
     });
   });
+
+  describe('GET /api/playground/components/:name/docs', () => {
+    it('should return 404 for component without docs', async () => {
+      await request(app.getHttpServer())
+        .get('/api/playground/components/Button/docs')
+        .expect(404);
+    });
+
+    it('should return 404 for non-existent component docs', async () => {
+      await request(app.getHttpServer())
+        .get('/api/playground/components/NonExistent/docs')
+        .expect(404);
+    });
+  });
 });

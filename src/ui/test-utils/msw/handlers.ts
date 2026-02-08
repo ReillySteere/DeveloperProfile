@@ -774,6 +774,7 @@ export const mockPlaygroundComponents: ComponentMetadata[] = [
     name: 'Button',
     description: 'Accessible button with primary/secondary variants',
     category: 'Inputs',
+    renderMode: 'direct',
     props: [
       {
         name: 'variant',
@@ -814,6 +815,7 @@ export const mockPlaygroundComponents: ComponentMetadata[] = [
     name: 'Badge',
     description: 'Small label for status display',
     category: 'Data Display',
+    renderMode: 'direct',
     props: [
       {
         name: 'variant',
@@ -841,6 +843,7 @@ export const mockPlaygroundComponents: ComponentMetadata[] = [
     name: 'Card',
     description: 'Container card component',
     category: 'Layout',
+    renderMode: 'direct',
     props: [
       {
         name: 'as',
@@ -875,6 +878,7 @@ export const mockPlaygroundComponents: ComponentMetadata[] = [
     description: 'Radial gauge for Web Vital metric',
     category: 'Data Display',
     renderMode: 'direct',
+    mdxPath: 'ui/containers/performance/components/VitalGauge.mdx',
     props: [
       {
         name: 'name',
@@ -960,10 +964,22 @@ export const mockCompositionTemplates: CompositionTemplate[] = [
   },
 ];
 
+export function createPlaygroundDocsHandler(
+  content: string | null = '# Component Documentation\n\nSample docs content.',
+) {
+  return http.get('/api/playground/components/:name/docs', () => {
+    if (!content) {
+      return new HttpResponse(null, { status: 404 });
+    }
+    return HttpResponse.json({ content });
+  });
+}
+
 export function createPlaygroundHandlers(
   overrides: {
     components?: ComponentMetadata[];
     templates?: CompositionTemplate[];
+    docsContent?: string | null;
     delayMs?: number;
   } = {},
 ) {
@@ -992,6 +1008,8 @@ export function createPlaygroundHandlers(
       if (delayMs) await delay(delayMs);
       return HttpResponse.json(templates);
     }),
+
+    createPlaygroundDocsHandler(overrides.docsContent ?? null),
   ];
 }
 

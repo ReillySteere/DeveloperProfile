@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import type { ComponentMetadata, ViewportSize } from 'shared/types';
 import { VIEWPORT_DIMENSIONS } from 'shared/types';
-import { useIframeRenderer } from '../hooks/useIframeRenderer';
-import { FeatureComponentPreview } from './FeatureComponentPreview';
+import { Skeleton } from 'ui/shared/components';
+import { getRegisteredComponent } from './ComponentRegistry';
 import styles from '../playground.module.scss';
 
 interface ComponentPreviewProps {
@@ -17,57 +17,31 @@ export const ComponentPreview: React.FC<ComponentPreviewProps> = ({
   component,
   props,
   viewport,
-  theme,
   showGrid,
 }) => {
-  if (component.renderMode === 'direct') {
-    return (
-      <FeatureComponentPreview
-        component={component}
-        props={props}
-        viewport={viewport}
-        showGrid={showGrid}
-      />
-    );
-  }
-
-  return (
-    <IframePreview
-      component={component}
-      props={props}
-      viewport={viewport}
-      theme={theme}
-      showGrid={showGrid}
-    />
-  );
-};
-
-const IframePreview: React.FC<ComponentPreviewProps> = ({
-  component,
-  props,
-  viewport,
-  theme,
-  showGrid,
-}) => {
-  const { iframeRef } = useIframeRenderer({ component, props, theme });
+  const Component = getRegisteredComponent(component.name);
   const dimensions = VIEWPORT_DIMENSIONS[viewport];
-  const iframeStyle: React.CSSProperties =
+  const containerStyle: React.CSSProperties =
     viewport === 'full'
       ? { width: '100%', minHeight: 300 }
-      : { width: dimensions.width, height: dimensions.height };
+      : { width: dimensions.width, maxHeight: dimensions.height };
+
+  const mergedProps = { ...(component.sampleData ?? {}), ...props };
 
   return (
     <div
       className={`${styles.previewContainer} ${showGrid ? styles.previewGrid : ''}`}
       data-testid="component-preview"
     >
-      <iframe
-        ref={iframeRef}
-        title={`${component.name} preview`}
-        className={styles.previewIframe}
-        style={iframeStyle}
-        sandbox="allow-same-origin"
-      />
+      <div style={containerStyle} className={styles.directPreview}>
+        <Suspense fallback={<Skeleton height={200} />}>
+          {Component ? (
+            <Component {...mergedProps} />
+          ) : (
+            <p>Component &quot;{component.name}&quot; not found in registry</p>
+          )}
+        </Suspense>
+      </div>
     </div>
   );
 };

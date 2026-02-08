@@ -10,6 +10,7 @@ import { ComponentPreview } from './components/ComponentPreview';
 import { PropEditor } from './components/PropEditor';
 import { CodeOutput } from './components/CodeOutput';
 import { ViewportToggle } from './components/ViewportToggle';
+import { MDXDocPanel } from './components/MDXDocPanel';
 import { Grid3x3 } from 'lucide-react';
 import styles from './playground.module.scss';
 
@@ -183,7 +184,20 @@ export default function ComponentDetailContainer() {
                   </div>
 
                   <div className={styles.detailLayout}>
-                    <CodeOutput code={code} />
+                    <div>
+                      <CodeOutput code={code} />
+                      {comp.mdxPath && (
+                        <div
+                          className={styles.previewSection}
+                          style={{ marginTop: '1rem' }}
+                        >
+                          <div className={styles.previewToolbar}>
+                            <h3>Docs</h3>
+                          </div>
+                          <MDXDocPanel componentName={comp.name} />
+                        </div>
+                      )}
+                    </div>
                     <div className={styles.detailSidebar}>
                       {isSelfContained ? (
                         <div

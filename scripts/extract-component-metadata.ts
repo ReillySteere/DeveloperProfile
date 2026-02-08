@@ -163,13 +163,9 @@ function extractPropsFromInterface(
             controlType === 'select' ? extractUnionOptions(type) : undefined;
 
           // Extract JSDoc description
-          const symbol = checker.getSymbolAtLocation(
-            member.name as ts.Node,
-          );
+          const symbol = checker.getSymbolAtLocation(member.name as ts.Node);
           const description = symbol
-            ? ts.displayPartsToString(
-                symbol.getDocumentationComment(checker),
-              )
+            ? ts.displayPartsToString(symbol.getDocumentationComment(checker))
             : undefined;
 
           props.push({
@@ -190,9 +186,7 @@ function extractPropsFromInterface(
   return props;
 }
 
-function buildDefaultProps(
-  props: PropDefinition[],
-): Record<string, unknown> {
+function buildDefaultProps(props: PropDefinition[]): Record<string, unknown> {
   const defaults: Record<string, unknown> = {};
   for (const prop of props) {
     if (prop.controlType === 'node' || prop.controlType === 'function')
@@ -218,6 +212,17 @@ function buildExamples(
 ): ComponentExample[] {
   const defaults = buildDefaultProps(props);
   return [{ name: 'Default', props: defaults }];
+}
+
+const SRC_DIR = path.join(__dirname, '..', 'src');
+
+function detectMdxPath(componentFilePath: string): string | undefined {
+  const mdxFile = componentFilePath.replace(/\.tsx?$/, '.mdx');
+  const fullMdxPath = path.join(COMPONENTS_DIR, mdxFile);
+  if (fs.existsSync(fullMdxPath)) {
+    return `ui/shared/components/${mdxFile}`;
+  }
+  return undefined;
 }
 
 function extractMetadata(): ComponentMetadata[] {
@@ -290,15 +295,21 @@ function extractMetadata(): ComponentMetadata[] {
     }
 
     const importDir = COMPONENT_FILES[componentName].split('/')[0];
-    results.push({
+    const mdxPath = detectMdxPath(COMPONENT_FILES[componentName]);
+    const metadata: ComponentMetadata = {
       name: componentName,
       description:
         COMPONENT_DESCRIPTIONS[componentName] || `${componentName} component`,
       category: COMPONENT_CATEGORIES[componentName] || 'Data Display',
+      renderMode: 'direct',
       props,
       examples: buildExamples(componentName, props),
       importPath: `ui/shared/components/${importDir}/${importDir}`,
-    });
+    };
+    if (mdxPath) {
+      metadata.mdxPath = mdxPath;
+    }
+    results.push(metadata);
   }
 
   return results;

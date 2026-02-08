@@ -7,6 +7,7 @@ export interface IPlaygroundService {
   getAllComponents(): Promise<ComponentMetadata[]>;
   getComponent(name: string): Promise<ComponentMetadata | undefined>;
   getCompositionTemplates(): Promise<CompositionTemplate[]>;
+  getComponentDocs(name: string): Promise<{ content: string } | null>;
 }
 
 /**
@@ -85,5 +86,18 @@ export class PlaygroundService implements IPlaygroundService {
 
   async getCompositionTemplates(): Promise<CompositionTemplate[]> {
     return this.loadTemplates();
+  }
+
+  async getComponentDocs(name: string): Promise<{ content: string } | null> {
+    const component = await this.getComponent(name);
+    if (!component?.mdxPath) return null;
+
+    try {
+      const fullPath = path.join(this.basePath, 'src', component.mdxPath);
+      const content = await fs.readFile(fullPath, 'utf-8');
+      return { content };
+    } catch {
+      return null;
+    }
   }
 }

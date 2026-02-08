@@ -5,6 +5,7 @@ type LazyComponent = React.LazyExoticComponent<ComponentType<any>>;
 
 /* istanbul ignore next -- lazy callbacks execute at render time, not import time */
 const registry: Record<string, LazyComponent> = {
+  // Feature components
   VitalGauge: lazy(() =>
     import('ui/containers/performance/components/VitalGauge').then((m) => ({
       default: m.VitalGauge,
@@ -35,12 +36,48 @@ const registry: Record<string, LazyComponent> = {
       (m) => ({ default: m.ContrastChecker }),
     ),
   ),
+
+  // Shared components
+  Button: lazy(() =>
+    import('ui/shared/components').then((m) => ({ default: m.Button })),
+  ),
+  Badge: lazy(() =>
+    import('ui/shared/components').then((m) => ({ default: m.Badge })),
+  ),
+  Card: lazy(() =>
+    import('ui/shared/components').then((m) => ({ default: m.Card })),
+  ),
+  CardHeader: lazy(() =>
+    import('ui/shared/components').then((m) => ({ default: m.CardHeader })),
+  ),
+  CardTitle: lazy(() =>
+    import('ui/shared/components').then((m) => ({ default: m.CardTitle })),
+  ),
+  CardContent: lazy(() =>
+    import('ui/shared/components').then((m) => ({ default: m.CardContent })),
+  ),
+  CardFooter: lazy(() =>
+    import('ui/shared/components').then((m) => ({ default: m.CardFooter })),
+  ),
+  Skeleton: lazy(() =>
+    import('ui/shared/components').then((m) => ({ default: m.Skeleton })),
+  ),
+  LinkButton: lazy(() =>
+    import('ui/shared/components').then((m) => ({ default: m.LinkButton })),
+  ),
 };
 
-export function getFeatureComponent(name: string): LazyComponent | undefined {
+export function getRegisteredComponent(
+  name: string,
+): LazyComponent | undefined {
   return registry[name];
 }
 
-export function isFeatureComponent(name: string): boolean {
+export function isRegisteredComponent(name: string): boolean {
   return name in registry;
 }
+
+/** @deprecated Use getRegisteredComponent instead */
+export const getFeatureComponent = getRegisteredComponent;
+/** @deprecated Use isRegisteredComponent instead */
+export const isFeatureComponent = isRegisteredComponent;

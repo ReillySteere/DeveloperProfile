@@ -45,6 +45,7 @@ export interface ComponentMetadata {
   renderMode?: 'iframe' | 'direct';
   sampleData?: Record<string, unknown>;
   selfContained?: boolean;
+  mdxPath?: string;
 }
 
 export type ViewportSize = 'mobile' | 'tablet' | 'desktop' | 'full';

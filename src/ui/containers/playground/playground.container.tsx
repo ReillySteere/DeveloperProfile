@@ -24,6 +24,7 @@ export default function PlaygroundContainer() {
   const selectedTemplate = usePlaygroundStore((s) => s.selectedTemplate);
   const selectTemplate = usePlaygroundStore((s) => s.selectTemplate);
   const slotProps = usePlaygroundStore((s) => s.slotProps);
+  const updateSlotProp = usePlaygroundStore((s) => s.updateSlotProp);
 
   const compositionCode = useCompositionCodeGeneration(
     selectedTemplate,
@@ -105,6 +106,8 @@ export default function PlaygroundContainer() {
                     <CompositionEditor
                       template={selectedTemplate}
                       slotProps={slotProps}
+                      components={data}
+                      onSlotPropChange={updateSlotProp}
                     />
                   </div>
                   <CodeOutput code={compositionCode} />

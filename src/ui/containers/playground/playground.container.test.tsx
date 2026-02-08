@@ -52,30 +52,26 @@ jest.mock('framer-motion', () => {
   };
 });
 
-// Mock ComponentRegistry for feature component tests
+// Mock ComponentRegistry for component tests
 jest.mock('./components/ComponentRegistry', () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const React = require('react');
-  const MockFeatureComponent = (props: any) =>
+  const MockComponent = (props: any) =>
     React.createElement(
       'div',
       { 'data-testid': 'mock-feature-component' },
       JSON.stringify(props),
     );
+  const mockGet = (name: string) => {
+    if (name === 'UnknownComponent') return undefined;
+    return MockComponent;
+  };
+  const mockIs = (name: string) => name !== 'UnknownComponent';
   return {
-    getFeatureComponent: (name: string) => {
-      if (name === 'UnknownComponent') return undefined;
-      return MockFeatureComponent;
-    },
-    isFeatureComponent: (name: string) =>
-      [
-        'VitalGauge',
-        'AxeAuditPanel',
-        'ContrastChecker',
-        'WebVitalsDisplay',
-        'BundleSizeTreemap',
-        'CodeComparisonViewer',
-      ].includes(name),
+    getRegisteredComponent: mockGet,
+    isRegisteredComponent: mockIs,
+    getFeatureComponent: mockGet,
+    isFeatureComponent: mockIs,
   };
 });
 
@@ -763,7 +759,7 @@ describe('useCodeGeneration', () => {
 });
 
 describe('ComponentPreview (direct)', () => {
-  it('renders iframe with component name in title', () => {
+  it('renders component via registry with preview container', () => {
     const { ComponentPreview } = jest.requireActual<
       typeof import('./components/ComponentPreview')
     >('./components/ComponentPreview');
@@ -778,8 +774,8 @@ describe('ComponentPreview (direct)', () => {
       />,
     );
 
-    const iframe = screen.getByTitle('Button preview');
-    expect(iframe).toBeInTheDocument();
+    expect(screen.getByTestId('component-preview')).toBeInTheDocument();
+    expect(screen.getByTestId('mock-feature-component')).toBeInTheDocument();
   });
 
   it('applies grid class when showGrid is true', () => {
@@ -806,7 +802,7 @@ describe('ComponentPreview (direct)', () => {
       typeof import('./components/ComponentPreview')
     >('./components/ComponentPreview');
 
-    render(
+    const { container } = render(
       <ComponentPreview
         component={mockPlaygroundComponents[0]}
         props={{ variant: 'primary', children: 'Test' }}
@@ -816,81 +812,6 @@ describe('ComponentPreview (direct)', () => {
       />,
     );
 
-    const iframe = screen.getByTitle('Button preview');
-    expect(iframe).toHaveStyle({ width: '375px' });
-  });
-
-  it('renders FeatureComponentPreview for direct render mode', () => {
-    const { ComponentPreview } = jest.requireActual<
-      typeof import('./components/ComponentPreview')
-    >('./components/ComponentPreview');
-
-    render(
-      <ComponentPreview
-        component={mockPlaygroundComponents[3]}
-        props={{ name: 'LCP', value: 2200 }}
-        viewport="full"
-        theme="light"
-        showGrid={false}
-      />,
-    );
-
-    expect(screen.getByTestId('component-preview')).toBeInTheDocument();
-    expect(screen.getByTestId('mock-feature-component')).toBeInTheDocument();
-  });
-});
-
-describe('FeatureComponentPreview (direct)', () => {
-  it('renders feature component with merged sample data', () => {
-    const { FeatureComponentPreview } = jest.requireActual<
-      typeof import('./components/FeatureComponentPreview')
-    >('./components/FeatureComponentPreview');
-
-    render(
-      <FeatureComponentPreview
-        component={mockPlaygroundComponents[3]}
-        props={{ name: 'LCP' }}
-        viewport="full"
-        showGrid={false}
-      />,
-    );
-
-    expect(screen.getByTestId('mock-feature-component')).toBeInTheDocument();
-  });
-
-  it('applies grid class when showGrid is true', () => {
-    const { FeatureComponentPreview } = jest.requireActual<
-      typeof import('./components/FeatureComponentPreview')
-    >('./components/FeatureComponentPreview');
-
-    render(
-      <FeatureComponentPreview
-        component={mockPlaygroundComponents[3]}
-        props={{}}
-        viewport="full"
-        showGrid={true}
-      />,
-    );
-
-    const container = screen.getByTestId('component-preview');
-    expect(container.className).toContain('previewGrid');
-  });
-
-  it('shows viewport dimensions for non-full viewport', () => {
-    const { FeatureComponentPreview } = jest.requireActual<
-      typeof import('./components/FeatureComponentPreview')
-    >('./components/FeatureComponentPreview');
-
-    const { container } = render(
-      <FeatureComponentPreview
-        component={mockPlaygroundComponents[3]}
-        props={{}}
-        viewport="mobile"
-        showGrid={false}
-      />,
-    );
-
-    // Check the inner div has the width style
     const previewDiv = container.querySelector(
       '[data-testid="component-preview"] > div',
     );
@@ -898,25 +819,194 @@ describe('FeatureComponentPreview (direct)', () => {
   });
 
   it('shows fallback for unknown component', () => {
-    const { FeatureComponentPreview } = jest.requireActual<
-      typeof import('./components/FeatureComponentPreview')
-    >('./components/FeatureComponentPreview');
+    const { ComponentPreview } = jest.requireActual<
+      typeof import('./components/ComponentPreview')
+    >('./components/ComponentPreview');
 
     const unknownComponent = {
-      ...mockPlaygroundComponents[3],
+      ...mockPlaygroundComponents[0],
       name: 'UnknownComponent',
     };
 
     render(
-      <FeatureComponentPreview
+      <ComponentPreview
         component={unknownComponent}
         props={{}}
         viewport="full"
+        theme="light"
         showGrid={false}
       />,
     );
 
     expect(screen.getByText(/not found in registry/)).toBeInTheDocument();
+  });
+});
+
+describe('SlotPropEditor (direct)', () => {
+  it('renders nothing when no editable props', () => {
+    const { SlotPropEditor } = jest.requireActual<
+      typeof import('./components/SlotPropEditor')
+    >('./components/SlotPropEditor');
+
+    const { container } = render(
+      <SlotPropEditor
+        slot={{ id: 'test', componentName: 'Test', label: 'Test', props: {} }}
+        componentMetadata={undefined}
+        currentProps={{}}
+        onPropChange={jest.fn()}
+      />,
+    );
+
+    expect(container.innerHTML).toBe('');
+  });
+
+  it('renders toggle button when component has editable props', () => {
+    const { SlotPropEditor } = jest.requireActual<
+      typeof import('./components/SlotPropEditor')
+    >('./components/SlotPropEditor');
+
+    render(
+      <SlotPropEditor
+        slot={{
+          id: 'test',
+          componentName: 'Button',
+          label: 'Button',
+          props: {},
+        }}
+        componentMetadata={mockPlaygroundComponents[0]}
+        currentProps={{ variant: 'primary' }}
+        onPropChange={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByText('Edit Props')).toBeInTheDocument();
+  });
+
+  it('expands and shows prop controls on toggle click', () => {
+    const { SlotPropEditor } = jest.requireActual<
+      typeof import('./components/SlotPropEditor')
+    >('./components/SlotPropEditor');
+
+    render(
+      <SlotPropEditor
+        slot={{
+          id: 'test',
+          componentName: 'Button',
+          label: 'Button',
+          props: {},
+        }}
+        componentMetadata={mockPlaygroundComponents[0]}
+        currentProps={{ variant: 'primary' }}
+        onPropChange={jest.fn()}
+      />,
+    );
+
+    fireEvent.click(screen.getByText('Edit Props'));
+
+    expect(screen.getByLabelText('variant property')).toBeInTheDocument();
+  });
+
+  it('calls onPropChange when a prop value changes', () => {
+    const { SlotPropEditor } = jest.requireActual<
+      typeof import('./components/SlotPropEditor')
+    >('./components/SlotPropEditor');
+
+    const onPropChange = jest.fn();
+
+    render(
+      <SlotPropEditor
+        slot={{
+          id: 'test',
+          componentName: 'Button',
+          label: 'Button',
+          props: {},
+        }}
+        componentMetadata={mockPlaygroundComponents[0]}
+        currentProps={{ variant: 'primary' }}
+        onPropChange={onPropChange}
+      />,
+    );
+
+    fireEvent.click(screen.getByText('Edit Props'));
+    fireEvent.change(screen.getByLabelText('variant property'), {
+      target: { value: 'secondary' },
+    });
+
+    expect(onPropChange).toHaveBeenCalledWith('variant', 'secondary');
+  });
+
+  it('collapses when toggled again', () => {
+    const { SlotPropEditor } = jest.requireActual<
+      typeof import('./components/SlotPropEditor')
+    >('./components/SlotPropEditor');
+
+    render(
+      <SlotPropEditor
+        slot={{
+          id: 'test',
+          componentName: 'Button',
+          label: 'Button',
+          props: {},
+        }}
+        componentMetadata={mockPlaygroundComponents[0]}
+        currentProps={{}}
+        onPropChange={jest.fn()}
+      />,
+    );
+
+    const toggle = screen.getByText('Edit Props');
+    fireEvent.click(toggle);
+    expect(screen.getByLabelText('variant property')).toBeInTheDocument();
+
+    fireEvent.click(toggle);
+    expect(screen.queryByLabelText('variant property')).not.toBeInTheDocument();
+  });
+});
+
+describe('MDXDocPanel (direct)', () => {
+  it('renders loading skeleton initially', () => {
+    server.use(...createPlaygroundHandlers({ docsContent: '# Docs' }));
+
+    const { MDXDocPanel } = jest.requireActual<
+      typeof import('./components/MDXDocPanel')
+    >('./components/MDXDocPanel');
+
+    render(<MDXDocPanel componentName="VitalGauge" />);
+
+    // Should show skeleton while loading
+    expect(screen.getAllByTestId('skeleton').length).toBeGreaterThan(0);
+  });
+
+  it('renders no docs message on error', async () => {
+    server.use(...createPlaygroundHandlers({ docsContent: null }));
+
+    const { MDXDocPanel } = jest.requireActual<
+      typeof import('./components/MDXDocPanel')
+    >('./components/MDXDocPanel');
+
+    render(<MDXDocPanel componentName="NonExistent" />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('no-docs-message')).toBeInTheDocument();
+    });
+  });
+
+  it('renders documentation content on success', async () => {
+    server.use(
+      ...createPlaygroundHandlers({
+        docsContent: '# VitalGauge Docs\n\nSample content',
+      }),
+    );
+
+    const { MDXDocPanel } = jest.requireActual<
+      typeof import('./components/MDXDocPanel')
+    >('./components/MDXDocPanel');
+
+    render(<MDXDocPanel componentName="VitalGauge" />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('mdx-doc-panel')).toBeInTheDocument();
+    });
   });
 });
 
@@ -1507,38 +1597,60 @@ describe('PropControl - color control onChange', () => {
 });
 
 describe('ComponentRegistry', () => {
-  it('getFeatureComponent returns component for known name', () => {
-    const { getFeatureComponent } = jest.requireActual<
+  it('getRegisteredComponent returns component for known feature name', () => {
+    const { getRegisteredComponent } = jest.requireActual<
+      typeof import('./components/ComponentRegistry')
+    >('./components/ComponentRegistry');
+
+    expect(getRegisteredComponent('VitalGauge')).toBeDefined();
+  });
+
+  it('getRegisteredComponent returns component for known shared name', () => {
+    const { getRegisteredComponent } = jest.requireActual<
+      typeof import('./components/ComponentRegistry')
+    >('./components/ComponentRegistry');
+
+    expect(getRegisteredComponent('Button')).toBeDefined();
+    expect(getRegisteredComponent('Badge')).toBeDefined();
+    expect(getRegisteredComponent('Card')).toBeDefined();
+    expect(getRegisteredComponent('Skeleton')).toBeDefined();
+    expect(getRegisteredComponent('LinkButton')).toBeDefined();
+  });
+
+  it('getRegisteredComponent returns undefined for unknown name', () => {
+    const { getRegisteredComponent } = jest.requireActual<
+      typeof import('./components/ComponentRegistry')
+    >('./components/ComponentRegistry');
+
+    expect(getRegisteredComponent('NonExistent')).toBeUndefined();
+  });
+
+  it('isRegisteredComponent returns true for feature and shared entries', () => {
+    const { isRegisteredComponent } = jest.requireActual<
+      typeof import('./components/ComponentRegistry')
+    >('./components/ComponentRegistry');
+
+    expect(isRegisteredComponent('VitalGauge')).toBe(true);
+    expect(isRegisteredComponent('AxeAuditPanel')).toBe(true);
+    expect(isRegisteredComponent('Button')).toBe(true);
+    expect(isRegisteredComponent('Card')).toBe(true);
+  });
+
+  it('isRegisteredComponent returns false for non-registry entries', () => {
+    const { isRegisteredComponent } = jest.requireActual<
+      typeof import('./components/ComponentRegistry')
+    >('./components/ComponentRegistry');
+
+    expect(isRegisteredComponent('NonExistent')).toBe(false);
+  });
+
+  it('deprecated aliases still work', () => {
+    const { getFeatureComponent, isFeatureComponent } = jest.requireActual<
       typeof import('./components/ComponentRegistry')
     >('./components/ComponentRegistry');
 
     expect(getFeatureComponent('VitalGauge')).toBeDefined();
-  });
-
-  it('getFeatureComponent returns undefined for unknown name', () => {
-    const { getFeatureComponent } = jest.requireActual<
-      typeof import('./components/ComponentRegistry')
-    >('./components/ComponentRegistry');
-
-    expect(getFeatureComponent('NonExistent')).toBeUndefined();
-  });
-
-  it('isFeatureComponent returns true for registry entries', () => {
-    const { isFeatureComponent } = jest.requireActual<
-      typeof import('./components/ComponentRegistry')
-    >('./components/ComponentRegistry');
-
-    expect(isFeatureComponent('VitalGauge')).toBe(true);
-    expect(isFeatureComponent('AxeAuditPanel')).toBe(true);
-  });
-
-  it('isFeatureComponent returns false for non-registry entries', () => {
-    const { isFeatureComponent } = jest.requireActual<
-      typeof import('./components/ComponentRegistry')
-    >('./components/ComponentRegistry');
-
-    expect(isFeatureComponent('Button')).toBe(false);
-    expect(isFeatureComponent('NonExistent')).toBe(false);
+    expect(isFeatureComponent('Button')).toBe(true);
   });
 });
 

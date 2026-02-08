@@ -10,6 +10,7 @@ const mockMetadata = [
     name: 'Button',
     description: 'A button component',
     category: 'Inputs',
+    renderMode: 'direct',
     props: [],
     examples: [],
     importPath: 'ui/shared/components',
@@ -18,9 +19,20 @@ const mockMetadata = [
     name: 'Badge',
     description: 'A badge component',
     category: 'Data Display',
+    renderMode: 'direct',
     props: [],
     examples: [],
     importPath: 'ui/shared/components',
+  },
+  {
+    name: 'VitalGauge',
+    description: 'A gauge component',
+    category: 'Data Display',
+    renderMode: 'direct',
+    mdxPath: 'ui/containers/performance/components/VitalGauge.mdx',
+    props: [],
+    examples: [],
+    importPath: 'ui/containers/performance/components/VitalGauge',
   },
 ];
 
@@ -56,7 +68,7 @@ describe('PlaygroundService', () => {
 
       const result = await service.getAllComponents();
 
-      expect(result).toHaveLength(2);
+      expect(result).toHaveLength(3);
       expect(result[0].name).toBe('Button');
       expect(result[1].name).toBe('Badge');
     });
@@ -123,6 +135,46 @@ describe('PlaygroundService', () => {
       const result = await service.getCompositionTemplates();
 
       expect(result).toEqual([]);
+    });
+  });
+
+  describe('getComponentDocs', () => {
+    it('should return MDX content for component with mdxPath', async () => {
+      mockFs.readFile
+        .mockResolvedValueOnce(JSON.stringify(mockMetadata))
+        .mockResolvedValueOnce('# VitalGauge\n\nDocumentation content');
+
+      const result = await service.getComponentDocs('VitalGauge');
+
+      expect(result).toEqual({
+        content: '# VitalGauge\n\nDocumentation content',
+      });
+    });
+
+    it('should return null for component without mdxPath', async () => {
+      mockFs.readFile.mockResolvedValue(JSON.stringify(mockMetadata));
+
+      const result = await service.getComponentDocs('Button');
+
+      expect(result).toBeNull();
+    });
+
+    it('should return null for unknown component', async () => {
+      mockFs.readFile.mockResolvedValue(JSON.stringify(mockMetadata));
+
+      const result = await service.getComponentDocs('NonExistent');
+
+      expect(result).toBeNull();
+    });
+
+    it('should return null when MDX file read fails', async () => {
+      mockFs.readFile
+        .mockResolvedValueOnce(JSON.stringify(mockMetadata))
+        .mockRejectedValueOnce(new Error('ENOENT'));
+
+      const result = await service.getComponentDocs('VitalGauge');
+
+      expect(result).toBeNull();
     });
   });
 });
