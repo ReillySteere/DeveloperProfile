@@ -1,0 +1,112 @@
+# WebVitalsDisplay
+
+A dashboard card displaying all Core Web Vitals metrics in a responsive grid of gauges.
+
+## Overview
+
+`WebVitalsDisplay` presents a comprehensive view of Core Web Vitals by rendering individual `VitalGauge` components for each metric. It automatically handles loading states and calculates performance ratings based on Google's thresholds.
+
+## Usage
+
+```tsx
+import { WebVitalsDisplay } from 'ui/containers/performance/components/WebVitalsDisplay';
+
+<WebVitalsDisplay
+  vitals={{
+    lcp: 2200,
+    inp: 180,
+    cls: 0.05,
+    fcp: 1500,
+    ttfb: 600,
+  }}
+/>
+```
+
+## Props
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `vitals` | `Partial<WebVitals>` | Yes | Object containing Web Vital metric values |
+
+### WebVitals Interface
+
+```tsx
+interface WebVitals {
+  lcp: number;   // Largest Contentful Paint (ms)
+  inp: number;   // Interaction to Next Paint (ms)
+  cls: number;   // Cumulative Layout Shift (score)
+  fcp: number;   // First Contentful Paint (ms)
+  ttfb: number;  // Time to First Byte (ms)
+}
+```
+
+## Metrics Displayed
+
+| Metric | Description | Good | Poor |
+|--------|-------------|------|------|
+| **LCP** | Largest Contentful Paint | ≤ 2500ms | > 4000ms |
+| **INP** | Interaction to Next Paint | ≤ 200ms | > 500ms |
+| **CLS** | Cumulative Layout Shift | ≤ 0.1 | > 0.25 |
+| **FCP** | First Contentful Paint | ≤ 1800ms | > 3000ms |
+| **TTFB** | Time to First Byte | ≤ 800ms | > 1800ms |
+
+## Features
+
+### Automatic Rating Calculation
+
+Ratings are calculated dynamically based on `WEB_VITAL_THRESHOLDS`:
+
+```tsx
+function getRating(key: string, value: number): WebVitalRating {
+  const thresholds = WEB_VITAL_THRESHOLDS[key];
+  if (value <= thresholds.good) return 'good';
+  if (value <= thresholds.poor) return 'needs-improvement';
+  return 'poor';
+}
+```
+
+### Empty State
+
+When no vitals have been collected yet, displays a friendly message:
+
+```
+Collecting metrics... Navigate the site to gather data.
+```
+
+### Responsive Grid
+
+Gauges are arranged in a responsive grid that adapts to container width:
+- 5 columns on large screens
+- 3 columns on medium screens
+- 2 columns on small screens
+
+## Accessibility
+
+- **Card semantics**: Uses proper card structure with header and content regions
+- **Gauge labels**: Each gauge includes the metric name and description
+- **Color + text**: Ratings shown as text in addition to gauge color
+
+## Design Rationale
+
+### Composition over Configuration
+
+Rather than building a monolithic component with complex configuration, this component composes multiple `VitalGauge` instances. This approach:
+1. Keeps each gauge's logic simple and testable
+2. Allows gauges to be used independently if needed
+3. Makes the grid layout easy to customize
+
+### Partial Data Support
+
+The `Partial<WebVitals>` type allows displaying whatever metrics are available. Metrics without values are simply skipped, enabling progressive data collection.
+
+## Dependencies
+
+- **VitalGauge**: Individual metric gauge component
+- **shared/types**: `WebVitals`, `WEB_VITAL_THRESHOLDS`
+- **Shared UI**: `Card`, `CardHeader`, `CardTitle`, `CardContent`
+
+## Related Components
+
+- `VitalGauge`: Individual metric visualization
+- `PerformanceScore`: Overall performance score
+- `BundleSizeTreemap`: Bundle analysis visualization

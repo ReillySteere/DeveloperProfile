@@ -1,0 +1,76 @@
+# VitalGauge
+
+A radial gauge visualization for Core Web Vitals metrics, using color-coded thresholds to indicate performance ratings.
+
+## Overview
+
+`VitalGauge` displays a single Web Vital metric as a semi-circular gauge with dynamic coloring based on Google's performance thresholds. The gauge fills proportionally to the metric value and changes color to indicate good (green), needs improvement (yellow), or poor (red) performance.
+
+## Usage
+
+```tsx
+import { VitalGauge } from 'ui/containers/performance/components/VitalGauge';
+
+<VitalGauge
+  name="LCP"
+  value={2200}
+  rating="needs-improvement"
+  unit="ms"
+  thresholds={{ good: 2500, poor: 4000 }}
+/>;
+```
+
+## Props
+
+| Prop         | Type                                      | Required | Description                                 |
+| ------------ | ----------------------------------------- | -------- | ------------------------------------------- |
+| `name`       | `string`                                  | Yes      | The metric name (e.g., "LCP", "FCP", "CLS") |
+| `value`      | `number`                                  | Yes      | The raw metric value                        |
+| `rating`     | `'good' \| 'needs-improvement' \| 'poor'` | Yes      | Performance rating determining gauge color  |
+| `unit`       | `string`                                  | Yes      | Unit label (e.g., "ms", "score")            |
+| `thresholds` | `{ good: number; poor: number }`          | Yes      | Threshold values for normalization          |
+
+## Accessibility
+
+- **Test ID**: Uses `data-testid="${name.toLowerCase()}-gauge"` for automated testing
+- **Color alone**: Color is supplemented by the rating badge text to avoid relying solely on color
+- **Screen readers**: The gauge value and unit are exposed as text content below the chart
+
+## Design Rationale
+
+### Normalization
+
+Values are normalized to a 0-100 scale based on thresholds. The maximum value is set to `thresholds.poor * 1.5` to ensure poor metrics still show meaningful fill levels:
+
+```tsx
+const maxVal = thresholds.poor * 1.5;
+const normalizedValue = Math.min(100, (value / maxVal) * 100);
+```
+
+### Color Scheme
+
+Colors follow Google's Core Web Vitals color conventions:
+
+- **Good**: `#22c55e` (green)
+- **Needs Improvement**: `#eab308` (yellow)
+- **Poor**: `#ef4444` (red)
+
+### Defensive Rendering
+
+The component includes null guards for initial render states where data may be undefined:
+
+```tsx
+const safeValue = value ?? 0;
+const safeRating = rating ?? 'good';
+const safeThresholds = thresholds ?? { good: 2500, poor: 4000 };
+```
+
+## Dependencies
+
+- **Recharts**: `RadialBarChart`, `RadialBar`, `ResponsiveContainer`, `PolarAngleAxis`
+- **shared/types**: `WebVitalRating` type definition
+
+## Related Components
+
+- `WebVitalsDisplay`: Displays all Core Web Vitals in a grid layout
+- `PerformanceScore`: Aggregated performance score visualization

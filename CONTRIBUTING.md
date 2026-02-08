@@ -2,6 +2,8 @@
 
 Welcome to the project! This guide will help you get started with contributing to the codebase.
 
+**Live Site:** [reillygoulding.ca](https://www.reillygoulding.ca)
+
 ## Development Workflow
 
 1.  **Strict Monorepo:** We work on both Frontend (`src/ui`) and Backend (`src/server`) in the same repo.
@@ -86,15 +88,67 @@ This will generate:
   - The global `AuthInterceptor` automatically injects the token for all requests if the user is logged in.
   - If you are writing a new hook, just call `axios.get('/api/...')`.
 
+## Accessibility Standards (WCAG 2.1 AA)
+
+This project targets **WCAG 2.1 Level AA** compliance. All UI changes must follow these requirements:
+
+### Component Requirements
+
+- **Use shared components**: Always prefer existing shared components (`Button`, `Card`, `Badge`, etc.) over creating bespoke ones. They have accessibility built-in.
+- **Semantic HTML**: Use appropriate elements (`<button>`, `<nav>`, `<main>`, `<article>`).
+- **ARIA when needed**: Add ARIA attributes only when HTML semantics are insufficient.
+- **Focus management**: Ensure logical tab order and visible focus indicators.
+- **Color contrast**: Minimum 4.5:1 for normal text, 3:1 for large text (use design tokens).
+
+### Testing Requirements
+
+- **jest-axe**: Add accessibility assertions to component tests:
+  ```typescript
+  import { axe, toHaveNoViolations } from 'jest-axe';
+  expect.extend(toHaveNoViolations);
+  expect(await axe(container)).toHaveNoViolations();
+  ```
+- **Keyboard testing**: Verify all interactive elements are keyboard accessible.
+- **E2E audits**: Playwright tests include axe-core full-page audits.
+
+### Documentation
+
+- [Accessibility Showcase](architecture/components/accessibility.md) - Interactive demos and patterns
+- [ADR-026: Accessibility Testing Architecture](architecture/decisions/ADR-026-accessibility-testing-architecture.md)
+- [ADR-027: ARIA Patterns Implementation](architecture/decisions/ADR-027-aria-patterns-implementation.md)
+- [Shared UI Components](architecture/components/shared-ui.md) - Component catalog with a11y details
+
 ## Developer Tools
 
-- **Architecture:** Check the `architecture/` folder for ADRs and component docs.
-- **AI Assistance:** This project has extensive AI agent support:
-  - **Instructions:** `.github/copilot-instructions.md` - Core rules and patterns.
-  - **Skills:** `.github/skills/` - Domain-specific guides (testing, migrations, error handling, etc.).
-  - **Prompts:** `.github/prompts/` - Reusable task templates (scaffold features, debug builds, create PRs).
-  - **Chat Modes:** `.github/chatmodes/` - Specialized AI personas (onboarding, planning).
-  - See `.github/skills/README.md` for a full directory of available skills.
+### Architecture Documentation
+
+The `architecture/` folder contains comprehensive documentation:
+
+- **Components:** `architecture/components/` - Feature-by-feature architecture docs
+- **Decisions:** `architecture/decisions/` - 30 ADRs covering all major decisions
+- **Features:** `architecture/features/` - Cross-cutting feature documentation (observability, etc.)
+
+Key component docs:
+
+| Feature              | Documentation                                                |
+| -------------------- | ------------------------------------------------------------ |
+| Accessibility        | [accessibility.md](architecture/components/accessibility.md) |
+| Component Playground | [playground.md](architecture/components/playground.md)       |
+| Performance          | [performance.md](architecture/components/performance.md)     |
+| Request Tracing      | [traces.md](architecture/components/traces.md)               |
+| Shared UI            | [shared-ui.md](architecture/components/shared-ui.md)         |
+
+See the [README](README.md#feature-architecture) for the complete list.
+
+### AI Assistance
+
+This project has extensive AI agent support:
+
+- **Instructions:** `.github/copilot-instructions.md` - Core rules and patterns.
+- **Skills:** `.github/skills/` - Domain-specific guides (testing, migrations, error handling, etc.).
+- **Prompts:** `.github/prompts/` - Reusable task templates (scaffold features, debug builds, create PRs).
+- **Chat Modes:** `.github/chatmodes/` - Specialized AI personas (onboarding, planning).
+- See `.github/skills/README.md` for a full directory of available skills.
 
 ## Deployment
 

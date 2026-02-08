@@ -1,0 +1,132 @@
+# CodeComparisonViewer
+
+A side-by-side code comparison component for showcasing before/after refactoring examples in case studies.
+
+## Overview
+
+`CodeComparisonViewer` displays code transformations with syntax highlighting, helping readers understand the impact of technical decisions. Each comparison shows "Before" and "After" code blocks with optional descriptions.
+
+## Usage
+
+```tsx
+import { CodeComparisonViewer } from 'ui/containers/case-studies/components/CodeComparisonViewer';
+
+<CodeComparisonViewer
+  comparisons={[
+    {
+      title: 'State Management Refactor',
+      description: 'Migrated from useState to Zustand for global state',
+      language: 'typescript',
+      before: `const [user, setUser] = useState(null);
+const [loading, setLoading] = useState(false);`,
+      after: `const { user, loading } = useUserStore();`,
+    },
+  ]}
+/>;
+```
+
+## Props
+
+| Prop          | Type               | Required | Description                      |
+| ------------- | ------------------ | -------- | -------------------------------- |
+| `comparisons` | `CodeComparison[]` | Yes      | Array of code comparison objects |
+
+### CodeComparison Interface
+
+```tsx
+interface CodeComparison {
+  title: string; // Comparison heading
+  description?: string; // Optional explanation of the change
+  language: string; // Syntax highlighting language
+  before: string; // Original code snippet
+  after: string; // Refactored code snippet
+}
+```
+
+## Supported Languages
+
+The component registers these Prism languages:
+
+- `typescript` - TypeScript/JavaScript
+- `bash` - Shell commands
+- `json` - JSON configuration
+
+Additional languages can be added by importing and registering them:
+
+```tsx
+import python from 'react-syntax-highlighter/dist/cjs/languages/prism/python';
+SyntaxHighlighter.registerLanguage('python', python);
+```
+
+## Features
+
+### Syntax Highlighting
+
+Uses `react-syntax-highlighter` with the `oneDark` theme for consistent, readable code presentation.
+
+### Responsive Layout
+
+- **Desktop**: Side-by-side columns for easy comparison
+- **Mobile**: Stacks vertically for readability
+
+### Empty State
+
+Returns `null` when `comparisons` array is empty, allowing conditional rendering at the parent level.
+
+## Accessibility
+
+- **Semantic headings**: Each comparison has an `<h4>` title
+- **Code blocks**: Wrapped in `<div>` with proper structure
+- **Color contrast**: Uses high-contrast syntax theme
+- **Labels**: "Before" and "After" labels provide context
+
+## Styling
+
+Uses SCSS modules from the parent case-studies container:
+
+- `.codeComparisonsContainer` - Wrapper with spacing
+- `.codeComparison` - Individual comparison card
+- `.comparisonTitle` - Section heading
+- `.codeColumns` - Flexbox container for columns
+- `.codeColumn` - Individual column wrapper
+- `.codeLabel` - "Before"/"After" indicator
+
+## Design Rationale
+
+### PrismLight over Prism
+
+Uses `PrismLight` (tree-shakeable) instead of full Prism to minimize bundle size. Only needed languages are registered.
+
+### Consistent Theme
+
+The `oneDark` theme matches the dark mode aesthetic and provides good contrast for code readability.
+
+### Flexible Comparisons Array
+
+Accepting an array allows case studies to show multiple related refactorings in sequence, building a narrative of the technical journey.
+
+## Dependencies
+
+- **react-syntax-highlighter**: Syntax highlighting with Prism
+- **shared/types**: `CodeComparison` interface
+
+## Related Components
+
+- `CaseStudyDetail`: Parent container that uses this component
+- `MetricCard`: Displays before/after metrics numerically
+
+## Example Output
+
+When rendered, produces:
+
+```
+┌─────────────────────────────────────────┐
+│ State Management Refactor               │
+│ Migrated from useState to Zustand...    │
+├──────────────────┬──────────────────────┤
+│ Before           │ After                │
+├──────────────────┼──────────────────────┤
+│ const [user...]  │ const { user... }    │
+│ const [loading]  │                      │
+└──────────────────┴──────────────────────┘
+```

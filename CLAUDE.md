@@ -2,44 +2,42 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Build & Development Commands
+**Live Site:** [reillygoulding.ca](https://www.reillygoulding.ca)
 
-```bash
-npm start                    # Dev mode: runs UI (webpack) + server (NestJS) concurrently
-npm run build                # Production build (server + UI)
-npm test                     # All tests with coverage (100% threshold required)
-npm run test:server          # Server tests only (jest.node.ts)
-npm run test:ui              # UI tests only (jest.browser.ts)
-npm run test:e2e             # Playwright E2E tests (requires dev server running)
-npm run lint                 # ESLint + Prettier + React Compiler
-npm run type-check           # TypeScript check (tsc --noEmit)
-npm run depcruise:verify     # Validate architectural boundaries
-```
+## Quick Reference
 
-### Running a Single Test
+| Task         | Command               |
+| ------------ | --------------------- |
+| Dev mode     | `npm start`           |
+| Test all     | `npm test`            |
+| Server tests | `npm run test:server` |
+| UI tests     | `npm run test:ui`     |
+| E2E tests    | `npm run test:e2e`    |
+| Lint         | `npm run lint`        |
+| Type check   | `npm run type-check`  |
+| Build        | `npm run build`       |
 
-```bash
-npx jest path/to/file.test.ts --config jest.node.ts    # Server test
-npx jest path/to/file.test.tsx --config jest.browser.ts # UI test
-```
+## Documentation Index
 
-### Database Migrations
+For detailed guidance, refer to:
 
-```bash
-npm run migration:generate -- src/server/migrations/MigrationName
-npm run migration:run
-npm run migration:revert
-```
+| Topic                      | Location                          |
+| -------------------------- | --------------------------------- |
+| **Full instructions**      | `.github/copilot-instructions.md` |
+| **Skills (domain guides)** | `.github/skills/`                 |
+| **Component docs**         | `architecture/components/`        |
+| **ADRs (30 decisions)**    | `architecture/decisions/`         |
+| **API docs**               | `http://localhost:3000/api/docs`  |
 
 ## Architecture Overview
 
-**Modular Monolith with BFF pattern**: NestJS backend + React 19 frontend in a single deployable unit.
+**Modular Monolith with BFF pattern**: NestJS backend + React 19 frontend in single deployable.
 
 ### Path Aliases
 
 - `server/*` → `src/server/`
 - `ui/*` → `src/ui/`
-- `shared/*` → `src/shared/` (shared types between frontend/backend)
+- `shared/*` → `src/shared/`
 
 ### Backend Structure (`src/server/`)
 
@@ -73,15 +71,28 @@ npm run migration:revert
 
 - **Styling**: SCSS Modules with CSS variables from `shared/styles/tokens.css`. Never hardcode colors/spacing.
 - **Auth**: Handled globally via `AuthInterceptor`. Do not manually add Authorization headers.
-- **Components**: Import shared components from `ui/shared/components` barrel file. Direct imports are blocked by dependency-cruiser.
-- **Testing**: Integration tests at container level. Mock network layer, not internal hooks.
+- **Components**: Import from `ui/shared/components` barrel. Prefer shared components (Button, Card, Badge, Skeleton) over bespoke ones.
+- **Accessibility**: WCAG 2.1 AA required. Use semantic HTML, add jest-axe tests.
+- **Testing**: Integration tests at container level. Mock network layer with MSW, not internal hooks.
 
 ## Test Utilities
 
-- **UI**: `src/ui/test-utils/` - includes `render` wrapper, `MockEventSource` (SSE), `mockRecharts`
-- **Server**: `src/server/test-utils/cronTestUtils.ts` - testing scheduled tasks
-- **Global Mocks**: ESM libraries (`react-markdown`, `mermaid`, `web-vitals`) are mocked globally in `jest-preloaded.ts` - no per-test mocking needed
+- **UI**: `src/ui/test-utils/` - `render` wrapper, `MockEventSource`, `mockRecharts`
+- **Server**: `src/server/test-utils/cronTestUtils.ts`
+- **Global Mocks**: ESM libs mocked in `jest-preloaded.ts` (react-markdown, mermaid, web-vitals)
 
-## API Documentation
+## Running Single Tests
 
-Swagger docs available at `http://localhost:3000/api/docs` when server is running.
+```bash
+npx jest path/to/file.test.ts --config jest.node.ts    # Server
+npx jest path/to/file.test.tsx --config jest.browser.ts # UI
+```
+
+## Database Migrations
+
+```bash
+npm run migration:generate -- src/server/migrations/MigrationName
+npm run migration:run
+```
+
+Migrations **MUST be idempotent**. Use `IF NOT EXISTS` and `PRAGMA table_info()` checks.

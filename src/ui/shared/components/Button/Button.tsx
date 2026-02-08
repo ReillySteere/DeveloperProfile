@@ -2,16 +2,30 @@ import React from 'react';
 import styles from './Button.module.scss';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
   leftIcon?: React.ReactNode;
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    { className, variant = 'primary', leftIcon, children, disabled, ...props },
+    {
+      className,
+      variant = 'primary',
+      size = 'md',
+      leftIcon,
+      children,
+      disabled,
+      ...props
+    },
     ref,
   ) => {
-    const rootClassName = [styles.button, styles[variant], styles.md, className]
+    const rootClassName = [
+      styles.button,
+      styles[variant],
+      styles[size],
+      className,
+    ]
       .filter(Boolean)
       .join(' ');
 

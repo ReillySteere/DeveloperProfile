@@ -218,8 +218,52 @@ describe('Button', () => {
 
 ## Related Documentation
 
+- [Accessibility Showcase](./accessibility.md) - Interactive a11y demos
 - [auth.md](./auth.md) - Authentication-specific components
 - [Testing Workflow Skill](../../.github/skills/testing-workflow/SKILL.md) - Testing patterns
 - [ADR-017: Frontend State Management](../decisions/ADR-017-frontend-state-management.md) - TanStack Query + Zustand patterns
 - [ADR-018: Container Component Pattern](../decisions/ADR-018-container-component-pattern.md) - Container/component separation
 - [ADR-019: Styling Architecture](../decisions/ADR-019-styling-architecture.md) - SCSS Modules and CSS Variables
+- [ADR-026: Accessibility Testing Architecture](../decisions/ADR-026-accessibility-testing-architecture.md) - jest-axe, Playwright axe
+
+## Accessibility Guidelines (WCAG 2.1 AA)
+
+All shared components are designed for **WCAG 2.1 Level AA** compliance.
+
+### Built-in Accessibility Features
+
+| Component        | Accessibility Features                                          |
+| ---------------- | --------------------------------------------------------------- |
+| `Button`         | Focus visible, `aria-disabled` support, proper role             |
+| `LinkButton`     | `aria-disabled`, keyboard accessible                            |
+| `Card`           | Polymorphic `as` prop for `<article>` semantics                 |
+| `Skeleton`       | `role="status"`, `aria-busy="true"`, configurable `aria-label`  |
+| `NavigationRail` | Landmark `<nav>`, `aria-expanded`, `aria-current`               |
+| `Frame`          | Uses `<main>` element, skip link target via `id="main-content"` |
+| `QueryState`     | Announces loading state to screen readers                       |
+
+### When Creating New Components
+
+1. **Use semantic HTML**: Prefer `<button>`, `<nav>`, `<main>`, `<article>` over generic divs
+2. **Add ARIA only when needed**: Don't add ARIA to elements that already have correct semantics
+3. **Manage focus**: Ensure keyboard navigation and visible focus states
+4. **Test with jest-axe**: Add accessibility assertions to component tests:
+
+```typescript
+import { axe, toHaveNoViolations } from 'jest-axe';
+
+expect.extend(toHaveNoViolations);
+
+it('has no accessibility violations', async () => {
+  const { container } = render(<MyComponent />);
+  expect(await axe(container)).toHaveNoViolations();
+});
+```
+
+### Design Token Compliance
+
+All shared components use CSS variables from `tokens.css` which are designed for accessibility:
+
+- **Contrast ratios**: All color pairings meet WCAG AA minimum (4.5:1 normal text, 3:1 large text)
+- **Focus indicators**: `:focus-visible` styles use high-contrast outlines
+- **Reduced motion**: Animations respect `prefers-reduced-motion`

@@ -102,6 +102,31 @@ jest.mock(
   () => require('test-utils/mockWebVitals').mockWebVitals,
 );
 
+// Global mocks for CodeMirror (ESM packages that don't work with Jest)
+jest.mock('codemirror', () => ({}));
+jest.mock('@codemirror/lang-javascript', () => ({
+  javascript: () => [],
+}));
+jest.mock('@codemirror/theme-one-dark', () => ({
+  oneDark: [],
+}));
+jest.mock('@codemirror/view', () => {
+  const mockView = jest.fn().mockImplementation(() => ({
+    destroy: jest.fn(),
+  }));
+  (mockView as any).editable = { of: jest.fn(() => []) };
+  (mockView as any).lineWrapping = [];
+  return {
+    EditorView: mockView,
+    keymap: { of: jest.fn(() => []) },
+  };
+});
+jest.mock('@codemirror/state', () => ({
+  EditorState: {
+    create: jest.fn(() => ({})),
+  },
+}));
+
 // Global mock for axe-core (requires full browser DOM not available in jsdom)
 jest.mock('axe-core', () => ({
   default: {

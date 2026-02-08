@@ -53,8 +53,9 @@ export function TelemetryCharts({ data }: TelemetryChartsProps) {
             <YAxis stroke="#888" />
             <Tooltip
               contentStyle={{
-                backgroundColor: '#1a1a1a',
-                border: '1px solid #333',
+                backgroundColor: 'var(--tooltip-bg)',
+                border: '1px solid var(--tooltip-border)',
+                color: 'var(--tooltip-text)',
               }}
             />
             <Legend />
@@ -90,8 +91,9 @@ export function TelemetryCharts({ data }: TelemetryChartsProps) {
             <YAxis stroke="#888" />
             <Tooltip
               contentStyle={{
-                backgroundColor: '#1a1a1a',
-                border: '1px solid #333',
+                backgroundColor: 'var(--tooltip-bg)',
+                border: '1px solid var(--tooltip-border)',
+                color: 'var(--tooltip-text)',
               }}
             />
             <Legend />

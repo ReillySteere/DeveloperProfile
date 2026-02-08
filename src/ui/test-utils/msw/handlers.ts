@@ -22,6 +22,8 @@ import type {
   CaseStudy,
   AggregatedMetrics,
   Benchmark,
+  ComponentMetadata,
+  CompositionTemplate,
 } from 'shared/types';
 
 // ============================================================================
@@ -764,6 +766,236 @@ export function createPerformanceHandlers(
 }
 
 // ============================================================================
+// Playground Handlers
+// ============================================================================
+
+export const mockPlaygroundComponents: ComponentMetadata[] = [
+  {
+    name: 'Button',
+    description: 'Accessible button with primary/secondary variants',
+    category: 'Inputs',
+    props: [
+      {
+        name: 'variant',
+        type: "'primary' | 'secondary'",
+        controlType: 'select',
+        required: false,
+        defaultValue: 'primary',
+        options: [
+          { label: 'primary', value: 'primary' },
+          { label: 'secondary', value: 'secondary' },
+        ],
+      },
+      {
+        name: 'disabled',
+        type: 'boolean',
+        controlType: 'boolean',
+        required: false,
+        defaultValue: 'false',
+      },
+      {
+        name: 'children',
+        type: 'React.ReactNode',
+        controlType: 'string',
+        required: false,
+        description: 'Content to render inside the component',
+        defaultValue: 'Button',
+      },
+    ],
+    examples: [
+      {
+        name: 'Default',
+        props: { variant: 'primary', disabled: false, children: 'Button' },
+      },
+    ],
+    importPath: 'ui/shared/components',
+  },
+  {
+    name: 'Badge',
+    description: 'Small label for status display',
+    category: 'Data Display',
+    props: [
+      {
+        name: 'variant',
+        type: "'primary'",
+        controlType: 'select',
+        required: true,
+        defaultValue: 'primary',
+        options: [{ label: 'primary', value: 'primary' }],
+      },
+      {
+        name: 'children',
+        type: 'React.ReactNode',
+        controlType: 'string',
+        required: false,
+        description: 'Content to render inside the component',
+        defaultValue: 'Badge',
+      },
+    ],
+    examples: [
+      { name: 'Default', props: { variant: 'primary', children: 'Badge' } },
+    ],
+    importPath: 'ui/shared/components',
+  },
+  {
+    name: 'Card',
+    description: 'Container card component',
+    category: 'Layout',
+    props: [
+      {
+        name: 'as',
+        type: "'div' | 'article'",
+        controlType: 'select',
+        required: false,
+        defaultValue: 'div',
+        options: [
+          { label: 'div', value: 'div' },
+          { label: 'article', value: 'article' },
+        ],
+      },
+      {
+        name: 'children',
+        type: 'React.ReactNode',
+        controlType: 'string',
+        required: false,
+        description: 'Content to render inside the component',
+        defaultValue: 'Card',
+      },
+    ],
+    examples: [
+      {
+        name: 'Default',
+        props: { as: 'div', children: 'Card content' },
+      },
+    ],
+    importPath: 'ui/shared/components',
+  },
+  {
+    name: 'VitalGauge',
+    description: 'Radial gauge for Web Vital metric',
+    category: 'Data Display',
+    renderMode: 'direct',
+    props: [
+      {
+        name: 'name',
+        type: 'string',
+        controlType: 'string',
+        required: true,
+        defaultValue: 'LCP',
+      },
+      {
+        name: 'value',
+        type: 'number',
+        controlType: 'number',
+        required: true,
+        defaultValue: '2200',
+      },
+      {
+        name: 'rating',
+        type: "'good' | 'needs-improvement' | 'poor'",
+        controlType: 'select',
+        required: true,
+        defaultValue: 'needs-improvement',
+        options: [
+          { label: 'good', value: 'good' },
+          { label: 'needs-improvement', value: 'needs-improvement' },
+          { label: 'poor', value: 'poor' },
+        ],
+      },
+      {
+        name: 'unit',
+        type: 'string',
+        controlType: 'string',
+        required: true,
+        defaultValue: 'ms',
+      },
+      {
+        name: 'thresholds',
+        type: '{ good: number; poor: number }',
+        controlType: 'json',
+        required: true,
+      },
+    ],
+    sampleData: {
+      thresholds: { good: 2500, poor: 4000 },
+      rating: 'needs-improvement',
+      unit: 'ms',
+    },
+    examples: [{ name: 'Default', props: {} }],
+    importPath: 'ui/containers/performance/components/VitalGauge',
+  },
+  {
+    name: 'AxeAuditPanel',
+    description: 'Live accessibility audit panel',
+    category: 'Feedback',
+    renderMode: 'direct',
+    selfContained: true,
+    props: [],
+    examples: [{ name: 'Default', props: {} }],
+    importPath: 'ui/containers/accessibility/components/AxeAuditPanel',
+  },
+];
+
+export const mockCompositionTemplates: CompositionTemplate[] = [
+  {
+    id: 'accessibility-audit',
+    name: 'Accessibility Audit',
+    description: 'Combined accessibility audit and contrast checking',
+    layout: 'grid-1x2',
+    slots: [
+      {
+        id: 'axe-panel',
+        componentName: 'AxeAuditPanel',
+        label: 'Axe Audit',
+        props: {},
+      },
+      {
+        id: 'contrast-checker',
+        componentName: 'ContrastChecker',
+        label: 'Contrast Checker',
+        props: {},
+      },
+    ],
+    codeTemplate: 'import ...',
+  },
+];
+
+export function createPlaygroundHandlers(
+  overrides: {
+    components?: ComponentMetadata[];
+    templates?: CompositionTemplate[];
+    delayMs?: number;
+  } = {},
+) {
+  const components = overrides.components ?? mockPlaygroundComponents;
+  const templates = overrides.templates ?? mockCompositionTemplates;
+  const delayMs = overrides.delayMs ?? 0;
+
+  return [
+    http.get('/api/playground/components', async () => {
+      if (delayMs) await delay(delayMs);
+      return HttpResponse.json(components);
+    }),
+
+    http.get('/api/playground/components/:name', async ({ params }) => {
+      if (delayMs) await delay(delayMs);
+      const component = components.find(
+        (c) => c.name.toLowerCase() === (params.name as string).toLowerCase(),
+      );
+      if (!component) {
+        return new HttpResponse(null, { status: 404 });
+      }
+      return HttpResponse.json(component);
+    }),
+
+    http.get('/api/playground/compositions', async () => {
+      if (delayMs) await delay(delayMs);
+      return HttpResponse.json(templates);
+    }),
+  ];
+}
+
+// ============================================================================
 // Default Handlers
 // ============================================================================
 
@@ -781,4 +1013,5 @@ export const handlers = [
   ...createArchitectureHandlers(),
   ...createAuthHandlers(),
   ...createPerformanceHandlers(),
+  ...createPlaygroundHandlers(),
 ];

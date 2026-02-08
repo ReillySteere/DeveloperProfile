@@ -19,6 +19,7 @@ import { ApiRootModule } from './modules/api-root/api-root.module';
 import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
 import { RateLimitModule, RateLimiterGuard } from './modules/rate-limit';
 import { PerformanceModule } from './modules/performance/performance.module';
+import { PlaygroundModule } from './modules/playground/playground.module';
 import { ALL_ENTITIES } from './data-source';
 import { ALL_MIGRATIONS } from './migrations';
 
@@ -56,6 +57,7 @@ const isProduction = process.env.NODE_ENV === 'production';
     HealthModule,
     ArchitectureModule,
     PerformanceModule,
+    PlaygroundModule,
   ],
   providers: [
     {

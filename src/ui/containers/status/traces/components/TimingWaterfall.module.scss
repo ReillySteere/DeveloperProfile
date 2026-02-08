@@ -1,8 +1,8 @@
 .waterfall {
   padding: 16px;
-  background-color: var(--color-surface);
+  background-color: var(--bg-surface);
   border-radius: 8px;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--border-default);
 }
 
 .waterfallExpanded {
@@ -19,13 +19,13 @@
 .title {
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--color-text);
+  color: var(--text-primary);
 }
 
 .total {
   font-family: var(--font-mono);
   font-size: 0.875rem;
-  color: var(--color-text-muted);
+  color: var(--text-secondary);
 }
 
 .timeline {
@@ -37,8 +37,8 @@
   height: 24px;
   border-radius: 6px;
   overflow: hidden;
-  background-color: var(--color-background);
-  border: 1px solid var(--color-border);
+  background-color: var(--bg-base);
+  border: 1px solid var(--border-default);
 }
 
 .segment {
@@ -103,8 +103,8 @@
   z-index: 100;
   min-width: 120px;
   padding: 8px 12px;
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
+  background-color: var(--tooltip-bg);
+  border: 1px solid var(--tooltip-border);
   border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   pointer-events: none;
@@ -113,7 +113,7 @@
 .tooltipTitle {
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--color-text);
+  color: var(--tooltip-text);
   margin-bottom: 4px;
 }
 
@@ -121,12 +121,12 @@
   font-family: var(--font-mono);
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--color-text);
+  color: var(--tooltip-text);
 }
 
 .tooltipPercentage {
   font-size: 0.6875rem;
-  color: var(--color-text-muted);
+  color: var(--tooltip-text);
   margin-top: 2px;
 }
 
@@ -147,7 +147,7 @@
   align-items: center;
   gap: 8px;
   padding: 6px 8px;
-  background-color: var(--color-background);
+  background-color: var(--bg-base);
   border-radius: 4px;
 }
 
@@ -165,14 +165,14 @@
 
 .legendName {
   font-size: 0.75rem;
-  color: var(--color-text-muted);
+  color: var(--text-secondary);
   flex-grow: 1;
 }
 
 .legendValue {
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  color: var(--color-text);
+  color: var(--text-primary);
   font-weight: 500;
 }
 

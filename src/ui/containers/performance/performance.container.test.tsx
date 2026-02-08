@@ -651,3 +651,68 @@ describe('useMemoryUsage hook', () => {
 // 2. document.readyState !== 'complete' - covered by istanbul ignore
 // These are defensive checks for older browsers that are difficult to test
 // in jsdom without breaking React's useState implementation.
+
+describe('VitalGauge - fallback paths', () => {
+  const { VitalGauge } = jest.requireActual<
+    typeof import('./components/VitalGauge')
+  >('./components/VitalGauge');
+
+  it('handles undefined value with fallback to 0', () => {
+    render(
+      <VitalGauge
+        {...({
+          name: 'LCP',
+          rating: 'good',
+          unit: 'ms',
+          thresholds: { good: 2500, poor: 4000 },
+        } as any)}
+        value={undefined}
+      />,
+    );
+
+    expect(screen.getByTestId('lcp-gauge')).toBeInTheDocument();
+  });
+
+  it('handles undefined rating with fallback to good', () => {
+    render(
+      <VitalGauge
+        {...({
+          name: 'CLS',
+          value: 0.1,
+          unit: '',
+          thresholds: { good: 0.1, poor: 0.25 },
+        } as any)}
+        rating={undefined}
+      />,
+    );
+
+    expect(screen.getByTestId('cls-gauge')).toBeInTheDocument();
+  });
+
+  it('handles undefined thresholds with fallback', () => {
+    render(
+      <VitalGauge
+        {...({ name: 'FCP', value: 1500, rating: 'good', unit: 'ms' } as any)}
+        thresholds={undefined}
+      />,
+    );
+
+    expect(screen.getByTestId('fcp-gauge')).toBeInTheDocument();
+  });
+
+  it('handles undefined name with fallback in data-testid', () => {
+    render(
+      <VitalGauge
+        {...({
+          value: 100,
+          rating: 'good',
+          unit: 'ms',
+          thresholds: { good: 2500, poor: 4000 },
+        } as any)}
+        name={undefined}
+      />,
+    );
+
+    expect(screen.getByTestId('metric-gauge')).toBeInTheDocument();
+  });
+});

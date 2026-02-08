@@ -122,12 +122,20 @@
   - **Global State:** Zustand (e.g., `navStore`).
   - **Authentication:** Handled globally via `AuthInterceptor` (Request & Response). **DO NOT** manually add Authorization headers in hooks.
 - **Components:** Functional components. Use `Frame` component for page layout.
+  - **Prefer shared components**: Always use existing components from `ui/shared/components` (Button, Card, Badge, Skeleton, QueryState, etc.) over creating bespoke ones. They have accessibility and theming built-in.
+  - **Component catalog**: See `architecture/components/shared-ui.md` for the full list.
 - **Styling:** SCSS Modules (`*.module.scss`).
   - **ALWAYS use CSS variables** from `src/ui/shared/styles/tokens.css`. Never hardcode colors, spacing, or other design tokens.
   - **Semantic tokens:** `--bg-surface`, `--text-primary`, `--border-default`, `--primary-default`, etc.
   - **Spacing:** `--space-1` (0.25rem) through `--space-16` (4rem).
   - **Radius:** `--radius-sm`, `--radius-md`, `--radius-lg`, `--radius-full`.
   - **Dark mode:** Tokens auto-switch via `[data-theme='dark']`.
+- **Accessibility (WCAG 2.1 AA):**
+  - **Semantic HTML**: Use `<button>`, `<nav>`, `<main>`, `<article>`, `<section>` appropriately.
+  - **ARIA**: Add ARIA attributes only when HTML semantics are insufficient.
+  - **Focus management**: Ensure logical tab order and visible focus indicators (`:focus-visible`).
+  - **Color contrast**: Use design tokens which meet 4.5:1 minimum contrast.
+  - **Testing**: Add `jest-axe` assertions to component tests. See ADR-026.
 - **Testing:**
   - Use `render` from `ui/test-utils` (wraps `QueryClientProvider`).
   - Test files: `src/ui/**/*.test.ts*`.
