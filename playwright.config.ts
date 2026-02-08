@@ -53,6 +53,8 @@ export default defineConfig({
     env: {
       /* Enable rate limit bypass for e2e tests */
       E2E_RATE_LIMIT_BYPASS: 'true',
+      /* Enable registration for e2e tests that need to create test users */
+      REGISTRATION_ENABLED: 'true',
     },
   },
 });
