@@ -2,6 +2,7 @@ import { test, expect, Page, APIRequestContext } from '@playwright/test';
 
 /**
  * Helper function to create a test user
+ * Note: Requires REGISTRATION_ENABLED=true environment variable
  */
 async function createUser(
   request: APIRequestContext,
@@ -16,7 +17,12 @@ async function createUser(
   });
 
   // Ignore 409 (Conflict) if user already exists from previous test run
-  if (!response.ok() && response.status() !== 409) {
+  // Ignore 403 (Forbidden) if registration is disabled - user may be pre-seeded
+  if (
+    !response.ok() &&
+    response.status() !== 409 &&
+    response.status() !== 403
+  ) {
     console.error(
       `Failed to register user: ${response.status()} ${await response.text()}`,
     );

@@ -12,6 +12,10 @@
       "Bash(npm test)",
       "Bash(npx tsr:*)",
       "Bash(npm ls:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run test:ui:*)",
+      "Bash(npm run lint:*)",
+      "Bash(git status:*)"
       "Bash(npx jest:*)"
     ]
   }
