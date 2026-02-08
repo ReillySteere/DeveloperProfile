@@ -12,23 +12,23 @@
   height: 120px;
 
   &[data-status='healthy'] {
-    --pulse-color: #00ff88;
-    --core-color: #00cc6a;
+    --pulse-color: var(--viz-healthy);
+    --core-color: var(--viz-healthy-core);
   }
 
   &[data-status='warning'] {
-    --pulse-color: #ffe66d;
-    --core-color: #ccb800;
+    --pulse-color: var(--viz-degraded);
+    --core-color: var(--viz-degraded-core);
   }
 
   &[data-status='critical'] {
-    --pulse-color: #ff6b6b;
-    --core-color: #cc4444;
+    --pulse-color: var(--viz-error);
+    --core-color: var(--viz-error-core);
   }
 
   &[data-status='disconnected'] {
-    --pulse-color: #666;
-    --core-color: #444;
+    --pulse-color: var(--viz-unknown);
+    --core-color: var(--viz-unknown-core);
   }
 }
 

@@ -1,9 +1,14 @@
 ﻿.navigation {
+  display: none;
   height: 100vh;
   position: sticky;
   top: 0;
   z-index: 50;
   flex-shrink: 0;
+
+  @media (min-width: 768px) {
+    display: block;
+  }
 }
 
 .rail {
@@ -117,4 +122,113 @@
   justify-content: center;
   margin-top: auto;
   padding: var(--space-2) 0;
+}
+
+/* Mobile Bottom Navigation */
+.bottomNav {
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background-color: var(--bg-surface);
+  border-top: 1px solid var(--border-default);
+  padding: var(--space-1) var(--space-2);
+  padding-bottom: calc(var(--space-1) + env(safe-area-inset-bottom, 0px));
+  justify-content: space-around;
+  align-items: stretch;
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+}
+
+.bottomNavLink {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: var(--text-tertiary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition-base);
+  flex: 1;
+  min-width: 0;
+
+  &:hover {
+    color: var(--text-secondary);
+  }
+}
+
+.bottomNavActive {
+  color: var(--primary-default);
+}
+
+.bottomNavLabel {
+  font-size: 0.625rem;
+  font-weight: 500;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+/* More menu */
+.moreOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 99;
+}
+
+.moreMenu {
+  position: fixed;
+  bottom: calc(60px + env(safe-area-inset-bottom, 0px));
+  right: var(--space-3);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-2);
+  z-index: 101;
+  min-width: 180px;
+}
+
+.moreMenuItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition-base);
+  width: 100%;
+  font-size: 0.875rem;
+
+  &:hover {
+    background-color: var(--bg-surface-hover);
+    color: var(--text-primary);
+  }
+}
+
+.moreMenuActive {
+  background-color: var(--primary-subtle);
+  color: var(--primary-default);
+}
+
+.moreMenuDivider {
+  height: 1px;
+  background-color: var(--border-default);
+  margin: var(--space-2) 0;
 }
