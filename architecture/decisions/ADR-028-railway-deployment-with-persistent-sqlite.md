@@ -35,11 +35,11 @@ The application uses SQLite with TypeORM (per [ADR-002](./ADR-002-SQLite-TypeOrm
 
 1. **Zero code changes required** - Existing SQLite + TypeORM setup works as-is
 2. **Persistent volumes** - Data survives deployments (Heroku doesn't offer this)
-3. **Usage-based pricing** - Pay only for actual compute time
-4. **Serverless mode** - Service sleeps when idle, reducing costs
-5. **Similar DX to Heroku** - GitHub autodeploy, logs, environment variables
-6. **SQLite remains the right choice** - Single author, low write concurrency, simple data model
-7. **Upgrade path to Pro** - Volume backups available if needed ($20/mo)
+3. **Built-in scheduled backups** - Daily/weekly/monthly with one-click restore
+4. **Usage-based pricing** - Pay only for actual compute time
+5. **Serverless mode** - Service sleeps when idle, reducing costs
+6. **Similar DX to Heroku** - GitHub autodeploy, logs, environment variables
+7. **SQLite remains the right choice** - Single author, low write concurrency, simple data model
 
 ### Why Not PostgreSQL?
 
@@ -60,6 +60,7 @@ Switching to PostgreSQL would add cost ($5+/mo) and complexity without solving a
 - ✅ Data persists across deployments
 - ✅ No application code changes
 - ✅ Automatic vertical scaling (no instance sizing)
+- ✅ Built-in backup scheduling
 - ✅ Lower cost potential (usage-based)
 - ✅ Private networking included
 - ✅ Preview environments for PRs
@@ -69,7 +70,7 @@ Switching to PostgreSQL would add cost ($5+/mo) and complexity without solving a
 - ⚠️ **Cannot use replicas with volumes** - Single instance only (acceptable)
 - ⚠️ Brief deployment downtime (~seconds) due to volume remounting
 - ⚠️ Hobby plan limited to single developer
-- ⚠️ **No volume backups on Hobby plan** - Requires Pro ($20/mo) or manual backup strategy
+- ⚠️ Backups can only restore to same environment
 - ⚠️ Younger platform than Heroku (founded 2020)
 - ⚠️ Cron jobs may prevent serverless sleep (see mitigation below)
 
@@ -235,36 +236,19 @@ Railway will provide CNAME targets. Update your DNS:
 - SSL certificate auto-provisions after DNS propagates
 - Check status in Railway dashboard
 
-### Phase 4: Backup Strategy (Hobby Plan)
+### Phase 4: Configure Backups
 
-Railway's Hobby plan does not include volume backups. Options:
+**4.1 Enable Scheduled Backups**
 
-**Option A: Manual SQLite Backup via SSH (Recommended)**
+In Railway dashboard → Service → Backups tab:
 
-```bash
-# SSH into the running service
-railway shell
+- [x] Enable Daily backups (retained 6 days)
+- [x] Enable Weekly backups (retained 1 month)
+- [ ] Optional: Monthly backups (retained 3 months)
 
-# Inside the container, copy the database
-cp /app/data/database.sqlite /app/data/database-backup-$(date +%Y%m%d).sqlite
+**4.2 Create Initial Manual Backup**
 
-# Or download locally via railway run
-railway run cat /app/data/database.sqlite > backup.sqlite
-```
-
-**Option B: Upgrade to Pro Plan ($20/mo)**
-
-Pro plan includes:
-
-- Scheduled volume backups (daily/weekly/monthly)
-- One-click restore
-- Backup retained up to 3 months
-
-**Option C: Application-Level Backup Endpoint**
-
-Add a protected endpoint to export database (future enhancement).
-
-**Current Approach:** Accept risk for now given low-value seed data. Implement manual backups before adding real content.
+- Click "Create Backup" in dashboard after confirming data is present
 
 ### Phase 5: Decommission Heroku
 
@@ -307,9 +291,8 @@ heroku apps:destroy your-app --confirm your-app
 | Hobby plan base       | $5.00                  |
 | Compute (low traffic) | Included in $5 credit  |
 | Volume (1 GB)         | $0.15                  |
-| **Total**             | **~$5.15/month**       |
-
-_Note: Volume backups require Pro plan ($20/mo). Manual backups are free._
+| Backups (incremental) | ~$0.05                 |
+| **Total**             | **~$5.20/month**       |
 
 ### Future Scaling Path
 
@@ -344,7 +327,7 @@ If Railway migration fails:
 
 1. **Keep Heroku running** until Railway is verified (don't delete immediately)
 2. **DNS rollback**: Point domain back to Heroku
-3. **Data recovery**: Restore from manual backup or seed from scratch
+3. **Data recovery**: Use Railway backup restore or seed from scratch
 
 ---
 

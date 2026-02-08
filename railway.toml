@@ -1,0 +1,18 @@
+# Railway Configuration
+# See: https://docs.railway.com/reference/config-as-code
+
+[build]
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+startCommand = "npm run start:server:prod"
+healthcheckPath = "/api/health"
+healthcheckTimeout = 30
+restartPolicyType = "on_failure"
+
+# Persistent volume for SQLite database
+# This ensures data survives deployments and restarts
+[[mounts]]
+source = "data"
+destination = "/app/data"
