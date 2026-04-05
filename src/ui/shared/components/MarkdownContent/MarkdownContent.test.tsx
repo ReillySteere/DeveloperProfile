@@ -67,6 +67,23 @@ jest.mock('react-markdown', () => {
       );
     }
 
+    // Parse code blocks with object children: ```!!object lang\n```
+    const objectCodeMatch = content.match(/```!!object (\w*)\n```/);
+    if (objectCodeMatch && props.components?.code) {
+      const [, lang] = objectCodeMatch;
+      const CodeComponent = props.components.code;
+      const codeProps = lang ? { className: `language-${lang}` } : {};
+      return React.createElement(
+        'div',
+        { 'data-testid': 'markdown' },
+        React.createElement(
+          CodeComponent,
+          codeProps,
+          React.createElement('span', null, 'nested'),
+        ),
+      );
+    }
+
     // Parse code blocks with array children: ```!!array lang\ncontent\n```
     const arrayCodeMatch = content.match(/```!!array (\w*)\n([\s\S]*?)\n```/);
     if (arrayCodeMatch && props.components?.code) {
@@ -312,6 +329,19 @@ const x = 1;
       );
 
       const highlighter = screen.getByTestId('syntax-highlighter');
+      expect(highlighter).toHaveTextContent('');
+    });
+
+    it('handles object children in code blocks without [object Object]', () => {
+      render(
+        <MarkdownContent
+          content={`\`\`\`!!object typescript
+\`\`\``}
+        />,
+      );
+
+      const highlighter = screen.getByTestId('syntax-highlighter');
+      expect(highlighter).not.toHaveTextContent('[object Object]');
       expect(highlighter).toHaveTextContent('');
     });
 

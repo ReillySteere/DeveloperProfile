@@ -11,6 +11,13 @@ import { oneDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { Mermaid } from '../Mermaid';
 import styles from './MarkdownContent.module.scss';
 
+function childrenToString(node: React.ReactNode): string {
+  if (node == null || typeof node === 'boolean') return '';
+  if (typeof node === 'string' || typeof node === 'number') return String(node);
+  if (Array.isArray(node)) return node.map(childrenToString).join('');
+  return '';
+}
+
 // Register languages
 SyntaxHighlighter.registerLanguage('typescript', ts);
 SyntaxHighlighter.registerLanguage('bash', bash);
@@ -146,9 +153,7 @@ export const MarkdownContent: React.FC<MarkdownContentProps> = ({
           code({ className, children, ...props }) {
             const match = /language-(\w+)/.exec(className || '');
             const language = match ? match[1] : '';
-            const codeString = String(
-              Array.isArray(children) ? children.join('') : (children ?? ''),
-            ).replace(/\n$/, '');
+            const codeString = childrenToString(children).replace(/\n$/, '');
 
             if (language === 'mermaid') {
               return <Mermaid chart={codeString} />;
