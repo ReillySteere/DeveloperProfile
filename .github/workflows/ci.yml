@@ -95,7 +95,7 @@ jobs:
           CI: true
 
       - name: SonarCloud Scan
-        run: npx @sonar/scan -Dsonar.region=us
+        run: npx @sonar/scan
         env:
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
 
