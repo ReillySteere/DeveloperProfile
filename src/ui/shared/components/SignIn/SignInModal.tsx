@@ -53,13 +53,15 @@ export const SignInModal: React.FC = () => {
     <div
       className={styles.overlay}
       onClick={closeLoginModal}
+      onKeyDown={(e) => e.key === 'Escape' && closeLoginModal()}
+      role="presentation"
+      tabIndex={-1}
       data-testid="signin-overlay"
     >
-      <div
+      <dialog
         className={styles.modal}
         onClick={(e) => e.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
+        open
         aria-labelledby="signin-title"
       >
         <div className={styles.header}>
@@ -124,7 +126,7 @@ export const SignInModal: React.FC = () => {
             </Button>
           </div>
         </form>
-      </div>
+      </dialog>
     </div>
   );
 

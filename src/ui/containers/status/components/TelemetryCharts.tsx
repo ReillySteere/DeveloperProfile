@@ -13,7 +13,7 @@ import type { TelemetrySnapshot } from 'shared/types';
 import styles from './TelemetryCharts.module.scss';
 
 interface TelemetryChartsProps {
-  data: TelemetrySnapshot[];
+  readonly data: TelemetrySnapshot[];
 }
 
 interface ChartDataPoint {

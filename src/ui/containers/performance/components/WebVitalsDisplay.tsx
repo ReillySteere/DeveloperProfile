@@ -6,7 +6,7 @@ import { WEB_VITAL_THRESHOLDS } from 'shared/types';
 import styles from '../performance.module.scss';
 
 interface WebVitalsDisplayProps {
-  vitals: Partial<WebVitals>;
+  readonly vitals: Partial<WebVitals>;
 }
 
 const vitalConfig = [
@@ -53,11 +53,7 @@ export function WebVitalsDisplay({
         <CardTitle>Core Web Vitals</CardTitle>
       </CardHeader>
       <CardContent>
-        {!hasVitals ? (
-          <div className={styles.collecting}>
-            Collecting metrics... Navigate the site to gather data.
-          </div>
-        ) : (
+        {hasVitals ? (
           <div className={styles.vitalsGrid}>
             {vitalConfig.map(({ key, label, unit }) => {
               const metric = vitals[key];
@@ -74,6 +70,10 @@ export function WebVitalsDisplay({
                 />
               );
             })}
+          </div>
+        ) : (
+          <div className={styles.collecting}>
+            Collecting metrics... Navigate the site to gather data.
           </div>
         )}
       </CardContent>

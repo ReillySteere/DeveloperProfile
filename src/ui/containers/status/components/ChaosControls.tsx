@@ -4,9 +4,9 @@ import styles from './ChaosControls.module.scss';
 
 interface ChaosControlsProps {
   /** Current chaos flags state */
-  chaosFlags: ChaosFlags;
+  readonly chaosFlags: ChaosFlags;
   /** Callback to toggle a chaos flag */
-  onToggle: (key: keyof ChaosFlags) => void;
+  readonly onToggle: (key: keyof ChaosFlags) => void;
 }
 
 /**

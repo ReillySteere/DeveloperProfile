@@ -9,11 +9,11 @@ import type { WebVitalRating } from 'shared/types';
 import styles from '../performance.module.scss';
 
 interface VitalGaugeProps {
-  name: string;
-  value: number;
-  rating: WebVitalRating;
-  unit: string;
-  thresholds: { good: number; poor: number };
+  readonly name: string;
+  readonly value: number;
+  readonly rating: WebVitalRating;
+  readonly unit: string;
+  readonly thresholds: { good: number; poor: number };
 }
 
 const ratingColors: Record<WebVitalRating, string> = {

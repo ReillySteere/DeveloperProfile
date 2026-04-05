@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from 'ui/shared/components';
 import styles from '../accessibility.module.scss';
 
-function getAnnouncement(el: Element): string {
+export function getAnnouncement(el: Element): string {
   const role = el.getAttribute('role') || el.tagName.toLowerCase();
   const label =
     el.getAttribute('aria-label') ||
@@ -44,23 +44,30 @@ export const ScreenReaderSimulator: React.FC = () => {
           className={styles.demoSection}
           onFocus={handleFocus}
           aria-label="Screen reader demo area"
+          role="region"
+          tabIndex={-1}
         >
           <button className={styles.demoElement} aria-label="Submit form">
             Submit
           </button>
 
-          <a className={styles.demoElement} aria-label="View documentation">
-            Documentation
-          </a>
-
-          <button
-            role="checkbox"
-            aria-checked={checkboxChecked}
-            onClick={() => setCheckboxChecked((prev) => !prev)}
+          <span
+            role="link"
+            tabIndex={0}
             className={styles.demoElement}
+            aria-label="View documentation"
           >
+            Documentation
+          </span>
+
+          <label className={styles.demoElement}>
+            <input
+              type="checkbox"
+              checked={checkboxChecked}
+              onChange={() => setCheckboxChecked((prev) => !prev)}
+            />{' '}
             Accept terms
-          </button>
+          </label>
 
           <button
             aria-expanded={menuExpanded}

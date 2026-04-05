@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-  act,
-  createEvent,
-} from 'ui/test-utils';
+import { render, screen, fireEvent, waitFor, act } from 'ui/test-utils';
 import Experience from './experience.container';
 import ExperienceSection from './components/ExperienceSection';
 import { QueryState } from 'ui/shared/components';
@@ -191,26 +184,9 @@ describe('Experience Container', () => {
     fireEvent.click(dots[1]);
     expect(Element.prototype.scrollIntoView).toHaveBeenCalled();
 
-    // Key press on dot (Enter) - verify preventDefault and scroll
-    const enterEvent = createEvent.keyDown(dots[0], { key: 'Enter' });
-    const spyEnter = jest.spyOn(enterEvent, 'preventDefault');
-    fireEvent(dots[0], enterEvent);
-    expect(spyEnter).toHaveBeenCalled();
+    // Native button handles Enter/Space via click — verify scroll on click
+    fireEvent.click(dots[0]);
     expect(Element.prototype.scrollIntoView).toHaveBeenCalledTimes(2);
-
-    // Key press on dot (Space) - verify preventDefault and scroll
-    const spaceEvent = createEvent.keyDown(dots[0], { key: ' ' });
-    const spySpace = jest.spyOn(spaceEvent, 'preventDefault');
-    fireEvent(dots[0], spaceEvent);
-    expect(spySpace).toHaveBeenCalled();
-    expect(Element.prototype.scrollIntoView).toHaveBeenCalledTimes(3);
-
-    // Key press with unhandled key (e.g. 'a') - verify NO preventDefault and NO scroll
-    const aEvent = createEvent.keyDown(dots[0], { key: 'a' });
-    const spyA = jest.spyOn(aEvent, 'preventDefault');
-    fireEvent(dots[0], aEvent);
-    expect(spyA).not.toHaveBeenCalled();
-    expect(Element.prototype.scrollIntoView).toHaveBeenCalledTimes(3);
   });
 
   it('ExperienceSection handles object refs', () => {

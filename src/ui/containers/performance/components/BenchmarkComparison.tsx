@@ -12,8 +12,8 @@ import { Card, CardHeader, CardTitle, CardContent } from 'ui/shared/components';
 import type { Benchmark, WebVitals } from 'shared/types';
 
 interface BenchmarkComparisonProps {
-  benchmarks: Benchmark[];
-  vitals: Partial<WebVitals>;
+  readonly benchmarks: Benchmark[];
+  readonly vitals: Partial<WebVitals>;
 }
 
 export function BenchmarkComparison({
@@ -54,7 +54,7 @@ export function BenchmarkComparison({
                 }}
                 formatter={(value) => {
                   const val = value as number | null;
-                  return val !== null ? [`${val}ms`] : ['N/A'];
+                  return val === null ? ['N/A'] : [`${val}ms`];
                 }}
               />
               <Legend />

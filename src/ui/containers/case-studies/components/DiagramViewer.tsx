@@ -4,7 +4,7 @@ import { CaseStudyDiagram } from 'shared/types';
 import styles from '../case-studies.module.scss';
 
 interface DiagramViewerProps {
-  diagrams: CaseStudyDiagram[];
+  readonly diagrams: CaseStudyDiagram[];
 }
 
 export function DiagramViewer({ diagrams }: DiagramViewerProps) {
@@ -15,7 +15,10 @@ export function DiagramViewer({ diagrams }: DiagramViewerProps) {
   return (
     <div className={styles.diagramsContainer}>
       {diagrams.map((diagram, index) => (
-        <figure key={index} className={styles.diagramFigure}>
+        <figure
+          key={diagram.caption ?? diagram.content}
+          className={styles.diagramFigure}
+        >
           {diagram.type === 'mermaid' ? (
             <Mermaid chart={diagram.content} />
           ) : (

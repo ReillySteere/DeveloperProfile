@@ -13,8 +13,8 @@ import type { MemoryUsage } from 'shared/types';
 import styles from '../performance.module.scss';
 
 interface MemoryChartProps {
-  samples: MemoryUsage[];
-  isSupported: boolean;
+  readonly samples: MemoryUsage[];
+  readonly isSupported: boolean;
 }
 
 function formatBytes(bytes: number): string {
@@ -68,7 +68,7 @@ export function MemoryChart({
     limit: s.jsHeapSizeLimit / (1024 * 1024),
   }));
 
-  const currentUsed = samples[samples.length - 1];
+  const currentUsed = samples.at(-1)!;
 
   return (
     <Card>
@@ -96,7 +96,7 @@ export function MemoryChart({
               }}
               formatter={(value) => {
                 const val = value as number | null | undefined;
-                return val != null ? [`${val.toFixed(1)} MB`] : ['N/A'];
+                return val == null ? ['N/A'] : [`${val.toFixed(1)} MB`];
               }}
             />
             <ReferenceLine

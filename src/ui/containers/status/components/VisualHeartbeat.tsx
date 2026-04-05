@@ -3,9 +3,9 @@ import styles from './VisualHeartbeat.module.scss';
 
 interface VisualHeartbeatProps {
   /** Current event loop lag in milliseconds */
-  lagMs: number;
+  readonly lagMs: number;
   /** Whether SSE connection is active */
-  isConnected: boolean;
+  readonly isConnected: boolean;
 }
 
 type HealthStatus = 'healthy' | 'warning' | 'critical' | 'disconnected';

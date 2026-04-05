@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './Skeleton.module.scss';
 
-interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
+interface SkeletonProps extends React.HTMLAttributes<HTMLOutputElement> {
   height?: string | number;
 }
 
@@ -11,10 +11,9 @@ export const Skeleton = ({
   ...props
 }: SkeletonProps) => {
   return (
-    <div
+    <output
       data-testid="skeleton"
       className={styles.skeleton}
-      role="status"
       aria-busy="true"
       aria-label={ariaLabel}
       style={{ height }}

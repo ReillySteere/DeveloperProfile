@@ -15,7 +15,7 @@ import { CaseStudyEditor } from './views/CaseStudyEditor';
 import styles from './case-studies.module.scss';
 
 interface PhasesTimelineProps {
-  phases: CaseStudyPhase[];
+  readonly phases: CaseStudyPhase[];
 }
 
 function PhasesTimeline({ phases }: PhasesTimelineProps) {
@@ -41,7 +41,7 @@ function PhasesTimeline({ phases }: PhasesTimelineProps) {
 }
 
 interface MetricsGridProps {
-  metrics: CaseStudyMetric[];
+  readonly metrics: CaseStudyMetric[];
 }
 
 function MetricsGrid({ metrics }: MetricsGridProps) {
@@ -69,9 +69,9 @@ function MetricsGrid({ metrics }: MetricsGridProps) {
 }
 
 interface CaseStudyDetailProps {
-  caseStudy: CaseStudy;
-  isAuthenticated: boolean;
-  onEdit: () => void;
+  readonly caseStudy: CaseStudy;
+  readonly isAuthenticated: boolean;
+  readonly onEdit: () => void;
 }
 
 function CaseStudyDetail({
@@ -120,8 +120,8 @@ function CaseStudyDetail({
           <>
             <h3>Key Challenges</h3>
             <ul className={styles.challengesList}>
-              {caseStudy.challenges.map((challenge, i) => (
-                <li key={i} className={styles.challengeItem}>
+              {caseStudy.challenges.map((challenge) => (
+                <li key={challenge} className={styles.challengeItem}>
                   {challenge}
                 </li>
               ))}
@@ -147,8 +147,8 @@ function CaseStudyDetail({
           <>
             <h3>Key Decisions</h3>
             <ul className={styles.decisionsList}>
-              {caseStudy.keyDecisions.map((decision, i) => (
-                <li key={i} className={styles.decisionItem}>
+              {caseStudy.keyDecisions.map((decision) => (
+                <li key={decision} className={styles.decisionItem}>
                   {decision}
                 </li>
               ))}
@@ -188,8 +188,8 @@ function CaseStudyDetail({
           <>
             <h3>Key Learnings</h3>
             <ul className={styles.learningsList}>
-              {caseStudy.learnings.map((learning, i) => (
-                <li key={i} className={styles.learningItem}>
+              {caseStudy.learnings.map((learning) => (
+                <li key={learning} className={styles.learningItem}>
                   {learning}
                 </li>
               ))}

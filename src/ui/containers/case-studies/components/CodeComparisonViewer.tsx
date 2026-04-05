@@ -13,7 +13,7 @@ SyntaxHighlighter.registerLanguage('bash', bash);
 SyntaxHighlighter.registerLanguage('json', json);
 
 interface CodeComparisonViewerProps {
-  comparisons: CodeComparison[];
+  readonly comparisons: CodeComparison[];
 }
 
 export function CodeComparisonViewer({
@@ -25,8 +25,8 @@ export function CodeComparisonViewer({
 
   return (
     <div className={styles.codeComparisonsContainer}>
-      {comparisons.map((comparison, index) => (
-        <div key={index} className={styles.codeComparison}>
+      {comparisons.map((comparison) => (
+        <div key={comparison.title} className={styles.codeComparison}>
           <h4 className={styles.comparisonTitle}>{comparison.title}</h4>
           {comparison.description && (
             <p className={styles.comparisonDescription}>

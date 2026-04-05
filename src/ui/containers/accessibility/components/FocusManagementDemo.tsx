@@ -5,7 +5,7 @@ import styles from '../accessibility.module.scss';
 export const FocusManagementDemo: React.FC = () => {
   // Focus trap state
   const [trapActive, setTrapActive] = useState(false);
-  const trapRef = useRef<HTMLDivElement>(null);
+  const trapRef = useRef<HTMLDialogElement>(null);
 
   // Focus restoration state
   const [panelOpen, setPanelOpen] = useState(false);
@@ -34,11 +34,9 @@ export const FocusManagementDemo: React.FC = () => {
           e.preventDefault();
           last.focus();
         }
-      } else {
-        if (document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
+      } else if (document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
       }
     };
 
@@ -91,10 +89,10 @@ export const FocusManagementDemo: React.FC = () => {
             {trapActive ? 'Deactivate Trap' : 'Activate Trap'}
           </button>
           {trapActive && (
-            <div
+            <dialog
               ref={trapRef}
               className={styles.focusTrap}
-              role="dialog"
+              open
               aria-label="Focus trap demo"
             >
               <button className={styles.demoElement}>First</button>
@@ -106,7 +104,7 @@ export const FocusManagementDemo: React.FC = () => {
               >
                 Close Trap
               </button>
-            </div>
+            </dialog>
           )}
         </section>
 
@@ -124,9 +122,9 @@ export const FocusManagementDemo: React.FC = () => {
             Open Panel
           </button>
           {panelOpen && (
-            <div
+            <dialog
               className={styles.restorationPanel}
-              role="dialog"
+              open
               aria-label="Focus restoration demo"
             >
               <p>Panel content with focus restoration.</p>
@@ -137,7 +135,7 @@ export const FocusManagementDemo: React.FC = () => {
               >
                 Close Panel
               </button>
-            </div>
+            </dialog>
           )}
         </section>
       </CardContent>

@@ -5,9 +5,9 @@ import type { BundleModule } from 'shared/types';
 import styles from '../performance.module.scss';
 
 interface BundleSizeTreemapProps {
-  modules: BundleModule[];
-  totalSize: number;
-  gzippedSize: number;
+  readonly modules: BundleModule[];
+  readonly totalSize: number;
+  readonly gzippedSize: number;
 }
 
 function formatSize(bytes: number): string {
@@ -28,12 +28,12 @@ const COLORS = [
 ];
 
 interface TreemapContentProps {
-  x?: number;
-  y?: number;
-  width?: number;
-  height?: number;
-  name?: string;
-  index?: number;
+  readonly x?: number;
+  readonly y?: number;
+  readonly width?: number;
+  readonly height?: number;
+  readonly name?: string;
+  readonly index?: number;
 }
 
 function CustomContent({

@@ -3,9 +3,9 @@ import styles from './LatencyChain.module.scss';
 
 interface LatencyChainProps {
   /** Server-side latency (event loop lag) in milliseconds */
-  serverLatency: number;
+  readonly serverLatency: number;
   /** Database query latency in milliseconds */
-  dbLatency: number;
+  readonly dbLatency: number;
 }
 
 type HealthLevel = 'good' | 'warning' | 'critical';

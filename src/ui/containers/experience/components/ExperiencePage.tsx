@@ -64,21 +64,14 @@ const ExperiencePage: React.FC = () => {
           </main>
 
           <div className={styles.progressDots}>
-            {data.map((_, idx) => (
-              <div
-                key={idx}
+            {data.map((entry, idx) => (
+              <button
+                key={entry.id}
                 className={`${styles.dot} ${currentIndex === idx ? styles.active : ''}`}
                 onClick={() => scrollToSection(idx)}
-                role="button"
-                tabIndex={0}
                 aria-label={`Go to section ${idx + 1}`}
                 aria-current={currentIndex === idx ? 'true' : undefined}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    scrollToSection(idx);
-                  }
-                }}
+                type="button"
               />
             ))}
           </div>

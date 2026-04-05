@@ -17,13 +17,7 @@ const TraceRow = ({ trace, onClick }: TraceRowProps) => {
   const handleClick = () => onClick?.(trace.traceId);
 
   return (
-    <div
-      className={styles.traceRow}
-      onClick={handleClick}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => e.key === 'Enter' && handleClick()}
-    >
+    <button className={styles.traceRow} onClick={handleClick} type="button">
       <span className={`${styles.method} ${styles[methodClass]}`}>
         {trace.method}
       </span>
@@ -39,7 +33,7 @@ const TraceRow = ({ trace, onClick }: TraceRowProps) => {
       <span className={styles.timestamp}>
         {formatTimestamp(trace.timestamp)}
       </span>
-    </div>
+    </button>
   );
 };
 
