@@ -101,24 +101,24 @@ export class ArchitectureService implements IArchitectureService {
     const slug = filename.replace('.md', '');
 
     // Extract ADR number from filename (ADR-001-...)
-    const numberMatch = filename.match(/ADR-(\d+)/);
+    const numberMatch = /ADR-(\d+)/.exec(filename);
     const number = numberMatch ? parseInt(numberMatch[1], 10) : 0;
 
     // Extract title from first heading
-    const titleMatch = content.match(/^#\s+(.+)$/m);
+    const titleMatch = /^#\s+(.+)$/m.exec(content);
     const title = titleMatch ? titleMatch[1] : slug;
 
     // Extract status
-    const statusMatch = content.match(/##\s+Status\s*\n+([^\n]+)/i);
+    const statusMatch = /##\s+Status\s*\n+([^\n]+)/i.exec(content);
     const statusLine = statusMatch ? statusMatch[1] : 'Proposed';
     const status = this.parseStatus(statusLine);
 
     // Extract date from status line
-    const dateMatch = statusLine.match(/(\w{3,9}\s+\d{1,2}\s*[/,]\s*\d{4})/);
+    const dateMatch = /(\w{3,9}\s+\d{1,2}\s*[/,]\s*\d{4})/.exec(statusLine);
     const date = dateMatch ? dateMatch[1] : '';
 
     // Extract summary from Context section (first paragraph after ## Context)
-    const contextMatch = content.match(/##\s+Context\s*\n+([^\n#]+)/i);
+    const contextMatch = /##\s+Context\s*\n+([^\n#]+)/i.exec(content);
     const summary = contextMatch
       ? contextMatch[1].trim().substring(0, 200)
       : 'Architectural decision record';
@@ -159,7 +159,7 @@ export class ArchitectureService implements IArchitectureService {
             'utf-8',
           );
           // Extract first paragraph as summary
-          const summaryMatch = content.match(/^#[^#\n]+\n+([^\n#]+)/);
+          const summaryMatch = /^#[^#\n]+\n+([^\n#]+)/.exec(content);
           const summary = summaryMatch
             ? summaryMatch[1].trim()
             : 'Component documentation';
@@ -180,7 +180,7 @@ export class ArchitectureService implements IArchitectureService {
         'utf-8',
       );
       // Extract first paragraph as summary
-      const summaryMatch = content.match(/^#[^#\n]+\n+([^\n#]+)/);
+      const summaryMatch = /^#[^#\n]+\n+([^\n#]+)/.exec(content);
       const summary = summaryMatch
         ? summaryMatch[1].trim()
         : 'Component documentation';

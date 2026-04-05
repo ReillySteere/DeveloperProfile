@@ -32,8 +32,12 @@ if (typeof global.BroadcastChannel === 'undefined') {
     constructor(name: string) {
       this.name = name;
     }
-    postMessage() {}
-    close() {}
+    postMessage() {
+      // No cross-context messaging needed in single-process test environment
+    }
+    close() {
+      // No resources to release in test polyfill
+    }
   }
   Object.assign(global, { BroadcastChannel });
 }

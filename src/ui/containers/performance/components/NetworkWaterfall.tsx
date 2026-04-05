@@ -6,8 +6,9 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  Cell,
+  Rectangle,
 } from 'recharts';
+import type { BarShapeProps } from 'recharts';
 import { Card, CardHeader, CardTitle, CardContent } from 'ui/shared/components';
 import type { ResourceTiming } from 'shared/types';
 import styles from '../performance.module.scss';
@@ -26,6 +27,13 @@ const typeColors: Record<string, string> = {
   font: '#06b6d4',
   other: '#94a3b8',
 };
+
+function ResourceBar(props: BarShapeProps): React.ReactElement {
+  const type = (props.payload as { type?: string })?.type;
+  return (
+    <Rectangle {...props} fill={typeColors[type ?? ''] || typeColors.other} />
+  );
+}
 
 export function NetworkWaterfall({
   resources,
@@ -104,14 +112,7 @@ export function NetworkWaterfall({
                 String(name) === 'duration' ? 'Duration' : 'Start',
               ]}
             />
-            <Bar dataKey="duration" radius={[0, 4, 4, 0]}>
-              {chartData.map((entry, index) => (
-                <Cell
-                  key={index}
-                  fill={typeColors[entry.type] || typeColors.other}
-                />
-              ))}
-            </Bar>
+            <Bar dataKey="duration" radius={[0, 4, 4, 0]} shape={ResourceBar} />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>

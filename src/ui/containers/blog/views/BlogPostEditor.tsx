@@ -56,7 +56,7 @@ export const BlogPostEditor: React.FC<BlogPostEditorProps> = ({
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     // Explicitly construct payload to exclude id, publishedAt, createdAt, updatedAt

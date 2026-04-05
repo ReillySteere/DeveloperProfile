@@ -238,7 +238,7 @@ describe('Experience Container', () => {
 
     // Case 1: Intersecting valid index 1
     act(() => {
-      callback([{ isIntersecting: true, target: { getAttribute: () => '1' } }]);
+      callback([{ isIntersecting: true, target: { dataset: { index: '1' } } }]);
     });
     const dots = screen.getAllByRole('button', { name: /Go to section/i });
     expect(dots[1]).toHaveAttribute('aria-current', 'true');
@@ -246,7 +246,7 @@ describe('Experience Container', () => {
     // Case 2: Not intersecting (should do nothing) -- covers 'if (entry.isIntersecting)' else
     act(() => {
       callback([
-        { isIntersecting: false, target: { getAttribute: () => '0' } },
+        { isIntersecting: false, target: { dataset: { index: '0' } } },
       ]);
     });
     // State should still be 1 (from previous step) or at least not crash
@@ -255,7 +255,7 @@ describe('Experience Container', () => {
     // Case 3: Intersecting but NaN index -- covers 'if (!isNaN(idx))' else
     act(() => {
       callback([
-        { isIntersecting: true, target: { getAttribute: () => 'nan' } },
+        { isIntersecting: true, target: { dataset: { index: 'nan' } } },
       ]);
     });
     // State should not change
@@ -264,8 +264,8 @@ describe('Experience Container', () => {
     // Case 4: Mixed entries
     act(() => {
       callback([
-        { isIntersecting: false, target: { getAttribute: () => '1' } }, // ignored
-        { isIntersecting: true, target: { getAttribute: () => '0' } }, // applied
+        { isIntersecting: false, target: { dataset: { index: '1' } } }, // ignored
+        { isIntersecting: true, target: { dataset: { index: '0' } } }, // applied
       ]);
     });
     expect(dots[0]).toHaveAttribute('aria-current', 'true');

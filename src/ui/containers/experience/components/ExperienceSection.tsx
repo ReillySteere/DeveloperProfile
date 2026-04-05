@@ -27,7 +27,7 @@ const ExperienceSection = forwardRef<HTMLElement, ExperienceSectionProps>(
     const setRefs = (el: HTMLElement) => {
       inViewRef(el);
       if (typeof ref === 'function') ref(el);
-      else if (ref) (ref as React.MutableRefObject<HTMLElement>).current = el;
+      else if (ref) (ref as React.RefObject<HTMLElement>).current = el;
     };
 
     const formatDate = (dateStr: string | null) => {

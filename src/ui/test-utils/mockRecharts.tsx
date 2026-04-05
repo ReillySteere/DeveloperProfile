@@ -25,7 +25,7 @@ type TooltipFormatterFn = (
   props?: unknown,
 ) => [string, string] | string;
 
-interface MockTooltipProps extends MockComponentProps {
+interface MockTooltipProps {
   formatter?: TooltipFormatterFn;
   labelFormatter?: (label: unknown) => string;
 }
@@ -46,8 +46,8 @@ function createMockComponent(
 /**
  * Create a mock component that renders nothing (for elements like Line, Bar).
  */
-function createMockElement(name: string): React.FC<MockComponentProps> {
-  const MockElement: React.FC<MockComponentProps> = () => (
+function createMockElement(name: string): React.FC<Record<string, unknown>> {
+  const MockElement: React.FC = () => (
     <div data-testid={`recharts-${name.toLowerCase()}`} />
   );
   MockElement.displayName = `Mock${name}`;
@@ -92,7 +92,19 @@ export const mockRecharts = {
 
   // Chart elements
   Line: createMockElement('Line'),
-  Bar: createMockElement('Bar'),
+  Bar: ({
+    shape,
+  }: MockComponentProps & { shape?: (props: unknown) => React.ReactNode }) => {
+    // Execute shape prop with test payloads to ensure coverage
+    const shapeOutput = shape ? (
+      <>
+        {shape({ payload: { type: 'script' } })}
+        {shape({ payload: { type: 'unknown-type' } })}
+        {shape({ payload: {} })}
+      </>
+    ) : null;
+    return <div data-testid="recharts-bar">{shapeOutput}</div>;
+  },
   Area: createMockElement('Area'),
   Pie: createMockElement('Pie'),
 
@@ -155,6 +167,7 @@ export const mockRecharts = {
 
   // Shapes
   Cell: createMockElement('Cell'),
+  Rectangle: createMockElement('Rectangle'),
 
   // Radar
   Radar: createMockElement('Radar'),

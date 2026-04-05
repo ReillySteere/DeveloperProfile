@@ -155,7 +155,7 @@ export const CaseStudyEditor: React.FC<CaseStudyEditorProps> = ({
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Filter out empty items
     const payload: Partial<CaseStudy> = {

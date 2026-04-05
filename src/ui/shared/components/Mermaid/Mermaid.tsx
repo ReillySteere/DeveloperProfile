@@ -20,7 +20,7 @@ export const Mermaid: React.FC<MermaidProps> = ({ chart }) => {
 
   useEffect(() => {
     if (chart) {
-      const id = `mermaid-${Math.random().toString(36).substr(2, 9)}`;
+      const id = `mermaid-${Math.random().toString(36).slice(2, 11)}`;
       mermaid.render(id, chart).then(({ svg }) => {
         setSvg(svg);
       });

@@ -43,19 +43,71 @@ jest.mock('react-markdown', () => {
       );
     }
 
-    // Parse code blocks: ```lang\ncontent\n```
-    const codeMatch = content.match(/```(\w+)\n([\s\S]*?)\n```/);
-    if (codeMatch && props.components?.code) {
-      const [, lang, code] = codeMatch;
+    // Simulate anchor without href: <a>text</a>
+    const bareAnchorMatch = content.match(/<a>([^<]+)<\/a>/);
+    if (bareAnchorMatch && props.components?.a) {
+      const AnchorComponent = props.components.a;
+      return React.createElement(
+        'div',
+        { 'data-testid': 'markdown' },
+        React.createElement(AnchorComponent, {}, bareAnchorMatch[1]),
+      );
+    }
+
+    // Parse empty code blocks: ```!!empty lang\n```
+    const emptyCodeMatch = content.match(/```!!empty (\w*)\n```/);
+    if (emptyCodeMatch && props.components?.code) {
+      const [, lang] = emptyCodeMatch;
       const CodeComponent = props.components.code;
+      const codeProps = lang ? { className: `language-${lang}` } : {};
+      return React.createElement(
+        'div',
+        { 'data-testid': 'markdown' },
+        React.createElement(CodeComponent, codeProps, undefined),
+      );
+    }
+
+    // Parse code blocks with object children: ```!!object lang\n```
+    const objectCodeMatch = content.match(/```!!object (\w*)\n```/);
+    if (objectCodeMatch && props.components?.code) {
+      const [, lang] = objectCodeMatch;
+      const CodeComponent = props.components.code;
+      const codeProps = lang ? { className: `language-${lang}` } : {};
       return React.createElement(
         'div',
         { 'data-testid': 'markdown' },
         React.createElement(
           CodeComponent,
-          { className: `language-${lang}` },
-          code,
+          codeProps,
+          React.createElement('span', null, 'nested'),
         ),
+      );
+    }
+
+    // Parse code blocks with array children: ```!!array lang\ncontent\n```
+    const arrayCodeMatch = content.match(/```!!array (\w*)\n([\s\S]*?)\n```/);
+    if (arrayCodeMatch && props.components?.code) {
+      const [, lang, code] = arrayCodeMatch;
+      const CodeComponent = props.components.code;
+      const codeProps = lang ? { className: `language-${lang}` } : {};
+      const parts = code.split('|');
+      return React.createElement(
+        'div',
+        { 'data-testid': 'markdown' },
+        React.createElement(CodeComponent, codeProps, ...parts),
+      );
+    }
+
+    // Parse code blocks: ```lang\ncontent\n``` or ```\ncontent\n```
+    const codeMatch = content.match(/```(\w*)\n([\s\S]*?)\n```/);
+    if (codeMatch && props.components?.code) {
+      const [, lang, code] = codeMatch;
+      const CodeComponent = props.components.code;
+      const codeProps = lang ? { className: `language-${lang}` } : {};
+      return React.createElement(
+        'div',
+        { 'data-testid': 'markdown' },
+        React.createElement(CodeComponent, codeProps, code),
       );
     }
 
@@ -232,6 +284,14 @@ describe('MarkdownContent', () => {
       expect(link).toHaveAttribute('href', '/blog');
       expect(link).not.toHaveAttribute('target');
     });
+
+    it('renders anchor without href as plain link', () => {
+      render(<MarkdownContent content="<a>No href</a>" />);
+
+      const link = screen.getByText('No href');
+      expect(link.tagName).toBe('A');
+      expect(link).not.toHaveAttribute('href');
+    });
   });
 
   describe('code rendering', () => {
@@ -258,6 +318,60 @@ const x = 1;
       );
 
       expect(screen.getByTestId('syntax-highlighter')).toBeInTheDocument();
+    });
+
+    it('handles undefined children in code blocks', () => {
+      render(
+        <MarkdownContent
+          content={`\`\`\`!!empty typescript
+\`\`\``}
+        />,
+      );
+
+      const highlighter = screen.getByTestId('syntax-highlighter');
+      expect(highlighter).toHaveTextContent('');
+    });
+
+    it('handles object children in code blocks without [object Object]', () => {
+      render(
+        <MarkdownContent
+          content={`\`\`\`!!object typescript
+\`\`\``}
+        />,
+      );
+
+      const highlighter = screen.getByTestId('syntax-highlighter');
+      expect(highlighter).not.toHaveTextContent('[object Object]');
+      expect(highlighter).toHaveTextContent('');
+    });
+
+    it('handles array children in code blocks', () => {
+      render(
+        <MarkdownContent
+          content={`\`\`\`!!array typescript
+const x = 1;|const y = 2;
+\`\`\``}
+        />,
+      );
+
+      const highlighter = screen.getByTestId('syntax-highlighter');
+      expect(highlighter).toHaveTextContent('const x = 1;const y = 2;');
+    });
+
+    it('renders plain code block without language', () => {
+      render(
+        <MarkdownContent
+          content={`\`\`\`
+plain code
+\`\`\``}
+        />,
+      );
+
+      expect(screen.getByText('plain code')).toBeInTheDocument();
+      expect(
+        screen.queryByTestId('syntax-highlighter'),
+      ).not.toBeInTheDocument();
+      expect(screen.queryByTestId('mermaid')).not.toBeInTheDocument();
     });
   });
 

@@ -48,7 +48,7 @@ export const MockReactMarkdown: React.FC<ReactMarkdownProps> = ({
   // This allows tests to verify custom link/code handlers work
   if (components?.a && children?.includes('[')) {
     // Simple detection of markdown links for testing custom anchor components
-    const linkMatch = children.match(/\[([^\]]+)\]\(([^)]+)\)/);
+    const linkMatch = /\[([^\]]+)\]\(([^)]+)\)/.exec(children);
     if (linkMatch) {
       const CustomAnchor = components.a;
       return (
