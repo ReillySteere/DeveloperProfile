@@ -89,11 +89,8 @@ export function TimingWaterfall({
         }}
         onMouseEnter={() => setHoveredPhase(phase.key)}
         onMouseLeave={() => setHoveredPhase(null)}
-        tabIndex={0}
         role="img"
-        aria-label={phase.key}
-        onFocus={() => setHoveredPhase(phase.key)}
-        onBlur={() => setHoveredPhase(null)}
+        aria-label={`${phase.key}: ${Math.round(phase.percentage)}%`}
       >
         {showLabel && (
           <span className={styles.segmentLabel}>

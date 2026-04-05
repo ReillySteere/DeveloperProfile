@@ -40,25 +40,23 @@ export const ScreenReaderSimulator: React.FC = () => {
           Focus each element below to see how a screen reader would announce it.
         </p>
 
-        <div
+        <section
           className={styles.demoSection}
           onFocus={handleFocus}
           aria-label="Screen reader demo area"
-          role="region"
-          tabIndex={-1}
         >
           <button className={styles.demoElement} aria-label="Submit form">
             Submit
           </button>
 
-          <span
-            role="link"
-            tabIndex={0}
+          <a
+            href="#demo"
+            onClick={(e) => e.preventDefault()}
             className={styles.demoElement}
             aria-label="View documentation"
           >
             Documentation
-          </span>
+          </a>
 
           <label className={styles.demoElement}>
             <input
@@ -87,7 +85,7 @@ export const ScreenReaderSimulator: React.FC = () => {
           >
             Delete (disabled)
           </button>
-        </div>
+        </section>
 
         <div
           className={styles.announcementArea}

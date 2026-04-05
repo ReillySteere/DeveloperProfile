@@ -50,20 +50,16 @@ export const SignInModal: React.FC = () => {
   };
 
   const modalContent = (
-    <div
-      className={styles.overlay}
-      onClick={closeLoginModal}
-      onKeyDown={(e) => e.key === 'Escape' && closeLoginModal()}
-      role="presentation"
-      tabIndex={-1}
+    <dialog
+      className={`${styles.overlay} ${styles.modal}`}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) closeLoginModal();
+      }}
+      open
+      aria-labelledby="signin-title"
       data-testid="signin-overlay"
     >
-      <dialog
-        className={styles.modal}
-        onClick={(e) => e.stopPropagation()}
-        open
-        aria-labelledby="signin-title"
-      >
+      <div className={styles.modalInner}>
         <div className={styles.header}>
           <h2 id="signin-title" className={styles.title}>
             Sign In
@@ -126,8 +122,8 @@ export const SignInModal: React.FC = () => {
             </Button>
           </div>
         </form>
-      </dialog>
-    </div>
+      </div>
+    </dialog>
   );
 
   return ReactDOM.createPortal(modalContent, document.body);

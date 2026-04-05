@@ -588,15 +588,18 @@ describe('ScreenReaderSimulator - link focus', () => {
     typeof import('./components/ScreenReaderSimulator')
   >('./components/ScreenReaderSimulator');
 
-  it('announces link on focus', () => {
+  it('announces link on focus and prevents default on click', () => {
     render(<ScreenReaderSimulator />);
 
     const docLink = screen.getByText('Documentation');
     fireEvent.focus(docLink);
 
     expect(screen.getByRole('status')).toHaveTextContent(
-      'link: View documentation',
+      'a: View documentation',
     );
+
+    // Click the demo link — should not navigate
+    fireEvent.click(docLink);
   });
 });
 

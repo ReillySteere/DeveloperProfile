@@ -209,7 +209,10 @@ export const CaseStudyEditor: React.FC<CaseStudyEditorProps> = ({
       <legend>Implementation Phases</legend>
       <div className={styles.arrayField}>
         {formData.phases.map((phase, index) => (
-          <div key={`phase-${index}`} className={styles.phaseItem}>
+          <div
+            key={phase.name || `phase-${index}`}
+            className={styles.phaseItem}
+          >
             <div className={styles.phaseFields}>
               <input
                 type="text"
@@ -259,7 +262,10 @@ export const CaseStudyEditor: React.FC<CaseStudyEditorProps> = ({
       <legend>Impact Metrics</legend>
       <div className={styles.arrayField}>
         {formData.metrics.map((metric, index) => (
-          <div key={`metric-${index}`} className={styles.metricItem}>
+          <div
+            key={metric.label || `metric-${index}`}
+            className={styles.metricItem}
+          >
             <div className={styles.metricFields}>
               <input
                 type="text"
@@ -357,8 +363,8 @@ export const CaseStudyEditor: React.FC<CaseStudyEditorProps> = ({
               <>
                 <h4>Challenges</h4>
                 <ul>
-                  {formData.challenges.map((c, i) => (
-                    <li key={`preview-challenge-${i}`}>{c}</li>
+                  {formData.challenges.map((c) => (
+                    <li key={c}>{c}</li>
                   ))}
                 </ul>
               </>

@@ -115,8 +115,6 @@ export const DependencyGraph = ({ graph, title }: DependencyGraphProps) => {
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
         style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
-        role="application"
-        tabIndex={0}
       >
         <div
           className={styles.graphContent}
