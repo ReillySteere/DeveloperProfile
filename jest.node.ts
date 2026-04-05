@@ -29,7 +29,8 @@ module.exports = {
     '!**/dist/**',
     '!**/events.ts', // EDA - Not all events will be used, but we want to keep them defined
   ],
-  coverageReporters: ['html', 'text', 'text-summary', 'cobertura'],
+  coverageDirectory: 'coverage/server',
+  coverageReporters: ['html', 'text', 'text-summary', 'cobertura', 'lcov'],
   coverageThreshold: {
     global: {
       statements: 100,

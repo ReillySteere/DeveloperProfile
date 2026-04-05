@@ -64,12 +64,13 @@ jobs:
         run: npm run verify:migrations
 
   unit-tests:
-    name: Unit Tests
+    name: Unit Tests & SonarCloud
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: ⬇️ Checkout Repo
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: ⎔ Setup Node.js
         uses: actions/setup-node@v6
@@ -92,6 +93,11 @@ jobs:
         run: npm run test:ui
         env:
           CI: true
+
+      - name: SonarCloud Scan
+        run: npx @sonar/scan -Dsonar.region=us
+        env:
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
 
   e2e-tests:
     name: E2E Tests
