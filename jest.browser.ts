@@ -42,7 +42,8 @@ module.exports = {
     '!**/node_modules/**',
     '!**/dist/**',
   ],
-  coverageReporters: ['html', 'text', 'text-summary', 'cobertura'],
+  coverageDirectory: 'coverage/ui',
+  coverageReporters: ['html', 'text', 'text-summary', 'cobertura', 'lcov'],
   coverageThreshold: {
     global: {
       statements: 100,
