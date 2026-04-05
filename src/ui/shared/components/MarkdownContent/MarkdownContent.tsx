@@ -77,11 +77,8 @@ export const MarkdownContent: React.FC<MarkdownContentProps> = ({
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           a({ href, children, node, ref, ...props }) {
-            // Filter out ReactMarkdown-specific props that are incompatible with Link
-            void node;
-            void ref;
-
             if (!href) {
               return <a {...props}>{children}</a>;
             }
@@ -149,9 +146,12 @@ export const MarkdownContent: React.FC<MarkdownContentProps> = ({
           code({ className, children, ...props }) {
             const match = /language-(\w+)/.exec(className || '');
             const language = match ? match[1] : '';
+            const codeString = String(
+              Array.isArray(children) ? children.join('') : (children ?? ''),
+            ).replace(/\n$/, '');
 
             if (language === 'mermaid') {
-              return <Mermaid chart={String(children).replace(/\n$/, '')} />;
+              return <Mermaid chart={codeString} />;
             }
 
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -166,7 +166,7 @@ export const MarkdownContent: React.FC<MarkdownContentProps> = ({
                 PreTag="div"
                 {...rest}
               >
-                {String(children).replace(/\n$/, '')}
+                {codeString}
               </SyntaxHighlighter>
             ) : (
               <code className={className} {...props}>

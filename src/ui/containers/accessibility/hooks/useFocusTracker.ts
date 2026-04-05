@@ -35,29 +35,29 @@ export function useFocusTracker() {
     orderRef.current = 0;
   }, []);
 
+  const handleFocusIn = useCallback((e: FocusEvent) => {
+    const target = e.target as Element;
+    orderRef.current += 1;
+    const entry: FocusableElement = {
+      tagName: target.tagName.toLowerCase(),
+      role: target.getAttribute('role'),
+      label: getElementLabel(target),
+      order: orderRef.current,
+      isCurrent: true,
+    };
+    setCurrentFocus(entry);
+    setFocusHistory((prev) => [
+      ...prev.map((item) => ({ ...item, isCurrent: false })),
+      entry,
+    ]);
+  }, []);
+
   useEffect(() => {
     if (!isTracking) return;
 
-    const handleFocusIn = (e: FocusEvent) => {
-      const target = e.target as Element;
-      orderRef.current += 1;
-      const entry: FocusableElement = {
-        tagName: target.tagName.toLowerCase(),
-        role: target.getAttribute('role'),
-        label: getElementLabel(target),
-        order: orderRef.current,
-        isCurrent: true,
-      };
-      setCurrentFocus(entry);
-      setFocusHistory((prev) => [
-        ...prev.map((item) => ({ ...item, isCurrent: false })),
-        entry,
-      ]);
-    };
-
     document.addEventListener('focusin', handleFocusIn);
     return () => document.removeEventListener('focusin', handleFocusIn);
-  }, [isTracking]);
+  }, [isTracking, handleFocusIn]);
 
   return {
     isTracking,

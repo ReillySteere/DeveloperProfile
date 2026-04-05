@@ -18,7 +18,7 @@ const ExperiencePage: React.FC = () => {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            const idx = Number(entry.target.getAttribute('data-index'));
+            const idx = Number((entry.target as HTMLElement).dataset.index);
             if (!isNaN(idx)) setCurrentIndex(idx);
           }
         });

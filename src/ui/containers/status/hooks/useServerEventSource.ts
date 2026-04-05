@@ -121,7 +121,7 @@ export function useServerEventSource({
 
   return {
     data,
-    latestSnapshot: data[data.length - 1] ?? null,
+    latestSnapshot: data.at(-1) ?? null,
     connectionState,
     reconnect,
     disconnect,

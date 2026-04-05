@@ -46,48 +46,57 @@ export class AppLoggerService implements LoggerService {
   }
 
   private printLog(level: LogLevel, message: string, params: unknown[]): void {
-    const isProduction = process.env.NODE_ENV === 'production';
     const timestamp = new Date().toISOString();
 
-    if (isProduction) {
-      // JSON format for production (parseable by log aggregators like ELK, Datadog)
-      const logEntry: Record<string, unknown> = {
-        timestamp,
-        level,
-        message,
-      };
-
-      if (this.context) {
-        logEntry.context = this.context;
-      }
-
-      if (params.length > 0) {
-        // If first param is an object, spread it; otherwise use meta array
-        if (typeof params[0] === 'object' && params[0] !== null) {
-          Object.assign(logEntry, params[0]);
-        } else {
-          logEntry.meta = params;
-        }
-      }
-
-      // Use appropriate console method for level
-      const consoleMethod = level === 'error' ? console.error : console.log;
-      consoleMethod(JSON.stringify(logEntry));
+    if (process.env.NODE_ENV === 'production') {
+      this.printJsonLog(level, message, params, timestamp);
     } else {
-      // Human-readable for development
-      const contextStr = this.context ? `[${this.context}] ` : '';
-      const levelColor = this.getLevelColor(level);
-      const levelStr = `${levelColor}${level.toUpperCase().padEnd(7)}${this.getResetColor()}`;
-
-      if (params.length > 0) {
-        console.log(
-          `${timestamp} ${levelStr} ${contextStr}${message}`,
-          ...params,
-        );
-      } else {
-        console.log(`${timestamp} ${levelStr} ${contextStr}${message}`);
-      }
+      this.printDevLog(level, message, params, timestamp);
     }
+  }
+
+  private printJsonLog(
+    level: LogLevel,
+    message: string,
+    params: unknown[],
+    timestamp: string,
+  ): void {
+    const logEntry: Record<string, unknown> = {
+      timestamp,
+      level,
+      message,
+      ...(this.context ? { context: this.context } : {}),
+      ...this.formatParams(params),
+    };
+
+    const consoleMethod = level === 'error' ? console.error : console.log;
+    consoleMethod(JSON.stringify(logEntry));
+  }
+
+  private printDevLog(
+    level: LogLevel,
+    message: string,
+    params: unknown[],
+    timestamp: string,
+  ): void {
+    const contextStr = this.context ? `[${this.context}] ` : '';
+    const levelColor = this.getLevelColor(level);
+    const levelStr = `${levelColor}${level.toUpperCase().padEnd(7)}${this.getResetColor()}`;
+    const prefix = `${timestamp} ${levelStr} ${contextStr}${message}`;
+
+    if (params.length > 0) {
+      console.log(prefix, ...params);
+    } else {
+      console.log(prefix);
+    }
+  }
+
+  private formatParams(params: unknown[]): Record<string, unknown> {
+    if (params.length === 0) return {};
+    if (typeof params[0] === 'object' && params[0] !== null) {
+      return params[0] as Record<string, unknown>;
+    }
+    return { meta: params };
   }
 
   private getLevelColor(level: LogLevel): string {
