@@ -29,16 +29,10 @@ export function TraceFilters({
     const filters: TraceFiltersType = {
       method: method || undefined,
       path: path || undefined,
-      statusCode: statusCode
-        ? Number.Number.parseInt(statusCode, 10)
-        : undefined,
-      minDuration: minDuration
-        ? Number.Number.parseFloat(minDuration)
-        : undefined,
-      maxDuration: maxDuration
-        ? Number.Number.parseFloat(maxDuration)
-        : undefined,
-      limit: Number.Number.parseInt(limit, 10),
+      statusCode: statusCode ? Number.parseInt(statusCode, 10) : undefined,
+      minDuration: minDuration ? Number.parseFloat(minDuration) : undefined,
+      maxDuration: maxDuration ? Number.parseFloat(maxDuration) : undefined,
+      limit: Number.parseInt(limit, 10),
     };
     onFiltersChange(filters);
   }, [
