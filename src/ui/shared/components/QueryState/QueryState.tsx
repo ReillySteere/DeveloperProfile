@@ -4,16 +4,16 @@ import { Button } from '../Button/Button';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 
 interface QueryStateProps<T> {
-  isLoading: boolean;
-  isError: boolean;
-  data?: T;
-  error?: Error | null;
-  refetch?: () => void;
-  loadingComponent?: React.ReactNode;
-  emptyComponent?: React.ReactNode;
-  errorComponent?: React.ReactNode;
-  children: (data: T) => React.ReactNode;
-  isEmpty?: (data: T) => boolean;
+  readonly isLoading: boolean;
+  readonly isError: boolean;
+  readonly data?: T;
+  readonly error?: Error | null;
+  readonly refetch?: () => void;
+  readonly loadingComponent?: React.ReactNode;
+  readonly emptyComponent?: React.ReactNode;
+  readonly errorComponent?: React.ReactNode;
+  readonly children: (data: T) => React.ReactNode;
+  readonly isEmpty?: (data: T) => boolean;
 }
 
 export function QueryState<T>({

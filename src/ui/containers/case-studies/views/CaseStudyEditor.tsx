@@ -10,6 +10,7 @@ interface CaseStudyEditorProps {
 }
 
 type FormData = Omit<CaseStudy, 'id' | 'project'>;
+type StringArrayField = 'challenges' | 'keyDecisions' | 'learnings';
 
 export const CaseStudyEditor: React.FC<CaseStudyEditorProps> = ({
   caseStudy,
@@ -68,7 +69,7 @@ export const CaseStudyEditor: React.FC<CaseStudyEditorProps> = ({
 
   // String array handlers
   const handleStringArrayChange = (
-    field: 'challenges' | 'keyDecisions' | 'learnings',
+    field: StringArrayField,
     index: number,
     value: string,
   ) => {
@@ -79,19 +80,14 @@ export const CaseStudyEditor: React.FC<CaseStudyEditorProps> = ({
     });
   };
 
-  const addStringArrayItem = (
-    field: 'challenges' | 'keyDecisions' | 'learnings',
-  ) => {
+  const addStringArrayItem = (field: StringArrayField) => {
     setFormData((prev) => ({
       ...prev,
       [field]: [...prev[field], ''],
     }));
   };
 
-  const removeStringArrayItem = (
-    field: 'challenges' | 'keyDecisions' | 'learnings',
-    index: number,
-  ) => {
+  const removeStringArrayItem = (field: StringArrayField, index: number) => {
     setFormData((prev) => ({
       ...prev,
       [field]: prev[field].filter((_, i) => i !== index),
@@ -173,15 +169,12 @@ export const CaseStudyEditor: React.FC<CaseStudyEditorProps> = ({
     onSave(payload);
   };
 
-  const renderStringArrayField = (
-    field: 'challenges' | 'keyDecisions' | 'learnings',
-    label: string,
-  ) => (
+  const renderStringArrayField = (field: StringArrayField, label: string) => (
     <div className={styles.formGroup}>
       <label>{label}</label>
       <div className={styles.arrayField}>
         {formData[field].map((item, index) => (
-          <div key={index} className={styles.arrayItem}>
+          <div key={`${field}-${index}`} className={styles.arrayItem}>
             <input
               type="text"
               value={item}
@@ -212,11 +205,14 @@ export const CaseStudyEditor: React.FC<CaseStudyEditorProps> = ({
   );
 
   const renderPhasesField = () => (
-    <div className={styles.formGroup}>
-      <label>Implementation Phases</label>
+    <fieldset className={styles.formGroup}>
+      <legend>Implementation Phases</legend>
       <div className={styles.arrayField}>
         {formData.phases.map((phase, index) => (
-          <div key={index} className={styles.phaseItem}>
+          <div
+            key={phase.name || `phase-${index}`}
+            className={styles.phaseItem}
+          >
             <div className={styles.phaseFields}>
               <input
                 type="text"
@@ -258,15 +254,18 @@ export const CaseStudyEditor: React.FC<CaseStudyEditorProps> = ({
           + Add Phase
         </Button>
       </div>
-    </div>
+    </fieldset>
   );
 
   const renderMetricsField = () => (
-    <div className={styles.formGroup}>
-      <label>Impact Metrics</label>
+    <fieldset className={styles.formGroup}>
+      <legend>Impact Metrics</legend>
       <div className={styles.arrayField}>
         {formData.metrics.map((metric, index) => (
-          <div key={index} className={styles.metricItem}>
+          <div
+            key={metric.label || `metric-${index}`}
+            className={styles.metricItem}
+          >
             <div className={styles.metricFields}>
               <input
                 type="text"
@@ -318,7 +317,7 @@ export const CaseStudyEditor: React.FC<CaseStudyEditorProps> = ({
           + Add Metric
         </Button>
       </div>
-    </div>
+    </fieldset>
   );
 
   return (
@@ -355,7 +354,41 @@ export const CaseStudyEditor: React.FC<CaseStudyEditorProps> = ({
         </Button>
       </div>
 
-      {!showPreview ? (
+      {showPreview ? (
+        <div className={styles.preview}>
+          <div className={styles.previewSection}>
+            <h3>Problem Context</h3>
+            <MarkdownContent content={formData.problemContext} />
+            {formData.challenges.length > 0 && (
+              <>
+                <h4>Challenges</h4>
+                <ul>
+                  {formData.challenges.map((c) => (
+                    <li key={c}>{c}</li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </div>
+          <div className={styles.previewSection}>
+            <h3>Approach</h3>
+            <MarkdownContent content={formData.approach} />
+          </div>
+          <div className={styles.previewSection}>
+            <h3>Outcome Summary</h3>
+            <MarkdownContent content={formData.outcomeSummary} />
+          </div>
+          <div className={styles.editActions}>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setShowPreview(false)}
+            >
+              Back to Edit
+            </Button>
+          </div>
+        </div>
+      ) : (
         <form onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
             <label htmlFor="slug">Slug</label>
@@ -448,40 +481,6 @@ export const CaseStudyEditor: React.FC<CaseStudyEditorProps> = ({
             </Button>
           </div>
         </form>
-      ) : (
-        <div className={styles.preview}>
-          <div className={styles.previewSection}>
-            <h3>Problem Context</h3>
-            <MarkdownContent content={formData.problemContext} />
-            {formData.challenges.length > 0 && (
-              <>
-                <h4>Challenges</h4>
-                <ul>
-                  {formData.challenges.map((c, i) => (
-                    <li key={i}>{c}</li>
-                  ))}
-                </ul>
-              </>
-            )}
-          </div>
-          <div className={styles.previewSection}>
-            <h3>Approach</h3>
-            <MarkdownContent content={formData.approach} />
-          </div>
-          <div className={styles.previewSection}>
-            <h3>Outcome Summary</h3>
-            <MarkdownContent content={formData.outcomeSummary} />
-          </div>
-          <div className={styles.editActions}>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => setShowPreview(false)}
-            >
-              Back to Edit
-            </Button>
-          </div>
-        </div>
       )}
     </div>
   );

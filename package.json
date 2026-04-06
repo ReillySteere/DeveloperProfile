@@ -167,6 +167,9 @@
     "lodash": "^4.17.22",
     "lodash-es": "^4.17.23",
     "path-to-regexp": "^8.4.2",
+    "webpack-dev-server": {
+      "express": "^5.2.1"
+    },
     "picomatch": "^4.0.4",
     "node-forge": "^1.4.0",
     "serialize-javascript": "^7.0.5"

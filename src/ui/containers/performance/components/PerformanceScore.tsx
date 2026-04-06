@@ -9,7 +9,7 @@ import {
 import styles from '../performance.module.scss';
 
 interface PerformanceScoreProps {
-  vitals: Partial<WebVitals>;
+  readonly vitals: Partial<WebVitals>;
 }
 
 export function PerformanceScore({
@@ -81,4 +81,7 @@ export function PerformanceScore({
 }
 
 /** Re-export for convenience */
-export { calculateScore, getScoreColor };
+export {
+  calculateScore,
+  getScoreColor,
+} from 'ui/shared/services/performanceScoring';

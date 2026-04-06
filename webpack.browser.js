@@ -70,11 +70,7 @@ module.exports = (env, argv) => ({
       publicPath: '/',
     },
     port: 8081,
-    open: {
-      app: {
-        name: 'chrome',
-      },
-    },
+    open: false,
     historyApiFallback: {
       disableDotRule: true,
     },

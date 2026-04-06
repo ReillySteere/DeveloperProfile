@@ -7,7 +7,7 @@ import { CaseStudy } from 'shared/types';
 import styles from './case-studies.module.scss';
 
 interface CaseStudyCardProps {
-  caseStudy: CaseStudy;
+  readonly caseStudy: CaseStudy;
 }
 
 function CaseStudyCard({ caseStudy }: CaseStudyCardProps) {
@@ -31,7 +31,7 @@ function CaseStudyCard({ caseStudy }: CaseStudyCardProps) {
 }
 
 interface CaseStudyListProps {
-  caseStudies: CaseStudy[];
+  readonly caseStudies: CaseStudy[];
 }
 
 function CaseStudyList({ caseStudies }: CaseStudyListProps) {
@@ -53,7 +53,7 @@ export default function CaseStudiesContainer() {
       <div className={styles.header}>
         <h1 className={styles.title}>Case Studies</h1>
         {isAuthenticated && (
-          <Button onClick={() => window.alert('Create form coming soon')}>
+          <Button onClick={() => globalThis.alert('Create form coming soon')}>
             Create Case Study
           </Button>
         )}

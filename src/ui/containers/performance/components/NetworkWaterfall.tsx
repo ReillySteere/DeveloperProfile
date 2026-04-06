@@ -14,7 +14,7 @@ import type { ResourceTiming } from 'shared/types';
 import styles from '../performance.module.scss';
 
 interface NetworkWaterfallProps {
-  resources: ResourceTiming[];
+  readonly resources: ResourceTiming[];
 }
 
 const typeColors: Record<string, string> = {

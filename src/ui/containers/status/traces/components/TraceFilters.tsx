@@ -4,8 +4,8 @@ import { TraceFilters as TraceFiltersType } from 'shared/types';
 import styles from './TraceFilters.module.scss';
 
 interface TraceFiltersProps {
-  onFiltersChange: (filters: TraceFiltersType) => void;
-  initialFilters: TraceFiltersType;
+  readonly onFiltersChange: (filters: TraceFiltersType) => void;
+  readonly initialFilters: TraceFiltersType;
 }
 
 export function TraceFilters({
@@ -29,10 +29,10 @@ export function TraceFilters({
     const filters: TraceFiltersType = {
       method: method || undefined,
       path: path || undefined,
-      statusCode: statusCode ? parseInt(statusCode, 10) : undefined,
-      minDuration: minDuration ? parseFloat(minDuration) : undefined,
-      maxDuration: maxDuration ? parseFloat(maxDuration) : undefined,
-      limit: parseInt(limit, 10),
+      statusCode: statusCode ? Number.parseInt(statusCode, 10) : undefined,
+      minDuration: minDuration ? Number.parseFloat(minDuration) : undefined,
+      maxDuration: maxDuration ? Number.parseFloat(maxDuration) : undefined,
+      limit: Number.parseInt(limit, 10),
     };
     onFiltersChange(filters);
   }, [

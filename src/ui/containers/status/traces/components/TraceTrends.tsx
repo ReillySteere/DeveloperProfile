@@ -13,7 +13,7 @@ import { useTraceHourlyStats } from '../hooks/useTraces';
 import styles from './TraceTrends.module.scss';
 
 interface TraceTrendsProps {
-  hours: number;
+  readonly hours: number;
 }
 
 function formatHour(isoString: string): string {

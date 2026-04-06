@@ -4,7 +4,7 @@ import { useTraceEndpointStats } from '../hooks/useTraces';
 import styles from './EndpointBreakdown.module.scss';
 
 interface EndpointBreakdownProps {
-  limit: number;
+  readonly limit: number;
 }
 
 function formatDuration(ms: number): string {

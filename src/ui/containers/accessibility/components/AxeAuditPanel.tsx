@@ -4,6 +4,13 @@ import { useAxeAudit } from '../hooks/useAxeAudit';
 import styles from '../accessibility.module.scss';
 import type { Result } from 'axe-core';
 
+function getNodeKey(node: { target?: unknown[] }, idx: number): string {
+  if (node.target && node.target.length > 0) {
+    return String(node.target[0]);
+  }
+  return String(idx);
+}
+
 function getScoreClass(score: number): string {
   if (score >= 90) return styles.scoreGood;
   if (score >= 50) return styles.scoreModerate;
@@ -35,7 +42,7 @@ const ViolationDetails: React.FC<ViolationDetailsProps> = ({ violation }) => {
           <span className={styles.violationDesc}>{violation.help}</span>
           <span className={styles.violationNodes}>
             {violation.nodes.length} element
-            {violation.nodes.length !== 1 ? 's' : ''}
+            {violation.nodes.length === 1 ? '' : 's'}
           </span>
           <span className={styles.expandIcon} aria-hidden="true">
             {isExpanded ? '▼' : '▶'}
@@ -51,7 +58,7 @@ const ViolationDetails: React.FC<ViolationDetailsProps> = ({ violation }) => {
             <h4 className={styles.affectedTitle}>Affected Elements:</h4>
             <ul className={styles.nodeList}>
               {violation.nodes.map((node, idx) => (
-                <li key={idx} className={styles.nodeItem}>
+                <li key={getNodeKey(node, idx)} className={styles.nodeItem}>
                   <code className={styles.nodeSelector}>
                     {node.target
                       .map((t) => (typeof t === 'string' ? t : t.join(' > ')))

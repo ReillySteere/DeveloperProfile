@@ -21,7 +21,7 @@ export const BlogPostEditor: React.FC<BlogPostEditorProps> = ({
     metaDescription: '',
     tags: [],
     content: '',
-    ...(post || {}),
+    ...post,
   });
   const [showPreview, setShowPreview] = useState(false);
 
@@ -82,7 +82,23 @@ export const BlogPostEditor: React.FC<BlogPostEditorProps> = ({
         </Button>
       </div>
 
-      {!showPreview ? (
+      {showPreview ? (
+        <div className={styles.preview}>
+          <div className={styles.blogPost}>
+            <h1>{formData.title}</h1>
+            <BlogContent content={formData.content || ''} />
+          </div>
+          <div className={styles.actions}>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setShowPreview(false)}
+            >
+              Back to Edit
+            </Button>
+          </div>
+        </div>
+      ) : (
         <form onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
             <label htmlFor="title">Title</label>
@@ -133,9 +149,10 @@ export const BlogPostEditor: React.FC<BlogPostEditorProps> = ({
 
           {formData.publishedAt && (
             <div className={styles.formGroup}>
-              <label>Published At</label>
+              <label htmlFor="publishedAt">Published At</label>
               <input
                 type="text"
+                id="publishedAt"
                 value={new Date(formData.publishedAt).toLocaleString()}
                 disabled
                 readOnly
@@ -163,22 +180,6 @@ export const BlogPostEditor: React.FC<BlogPostEditorProps> = ({
             </Button>
           </div>
         </form>
-      ) : (
-        <div className={styles.preview}>
-          <div className={styles.blogPost}>
-            <h1>{formData.title}</h1>
-            <BlogContent content={formData.content || ''} />
-          </div>
-          <div className={styles.actions}>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => setShowPreview(false)}
-            >
-              Back to Edit
-            </Button>
-          </div>
-        </div>
       )}
     </div>
   );

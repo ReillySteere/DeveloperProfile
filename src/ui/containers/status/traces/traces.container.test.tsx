@@ -186,9 +186,9 @@ describe('TracesContainer', () => {
       expect(screen.getAllByText('/api/test').length).toBeGreaterThanOrEqual(1);
     });
 
-    // Click the trace row (the one with role="button")
-    const traceRows = document.querySelectorAll('[role="button"]');
-    const traceRow = Array.from(traceRows).find((row) =>
+    // Click the trace row (rendered as a <button>)
+    const traceRows = screen.getAllByRole('button');
+    const traceRow = traceRows.find((row) =>
       row.textContent?.includes('/api/test'),
     );
     if (traceRow) {
@@ -329,12 +329,13 @@ describe('TracesContainer', () => {
       expect(screen.getAllByText('/api/test').length).toBeGreaterThanOrEqual(1);
     });
 
-    // Get the trace row - it's the one with role="button"
-    const traceRow = screen
-      .getByRole('button', { name: /GET/i })
-      .closest('[role="button"]');
+    // Get the trace row (rendered as a <button>)
+    const traceRows = screen.getAllByRole('button');
+    const traceRow = traceRows.find((row) =>
+      row.textContent?.includes('/api/test'),
+    );
     if (traceRow) {
-      (traceRow as HTMLElement).focus();
+      traceRow.focus();
       await user.keyboard('{Enter}');
     }
 
@@ -354,12 +355,13 @@ describe('TracesContainer', () => {
       expect(screen.getAllByText('/api/test').length).toBeGreaterThanOrEqual(1);
     });
 
-    // Get the trace row - it's the one with role="button"
-    const traceRow = screen
-      .getByRole('button', { name: /GET/i })
-      .closest('[role="button"]');
+    // Get the trace row (rendered as a <button>)
+    const traceRows = screen.getAllByRole('button');
+    const traceRow = traceRows.find((row) =>
+      row.textContent?.includes('/api/test'),
+    );
     if (traceRow) {
-      (traceRow as HTMLElement).focus();
+      traceRow.focus();
       await user.keyboard('{Escape}');
     }
 
@@ -2234,6 +2236,11 @@ describe('TimingWaterfall - comprehensive branch coverage', () => {
     // All segments should be in the legend
     expect(screen.getByText('Middleware')).toBeInTheDocument();
     expect(screen.getByText('Guard')).toBeInTheDocument();
+
+    // Focus/blur a segment to trigger keyboard-accessible tooltip
+    const segments = screen.getAllByRole('img');
+    fireEvent.focus(segments[0]);
+    fireEvent.blur(segments[0]);
   });
 
   it('should format sub-millisecond duration', async () => {

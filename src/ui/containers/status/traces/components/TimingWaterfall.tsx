@@ -3,8 +3,8 @@ import { PhaseTiming } from 'shared/types';
 import styles from './TimingWaterfall.module.scss';
 
 interface TimingWaterfallProps {
-  timing: PhaseTiming;
-  totalDuration: number;
+  readonly timing: PhaseTiming;
+  readonly totalDuration: number;
 }
 
 interface PhaseData {
@@ -89,6 +89,8 @@ export function TimingWaterfall({
         }}
         onMouseEnter={() => setHoveredPhase(phase.key)}
         onMouseLeave={() => setHoveredPhase(null)}
+        role="img"
+        aria-label={`${phase.key}: ${Math.round(phase.percentage)}%`}
       >
         {showLabel && (
           <span className={styles.segmentLabel}>

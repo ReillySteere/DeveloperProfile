@@ -63,7 +63,7 @@ export const AdrFilters = ({
       <Button
         variant="secondary"
         onClick={onClear}
-        className={`${styles.clearButton} ${!hasFilters ? styles.hidden : ''}`}
+        className={`${styles.clearButton} ${hasFilters ? '' : styles.hidden}`}
         aria-hidden={!hasFilters}
       >
         Clear Filters

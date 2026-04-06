@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from 'ui/shared/components';
 import styles from '../accessibility.module.scss';
 
-function getAnnouncement(el: Element): string {
+export function getAnnouncement(el: Element): string {
   const role = el.getAttribute('role') || el.tagName.toLowerCase();
   const label =
     el.getAttribute('aria-label') ||
@@ -40,7 +40,7 @@ export const ScreenReaderSimulator: React.FC = () => {
           Focus each element below to see how a screen reader would announce it.
         </p>
 
-        <div
+        <section
           className={styles.demoSection}
           onFocus={handleFocus}
           aria-label="Screen reader demo area"
@@ -49,18 +49,23 @@ export const ScreenReaderSimulator: React.FC = () => {
             Submit
           </button>
 
-          <a className={styles.demoElement} aria-label="View documentation">
+          <a
+            href="#demo"
+            onClick={(e) => e.preventDefault()}
+            className={styles.demoElement}
+            aria-label="View documentation"
+          >
             Documentation
           </a>
 
-          <button
-            role="checkbox"
-            aria-checked={checkboxChecked}
-            onClick={() => setCheckboxChecked((prev) => !prev)}
-            className={styles.demoElement}
-          >
+          <label className={styles.demoElement}>
+            <input
+              type="checkbox"
+              checked={checkboxChecked}
+              onChange={() => setCheckboxChecked((prev) => !prev)}
+            />{' '}
             Accept terms
-          </button>
+          </label>
 
           <button
             aria-expanded={menuExpanded}
@@ -80,7 +85,7 @@ export const ScreenReaderSimulator: React.FC = () => {
           >
             Delete (disabled)
           </button>
-        </div>
+        </section>
 
         <div
           className={styles.announcementArea}
