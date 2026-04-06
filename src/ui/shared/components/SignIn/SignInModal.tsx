@@ -55,9 +55,10 @@ export const SignInModal: React.FC = () => {
       onClick={(e) => {
         if (e.target === e.currentTarget) closeLoginModal();
       }}
-      role="dialog"
+      open
       aria-labelledby="signin-title"
       data-testid="signin-overlay"
+      role="dialog"
     >
       <div className={styles.modalInner}>
         <div className={styles.header}>
