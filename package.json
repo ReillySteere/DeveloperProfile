@@ -73,7 +73,7 @@
     "@types/express": "^5.0.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^25.0.9",
-    "@types/nodemailer": "^7.0.9",
+    "@types/nodemailer": "^8.0.0",
     "@types/passport-jwt": "^4.0.1",
     "@types/react": "^19.2.10",
     "@types/react-dom": "^19.0.4",
