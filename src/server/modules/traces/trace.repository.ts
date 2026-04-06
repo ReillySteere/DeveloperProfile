@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, LessThan, MoreThanOrEqual } from 'typeorm';
+import { LessThan, MoreThanOrEqual, Repository } from 'typeorm';
 import { RequestTrace } from './trace.entity';
 import type {
+  EndpointStatsResult,
+  HourlyStatsResult,
   ITraceRepository,
   TraceFilters,
   TraceStatsResult,
-  HourlyStatsResult,
-  EndpointStatsResult,
 } from './trace.types';
 
 // Re-export types for backward compatibility
 export type {
+  ITraceRepository,
   TraceFilters,
   TraceStatsResult,
-  ITraceRepository,
 } from './trace.types';
 
 @Injectable()
@@ -108,9 +108,9 @@ export class TraceRepository implements ITraceRepository {
       }>();
 
     return {
-      totalCount: parseInt(result?.totalCount ?? '0', 10),
-      avgDuration: parseFloat(result?.avgDuration ?? '0'),
-      errorRate: parseFloat(result?.errorRate ?? '0'),
+      totalCount: Number.parseInt(result?.totalCount ?? '0', 10),
+      avgDuration: Number.parseFloat(result?.avgDuration ?? '0'),
+      errorRate: Number.parseFloat(result?.errorRate ?? '0'),
     };
   }
 
@@ -197,9 +197,9 @@ export class TraceRepository implements ITraceRepository {
     return result.map((row) => ({
       path: row.path,
       method: row.method,
-      count: parseInt(row.count, 10),
-      avgDuration: parseFloat(row.avgDuration),
-      errorRate: parseFloat(row.errorRate ?? '0'),
+      count: Number.parseInt(row.count, 10),
+      avgDuration: Number.parseFloat(row.avgDuration),
+      errorRate: Number.parseFloat(row.errorRate ?? '0'),
     }));
   }
 }

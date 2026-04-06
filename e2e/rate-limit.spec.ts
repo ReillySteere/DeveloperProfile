@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 // These tests need to actually test rate limiting, so disable the bypass header
 test.use({
@@ -21,9 +21,9 @@ test.describe('Rate Limiting', () => {
     expect(reset).toBeDefined();
 
     // Values should be valid numbers
-    expect(parseInt(limit, 10)).toBeGreaterThan(0);
-    expect(parseInt(remaining, 10)).toBeGreaterThanOrEqual(0);
-    expect(parseInt(reset, 10)).toBeGreaterThan(0);
+    expect(Number.parseInt(limit, 10)).toBeGreaterThan(0);
+    expect(Number.parseInt(remaining, 10)).toBeGreaterThanOrEqual(0);
+    expect(Number.parseInt(reset, 10)).toBeGreaterThan(0);
   });
 
   test('should decrement remaining count on subsequent requests', async ({
@@ -31,14 +31,14 @@ test.describe('Rate Limiting', () => {
   }) => {
     // Make first request
     const first = await request.get('/api/projects');
-    const firstRemaining = parseInt(
+    const firstRemaining = Number.parseInt(
       first.headers()['x-ratelimit-remaining'],
       10,
     );
 
     // Make second request
     const second = await request.get('/api/projects');
-    const secondRemaining = parseInt(
+    const secondRemaining = Number.parseInt(
       second.headers()['x-ratelimit-remaining'],
       10,
     );
@@ -99,7 +99,7 @@ test.describe('Rate Limiting', () => {
     if (response.status() === 429) {
       const retryAfter = response.headers()['retry-after'];
       expect(retryAfter).toBeDefined();
-      expect(parseInt(retryAfter, 10)).toBeGreaterThan(0);
+      expect(Number.parseInt(retryAfter, 10)).toBeGreaterThan(0);
     }
   });
 });

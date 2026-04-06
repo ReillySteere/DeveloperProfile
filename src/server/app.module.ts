@@ -1,26 +1,26 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { APP_INTERCEPTOR, APP_GUARD } from '@nestjs/core';
-import { join } from 'path';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { join } from 'node:path';
 
-import { ExperienceModule } from './modules/experience/experience.module';
-import { AboutModule } from './modules/about/about.module';
-import { ProjectModule } from './modules/projects/project.module';
-import { BlogModule } from './modules/blog/blog.module';
-import { CaseStudyModule } from './modules/case-studies/case-study.module';
-import { AuthModule } from './modules/auth/auth.module';
-import { SeedingModule } from './modules/seeding/seeding.module';
-import { HealthModule } from './modules/health/health.module';
-import { LoggerModule } from './shared/modules/logger';
-import { ArchitectureModule } from './modules/architecture/architecture.module';
-import { TraceModule } from './modules/traces/trace.module';
-import { ApiRootModule } from './modules/api-root/api-root.module';
-import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
-import { RateLimitModule, RateLimiterGuard } from './modules/rate-limit';
-import { PerformanceModule } from './modules/performance/performance.module';
 import { ALL_ENTITIES } from './data-source';
 import { ALL_MIGRATIONS } from './migrations';
+import { AboutModule } from './modules/about/about.module';
+import { ApiRootModule } from './modules/api-root/api-root.module';
+import { ArchitectureModule } from './modules/architecture/architecture.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { BlogModule } from './modules/blog/blog.module';
+import { CaseStudyModule } from './modules/case-studies/case-study.module';
+import { ExperienceModule } from './modules/experience/experience.module';
+import { HealthModule } from './modules/health/health.module';
+import { PerformanceModule } from './modules/performance/performance.module';
+import { ProjectModule } from './modules/projects/project.module';
+import { RateLimitModule, RateLimiterGuard } from './modules/rate-limit';
+import { SeedingModule } from './modules/seeding/seeding.module';
+import { TraceModule } from './modules/traces/trace.module';
+import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
+import { LoggerModule } from './shared/modules/logger';
 
 const isProduction = process.env.NODE_ENV === 'production';
 

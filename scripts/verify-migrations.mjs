@@ -23,10 +23,9 @@
  * @see ADR-002: SQLite TypeORM for persistence
  */
 
-import { readFileSync, readdirSync, statSync } from 'fs';
-import { join, basename } from 'path';
+import { readFileSync, readdirSync } from 'node:fs';
+import { basename, dirname, join } from 'node:path';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

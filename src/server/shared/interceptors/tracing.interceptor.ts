@@ -1,14 +1,14 @@
 import {
+  CallHandler,
+  ExecutionContext,
+  Inject,
   Injectable,
   NestInterceptor,
-  ExecutionContext,
-  CallHandler,
-  Inject,
 } from '@nestjs/common';
-import { Observable, tap, catchError, throwError } from 'rxjs';
-import { randomUUID } from 'crypto';
 import { Request, Response } from 'express';
-import type { ITraceServicePort, CreateTraceInput } from 'server/shared/ports';
+import { randomUUID } from 'node:crypto';
+import { catchError, Observable, tap, throwError } from 'rxjs';
+import type { CreateTraceInput, ITraceServicePort } from 'server/shared/ports';
 import { TRACE_SERVICE_TOKEN } from 'server/shared/ports';
 
 /** Paths to exclude from tracing */

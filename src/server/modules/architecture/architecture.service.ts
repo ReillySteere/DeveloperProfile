@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import * as fs from 'fs/promises';
-import * as path from 'path';
+import * as fs from 'node:fs/promises';
+import * as path from 'node:path';
 import {
   Adr,
   AdrListItem,
@@ -102,7 +102,7 @@ export class ArchitectureService implements IArchitectureService {
 
     // Extract ADR number from filename (ADR-001-...)
     const numberMatch = /ADR-(\d+)/.exec(filename);
-    const number = numberMatch ? parseInt(numberMatch[1], 10) : 0;
+    const number = numberMatch ? Number.parseInt(numberMatch[1], 10) : 0;
 
     // Extract title from first heading
     const titleMatch = /^#\s+(.+)$/m.exec(content);
@@ -131,11 +131,11 @@ export class ArchitectureService implements IArchitectureService {
 
   private stripMarkdown(content: string): string {
     return content
-      .replace(/```[\s\S]*?```/g, ' ') // Remove code blocks
-      .replace(/`[^`]+`/g, ' ') // Remove inline code
-      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Links → text
-      .replace(/[#*_~>-]/g, ' ') // Remove markdown symbols
-      .replace(/\s+/g, ' ') // Normalize whitespace
+      .replaceAll(/```[\s\S]*?```/g, ' ') // Remove code blocks
+      .replaceAll(/`[^`]+`/g, ' ') // Remove inline code
+      .replaceAll(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Links → text
+      .replaceAll(/[#*_~>-]/g, ' ') // Remove markdown symbols
+      .replaceAll(/\s+/g, ' ') // Normalize whitespace
       .trim()
       .toLowerCase();
   }

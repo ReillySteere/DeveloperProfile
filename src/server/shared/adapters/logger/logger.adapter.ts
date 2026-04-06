@@ -1,7 +1,6 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { ILoggingPort, LogContext } from '../../ports';
+import { Inject, Injectable, LoggerService } from '@nestjs/common';
 import { LOGGER_TOKENS } from '../../modules/logger';
-import { LoggerService } from '@nestjs/common';
+import { ILoggingPort, LogContext } from '../../ports';
 
 /**
  * Adapter tokens for DI registration in business modules.

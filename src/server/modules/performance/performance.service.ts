@@ -1,16 +1,16 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import type { IPerformanceRepository } from './performance.repository';
 import type {
-  PerformanceReportInput,
   AggregatedMetrics,
   Benchmark,
   BundleAnalysis,
+  PerformanceReportInput,
 } from 'shared/types';
-import type { PerformanceReport, BundleSnapshot } from './performance.entity';
-import TOKENS from './tokens';
 import { PERFORMANCE_EVENTS } from './events';
+import type { BundleSnapshot, PerformanceReport } from './performance.entity';
+import type { IPerformanceRepository } from './performance.repository';
+import TOKENS from './tokens';
 
 /** Default retention: 7 days for detailed reports */
 const DEFAULT_RETENTION_MS = 7 * 24 * 60 * 60 * 1000;
@@ -39,7 +39,7 @@ export class PerformanceService implements IPerformanceService {
   ) {
     this.#repository = repository;
     this.#eventEmitter = eventEmitter;
-    this.#retentionMs = parseInt(
+    this.#retentionMs = Number.parseInt(
       process.env.PERF_RETENTION_MS ?? String(DEFAULT_RETENTION_MS),
       10,
     );

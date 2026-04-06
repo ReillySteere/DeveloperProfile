@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { createReadStream } from 'node:fs';
-import { join } from 'path';
+import { join } from 'node:path';
 import { ResumeReadableStream } from './about.types';
 
 export interface IAboutService {

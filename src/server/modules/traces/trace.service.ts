@@ -1,21 +1,21 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import * as Sentry from '@sentry/node';
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import { TRACE_EVENTS } from './events';
+import TOKENS from './tokens';
 import type {
+  CreateTraceInput,
+  EndpointStatsResult,
+  HourlyStatsResult,
+  IRequestTrace,
   ITraceRepository,
+  ITraceService,
   TraceFilters,
   TraceStatsResult,
-  HourlyStatsResult,
-  EndpointStatsResult,
-  IRequestTrace,
-  CreateTraceInput,
-  ITraceService,
 } from './trace.types';
-import TOKENS from './tokens';
-import { TRACE_EVENTS } from './events';
 
 // Re-export types for backward compatibility
 export type { CreateTraceInput, ITraceService } from './trace.types';
@@ -28,7 +28,7 @@ const DB_SIZE_ALERT_THRESHOLD = 0.3;
 
 /** Maximum expected database size in bytes (default 100MB for Heroku ephemeral) */
 const MAX_DB_SIZE_BYTES =
-  parseInt(process.env.MAX_DB_SIZE_MB ?? '100', 10) * 1024 * 1024;
+  Number.parseInt(process.env.MAX_DB_SIZE_MB ?? '100', 10) * 1024 * 1024;
 
 @Injectable()
 export class TraceService implements ITraceService {
@@ -43,7 +43,7 @@ export class TraceService implements ITraceService {
   ) {
     this.#repository = repository;
     this.#eventEmitter = eventEmitter;
-    this.#ttlMs = parseInt(
+    this.#ttlMs = Number.parseInt(
       process.env.TRACE_TTL_MS ?? String(DEFAULT_TTL_MS),
       10,
     );

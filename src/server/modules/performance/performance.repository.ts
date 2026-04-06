@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, LessThan } from 'typeorm';
-import { PerformanceReport } from './performance.entity';
-import { BundleSnapshot } from './performance.entity';
 import type { AggregatedMetrics } from 'shared/types';
+import { LessThan, Repository } from 'typeorm';
+import { BundleSnapshot, PerformanceReport } from './performance.entity';
 
 export interface IPerformanceRepository {
   createReport(data: Partial<PerformanceReport>): Promise<PerformanceReport>;
