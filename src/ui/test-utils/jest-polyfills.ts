@@ -7,8 +7,8 @@
  * Used by: jest.browser.ts (setupFiles)
  */
 /* eslint-disable @typescript-eslint/no-require-imports */
-import { TextEncoder, TextDecoder } from 'util';
 import { ReadableStream, TransformStream, WritableStream } from 'stream/web';
+import { TextDecoder, TextEncoder } from 'util';
 
 // MSW's interceptors require TextEncoder/TextDecoder
 // These must be set before MSW modules are imported
@@ -20,7 +20,7 @@ Object.assign(global, { ReadableStream, TransformStream, WritableStream });
 
 // Ensure Blob and File are available
 if (typeof global.Blob === 'undefined') {
-  const { Blob } = require('buffer');
+  const { Blob } = require('node:buffer');
   Object.assign(global, { Blob });
 }
 

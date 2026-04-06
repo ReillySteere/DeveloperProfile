@@ -1,6 +1,6 @@
-import { DataSource } from 'typeorm';
 import { glob } from 'glob';
-import path from 'path';
+import path from 'node:path';
+import { DataSource } from 'typeorm';
 import { ALL_ENTITIES } from '../data-source';
 import { ALL_MIGRATIONS } from './index';
 

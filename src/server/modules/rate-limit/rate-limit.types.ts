@@ -1,7 +1,7 @@
-import type { RateLimitRule, RateLimitKeyStrategy } from 'shared/types';
+import type { RateLimitRule } from 'shared/types';
 
 // Re-export for convenience
-export type { RateLimitRule, RateLimitKeyStrategy };
+export type { RateLimitKeyStrategy, RateLimitRule } from 'shared/types';
 
 /**
  * Result from checking rate limit.

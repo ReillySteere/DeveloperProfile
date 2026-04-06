@@ -1,40 +1,40 @@
 import {
-  Controller,
-  Get,
-  Delete,
-  Patch,
-  Param,
-  Query,
   Body,
-  Sse,
+  Controller,
+  Delete,
+  Get,
   Inject,
-  NotFoundException,
-  UseGuards,
   MessageEvent,
+  NotFoundException,
+  Param,
+  Patch,
+  Query,
+  Sse,
+  UseGuards,
 } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiQuery,
   ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
 import { Observable, fromEvent, map } from 'rxjs';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { AuthGuardAdapter } from 'server/shared/adapters/auth';
-import { ITraceService } from './trace.service';
+import type { AlertHistory } from './alert-history.entity';
+import type { AlertEvent, AlertRule } from './alert.config';
+import { TRACE_EVENTS } from './events';
+import TOKENS from './tokens';
 import { TraceAlertService } from './trace-alert.service';
+import { RequestTrace } from './trace.entity';
+import { ITraceService } from './trace.service';
 import type {
+  EndpointStatsResult,
+  HourlyStatsResult,
   TraceFilters,
   TraceStatsResult,
-  HourlyStatsResult,
-  EndpointStatsResult,
 } from './trace.types';
-import type { AlertRule, AlertEvent } from './alert.config';
-import type { AlertHistory } from './alert-history.entity';
-import { RequestTrace } from './trace.entity';
-import TOKENS from './tokens';
-import { TRACE_EVENTS } from './events';
 
 /**
  * Controller for request trace observability endpoints.
@@ -114,11 +114,11 @@ export class TraceController {
     const filters: TraceFilters = {
       method,
       path,
-      statusCode: statusCode ? parseInt(statusCode, 10) : undefined,
-      minDuration: minDuration ? parseFloat(minDuration) : undefined,
-      maxDuration: maxDuration ? parseFloat(maxDuration) : undefined,
-      limit: limit ? parseInt(limit, 10) : undefined,
-      offset: offset ? parseInt(offset, 10) : undefined,
+      statusCode: statusCode ? Number.parseInt(statusCode, 10) : undefined,
+      minDuration: minDuration ? Number.parseFloat(minDuration) : undefined,
+      maxDuration: maxDuration ? Number.parseFloat(maxDuration) : undefined,
+      limit: limit ? Number.parseInt(limit, 10) : undefined,
+      offset: offset ? Number.parseInt(offset, 10) : undefined,
     };
 
     return this.#traceService.getRecentTraces(filters);
@@ -148,7 +148,7 @@ export class TraceController {
   async getHourlyStats(
     @Query('hours') hours?: string,
   ): Promise<HourlyStatsResult[]> {
-    const hoursNum = hours ? parseInt(hours, 10) : 24;
+    const hoursNum = hours ? Number.parseInt(hours, 10) : 24;
     return this.#traceService.getHourlyStats(hoursNum);
   }
 
@@ -166,7 +166,7 @@ export class TraceController {
   async getEndpointStats(
     @Query('limit') limit?: string,
   ): Promise<EndpointStatsResult[]> {
-    const limitNum = limit ? parseInt(limit, 10) : 20;
+    const limitNum = limit ? Number.parseInt(limit, 10) : 20;
     return this.#traceService.getEndpointStats(limitNum);
   }
 
@@ -224,7 +224,7 @@ export class TraceController {
   async getAlertHistory(
     @Query('limit') limit?: string,
   ): Promise<AlertHistory[]> {
-    const limitNum = limit ? parseInt(limit, 10) : 20;
+    const limitNum = limit ? Number.parseInt(limit, 10) : 20;
     return this.#alertService.getRecentAlerts(limitNum);
   }
 
@@ -253,7 +253,7 @@ export class TraceController {
     @Body() body: { notes?: string },
   ): Promise<AlertHistory> {
     const alert = await this.#alertService.resolveAlert(
-      parseInt(id, 10),
+      Number.parseInt(id, 10),
       body.notes,
     );
     if (!alert) {

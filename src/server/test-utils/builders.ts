@@ -7,13 +7,13 @@
  * ```
  */
 
-import type { RequestTrace, AlertRule, AlertHistoryRecord } from 'shared/types';
+import type { AlertHistoryRecord, AlertRule, RequestTrace } from 'shared/types';
 
 /**
  * Builder for RequestTrace objects.
  */
 export class TraceBuilder {
-  private trace: Partial<RequestTrace> = {
+  readonly trace: Partial<RequestTrace> = {
     traceId: `trace-${Date.now()}-${Math.random().toString(36).slice(2)}`,
     method: 'GET',
     path: '/api/test',

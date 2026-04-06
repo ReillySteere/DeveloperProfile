@@ -1,16 +1,16 @@
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import * as Sentry from '@sentry/node';
-import * as fs from 'fs';
+import * as fs from 'node:fs';
+import { TRACE_EVENTS } from './events';
 import { TraceService } from './trace.service';
 import type {
   CreateTraceInput,
-  ITraceService,
-  ITraceRepository,
-  TraceStatsResult,
-  PhaseTiming,
   IRequestTrace,
+  ITraceRepository,
+  ITraceService,
+  PhaseTiming,
+  TraceStatsResult,
 } from './trace.types';
-import { TRACE_EVENTS } from './events';
 
 // Mock Sentry before importing anything that uses it
 jest.mock('@sentry/node', () => ({

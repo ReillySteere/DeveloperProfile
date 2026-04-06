@@ -1,28 +1,28 @@
 import {
+  Body,
   Controller,
   Get,
-  Post,
-  Body,
-  Query,
-  Sse,
   Inject,
   MessageEvent,
+  Post,
+  Query,
+  Sse,
 } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiQuery,
   ApiBody,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
 import { Observable, fromEvent, map } from 'rxjs';
-import { EventEmitter2 } from '@nestjs/event-emitter';
-import type { IPerformanceService } from './performance.service';
 import type { AggregatedMetrics, Benchmark } from 'shared/types';
 import { ReportMetricDto } from './dto/reportMetric.dto';
-import { PerformanceReport, BundleSnapshot } from './performance.entity';
-import TOKENS from './tokens';
 import { PERFORMANCE_EVENTS } from './events';
+import { BundleSnapshot, PerformanceReport } from './performance.entity';
+import type { IPerformanceService } from './performance.service';
+import TOKENS from './tokens';
 
 @ApiTags('Performance')
 @Controller('api/performance')
@@ -67,7 +67,7 @@ export class PerformanceController {
     @Query('page') page?: string,
     @Query('days') days?: string,
   ): Promise<AggregatedMetrics> {
-    const daysNum = days ? parseInt(days, 10) : undefined;
+    const daysNum = days ? Number.parseInt(days, 10) : undefined;
     return this.#performanceService.getAggregatedMetrics(page, daysNum);
   }
 

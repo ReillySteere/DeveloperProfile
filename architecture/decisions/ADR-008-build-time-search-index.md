@@ -143,7 +143,7 @@ function parseAdr(filename, content) {
     title: titleMatch ? titleMatch[1] : slug,
     status: parseStatus(statusLine),
     date: dateMatch ? dateMatch[1] : '',
-    number: numberMatch ? parseInt(numberMatch[1], 10) : 0,
+    number: numberMatch ? Number.parseInt(numberMatch[1], 10) : 0,
     searchText: stripMarkdown(content),
   };
 }

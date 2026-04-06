@@ -93,8 +93,8 @@ Since dependency graphs only change when code changes, they are generated at **b
 
 ```javascript
 import { execSync } from 'child_process';
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

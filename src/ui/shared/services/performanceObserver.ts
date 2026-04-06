@@ -1,7 +1,7 @@
-import { onLCP, onCLS, onFCP, onTTFB, onINP } from 'web-vitals';
-import type { Metric } from 'web-vitals';
-import type { WebVitalMetric, WebVitals, NavigationTiming } from 'shared/types';
 import axios, { AxiosInstance } from 'axios';
+import type { NavigationTiming, WebVitalMetric, WebVitals } from 'shared/types';
+import type { Metric } from 'web-vitals';
+import { onCLS, onFCP, onINP, onLCP, onTTFB } from 'web-vitals';
 
 type MetricHandler = (metric: WebVitalMetric) => void;
 
@@ -52,11 +52,11 @@ export const defaultDeps: PerformanceObserverDeps = {
 };
 
 export class PerformanceObserverService {
-  #handlers: Set<MetricHandler> = new Set();
+  readonly #handlers: Set<MetricHandler> = new Set();
   #metrics: Partial<WebVitals> = {};
-  #sessionId: string;
+  readonly #sessionId: string;
   #reported = false;
-  #deps: PerformanceObserverDeps;
+  readonly #deps: PerformanceObserverDeps;
 
   constructor(deps: PerformanceObserverDeps = defaultDeps) {
     this.#deps = deps;

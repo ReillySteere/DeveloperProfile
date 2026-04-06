@@ -1,19 +1,19 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { join } from 'path';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { join } from 'node:path';
 
-import { AppModule } from './app.module';
 import * as Sentry from '@sentry/node';
+import { AppModule } from './app.module';
 import { SentryExceptionFilter } from './sentry-exception.filter';
 import { AppLoggerService } from './shared/modules/logger';
 
-import * as fs from 'fs';
 import { NextFunction, Request, Response } from 'express';
+import * as fs from 'node:fs';
 
 async function bootstrap() {
   // Ensure data directory exists for SQLite
